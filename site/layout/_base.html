@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="author" content="Peter Marheine" />
+    <!-- What, you expected highly compressed markup? -->
+    <link rel="stylesheet" type="text/css" href="{{site.url}}/media/css/base.css" />
+    <link rel="icon" type="image/png" href="{{site.url}}/media/img/favicon.png" />
+    <link rel="home" href="{{site.url}}" />
+
+    {% block page_meta %}
+        {% if page.meta_description %}
+            <meta name="description" content="{{page.meta_description}}" />
+        {% endif %}
+        {% if page.meta_keywords %}
+            <meta name="keywords" content="{{page.meta_keywords|join:','}}" />
+        {% endif %}
+    {% endblock %}
+    
+    <title>
+        {% block title %}
+            {% if page.title %}
+                {{page.title}}
+            {% else %}
+                {{page.page_name}}
+            {% endif %}
+            | タリ
+        {% endblock %}
+    </title>
+</head>
+
+<body>
+<!-- alt header: たり - I prefer the hiragana, but katakana is more correct -->
+<h1 id="pagehead">
+    <!-- aside: setting lang here for the benefit of screen readers and
+         friends so nobody tries to pronounce that erroneously -->
+    <span lang="ja">
+        タリ
+    </span>
+    <span id="tagline">
+        More fun than a kick in the teeth
+    </span>
+</h1>
+
+<div id="location">
+<!-- breadcrumbs -->
+<!-- Cyprinus carpio < Cyprinidae < Cypriniformes < Actinopterygii <
+     Chordata < Animalia ... -->
+    <a href="#content">
+        {% if page.title %}
+            {{page.title}}
+        {% else %}
+            {{page.page_name}}
+        {% endif %}
+    </a>
+    {% for n in page.node.ancestors %}
+        &lt; <a href="{{n.url}}">{{n.name}}</a>
+    {% endfor %}
+</div>
+
+<div id="content">
+    <div id="navi">
+        {% if page.contents %}
+            <h2 class="right">Contents</h2>
+            {% load taricorp_extras %}
+            <ul>{{ page.contents|unordered_list_a }}</ul>
+            <hr id="break"/>
+        {% endif %}
+        <h2 class="right">Navigation</h2>
+        {% block navigation %}
+        {% endblock %}
+    </div>
+    
+    {% block main_content %}
+    {% endblock %}
+</div>
+
+<div id="footer">
+    Page content copyright &copy; {% now "Y" %} Peter Marheine,
+    last generated  {% now "Ymd\THisO" %}.
+    <!-- ISO 8601 date format, for the interested reader -->
+</div>
+</body>
+</html>
