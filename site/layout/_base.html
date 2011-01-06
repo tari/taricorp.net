@@ -62,21 +62,26 @@
     <div id="navi">
         {% if page.contents %}
             <h2 class="right">Contents</h2>
-            {% load taricorp_extras %}
+            {% load unordered_list_a %}
             <ul>{{ page.contents|unordered_list_a }}</ul>
             <hr id="break"/>
         {% endif %}
-        <h2 class="right">Navigation</h2>
-        {% block navigation %}
-        {% endblock %}
+        <span id="navlinks">
+            <h2>Home</h2>
+            <h2>About</h2>
+            <h2>Me</h2>
+        </span>
     </div>
     
-    {% block main_content %}
-    {% endblock %}
+    {% load tocgen %}
+    {% tocgen %}
+        {% block main_content %}
+        {% endblock %}
+    {% endtocgen %}
 </div>
 
 <div id="footer">
-    Page content copyright &copy; {% now "Y" %} Peter Marheine,
+    Contents &copy; {% now "Y" %} Peter Marheine,
     last generated  {% now "Ymd\THisO" %}.
     <!-- ISO 8601 date format, for the interested reader -->
 </div>

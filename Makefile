@@ -11,5 +11,8 @@ endif
 all:
 	$(PYTHON) $(HYDE) -g -s $(SITE) -d $(DEPLOY)
 
+watch:
+	$(PYTHON) $(HYDE) -g -s $(SITE) -d $(DEPLOY) -k
+
 serve: all
 	$(PYTHON) $(HYDE) -w -s $(SITE) -d $(DEPLOY)

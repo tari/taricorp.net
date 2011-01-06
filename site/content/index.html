@@ -14,14 +14,11 @@
 
 {% load webdesign %}
 
-{% block navigation %}
-    <p>{% lorem 20 w random %}</p>
-{% endblock %}
-
 {% block main_content %}
+    {{page.contents}}
     <h2 id="carp">carp</h2>
     {% lorem 2 p %}
-    <h3 id="too hardcore?">too hardcore?</h3>
+    <h3 id="{{'too hardcore?'|urlencode}}">too hardcore?</h3>
     {% lorem 1 p random %}
     <h3 id="how to kill">how to kill</h3>
     {% lorem 2 p random %}

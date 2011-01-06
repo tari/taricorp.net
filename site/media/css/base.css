@@ -57,13 +57,15 @@ body {
     text-decoration: none;
 }
 #content #navi #break {
-    margin-top: .25em;
-    margin-bottom: .25em;
+    margin: .25em 1em .25em auto;
     border: 0;
     height: 1pt;
     color: #564b47;
     background-color: #564b47;
-    width: 65%;
+    width: 75%;
+}
+#content #navi #navlinks {
+    text-align: right;
 }
 
 p, ul, ol{
