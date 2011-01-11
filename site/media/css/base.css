@@ -44,7 +44,7 @@ body {
 #content #navi {
     float: right;
     width: 250px;
-    background-color: #c4cad4; /*#ff99cc;*/
+    background-color: #c4cad4;
     margin: 0px 0px 20px 20px;
     border-bottom-left-radius: 10px;
     padding-left: .25em;

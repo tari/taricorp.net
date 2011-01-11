@@ -14,5 +14,5 @@ all:
 watch:
 	$(PYTHON) $(HYDE) -g -s $(SITE) -d $(DEPLOY) -k
 
-serve: all
-	$(PYTHON) $(HYDE) -w -s $(SITE) -d $(DEPLOY)
+serve:
+	cd $(DEPLOY); $(PYTHON) -m SimpleHTTPServer 8080

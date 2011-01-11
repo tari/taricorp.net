@@ -5,25 +5,19 @@
     created: 2010-12-28
     meta_description: "Index and latest content"
     listing: True
-    contents:
-        [carp,
-            ["too hardcore?", how to kill],
-         leatherworking,
-            [carp leather]]
 %}
 
 {% load webdesign %}
 
 {% block main_content %}
-    {{page.contents}}
-    <h2 id="carp">carp</h2>
+    <h2>carp</h2>
     {% lorem 2 p %}
-    <h3 id="{{'too hardcore?'|urlencode}}">too hardcore?</h3>
+    <h3>too hardcore?</h3>
     {% lorem 1 p random %}
-    <h3 id="how to kill">how to kill</h3>
+    <h3>how to kill</h3>
     {% lorem 2 p random %}
-    <h2 id="leatherworking">leatherworking</h2>
+    <h2>leatherworking</h2>
     {% lorem 2 p random %}
-    <h3 id="carp leather">carp leather</h3>
+    <h3>carp leather</h3>
     {% lorem 1 p random %}
 {% endblock %}

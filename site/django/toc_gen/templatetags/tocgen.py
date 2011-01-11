@@ -7,7 +7,7 @@ from BeautifulSoup import BeautifulSoup
 @register.tag(name='tocgen')
 def do_tocgen(parser, token):
     args = token.split_contents()
-    var_out = 'page.contents' if len(args) <= 1 else args[1]
+    var_out = 'contents' if len(args) <= 1 else args[1]
     nodelist = parser.parse(('endtocgen',))
     parser.delete_first_token()
     return TocGenNode(nodelist, var_out)
@@ -19,7 +19,7 @@ class TocGenNode(template.Node):
     def render(self, context):
         soup = BeautifulSoup(self.nodelist.render(context))
         # Find headings
-        hns = soup.findall(['h2', 'h3', 'h4', 'h5', 'h6'])
+        hns = soup.findAll(['h2', 'h3', 'h4', 'h5', 'h6'])
         contents = []
         for h in hns:
             level = int(h.name[1]) - 1
@@ -29,8 +29,10 @@ class TocGenNode(template.Node):
             # Set id so we can link to it
             h['id'] = urlquote(h.text)
         # Set contents var for our page so it can be inserted
+        print "context[%s] = %s" %(self.var_name, contents)
         context[self.var_name] = contents
-        return str(soup)
+        # Now re-render the page with updated context
+        return self.nodelist.render(context)
 
 def nested_append(nlist, element, depth):
     """Appends element to nlist at depth levels in, where levels are delimited

@@ -60,23 +60,27 @@
 
 <div id="content">
     <div id="navi">
-        {% if page.contents %}
+        {% if contents %}
             <h2 class="right">Contents</h2>
             {% load unordered_list_a %}
-            <ul>{{ page.contents|unordered_list_a }}</ul>
+            <ul>{{ contents|unordered_list_a }}</ul>
             <hr id="break"/>
+        {% else %}
+            <p>contents not included</p>
         {% endif %}
-        <span id="navlinks">
+        <div id="navlinks">
             <h2>Home</h2>
             <h2>About</h2>
             <h2>Me</h2>
-        </span>
+        </div>
     </div>
     
     {% load tocgen %}
     {% tocgen %}
         {% block main_content %}
         {% endblock %}
+        
+        {{ contents }}
     {% endtocgen %}
 </div>
 
