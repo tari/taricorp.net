@@ -56,6 +56,19 @@ APPEND_SLASH = False
 
 # Extensions do not support wildcards.
 
+# Apply to all directory on win32 is '\' rather than '/' for some reason.
+from sys import platform as _platform
+_pre_all = '/'
+if _platform == 'win32':
+    _pre_all = '\\' 
+SITE_PRE_PROCESSORS = {
+    _pre_all: {
+        'toc_gen.site_pre_processors.ContentsGenerator' : {
+            'cvar' : 'contents',
+        }
+    }
+}
+
 MEDIA_PROCESSORS = {
     '*':{
         '.css':('hydeengine.media_processors.TemplateProcessor',
