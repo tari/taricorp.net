@@ -6,7 +6,7 @@
     <!-- What, you expected highly compressed markup? -->
     <link rel="stylesheet" type="text/css" href="{{site.url}}/media/css/base.css" />
     <link rel="icon" type="image/png" href="{{site.url}}/media/img/favicon.png" />
-    <link rel="home" href="{{site.url}}" />
+    <link rel="home" href="/{{site.url}}" />
 
     {% block page_meta %}
         {% if page.meta_description %}
@@ -53,20 +53,18 @@
             {{page.page_name}}
         {% endif %}
     </a>
-    {% for n in page.node.ancestors %}
-        &lt; <a href="{{n.url}}">{{n.name}}</a>
+    {% for n in page.node.ancestors reversed %}
+        &lt; <a href="/{{n.url}}">{{n.name}}</a>
     {% endfor %}
 </div>
 
 <div id="content">
     <div id="navi">
-        {% if contents %}
+        {% if page.contents %}
             <h2 class="right">Contents</h2>
             {% load unordered_list_a %}
-            <ul>{{ contents|unordered_list_a }}</ul>
+            <ul>{{ page.contents|unordered_list_a }}</ul>
             <hr id="break"/>
-        {% else %}
-            <p>contents not included</p>
         {% endif %}
         <div id="navlinks">
             <h2>Home</h2>
@@ -75,13 +73,10 @@
         </div>
     </div>
     
-{#    {% load tocgen %}
-    {% tocgen %} #}
-        {% block main_content %}
-        {% endblock %}
-        
-        {{ contents }}
-{#    {% endtocgen %} #}
+    {% block main_content %}
+    {% endblock %}
+    
+    {{ contents }}
 </div>
 
 <div id="footer">
