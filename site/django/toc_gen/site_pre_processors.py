@@ -37,22 +37,17 @@ class ContentsGenerator(object):
                 text = h.text
                 # Put this in the global contents 
                 nested_append(contents, text, level)
-                # Set id so we can link to it
-                h['id'] = urlquote(h.text)
             return contents
         accept_exts = ('.html')
         # Walk nodes, then pages of each node.  Set page.contents to the TOC
         node = params['node']
         #for node in params['node'].children:
         for page in node.walk_pages():
-            print "\t%s" %page.file.name
             extension = page.source_file.extension
             if extension in accept_exts and bool(extension):
                 if hasattr(page, omit_var) and page.__getattribute__(omit_var):
                     continue
+                print "\t%s" %page.file.name
                 with open(page.source_file.path, 'r') as infile:
                     contents = generate_headings(infile)
                     page.__setattr__(contents_var, contents)
-                    print "\t\t%s" %contents
-            else:
-                print "\t\tIgnored"

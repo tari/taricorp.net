@@ -61,9 +61,16 @@ from sys import platform as _platform
 _pre_all = '/'
 if _platform == 'win32':
     _pre_all = '\\' 
+    
 SITE_PRE_PROCESSORS = {
     _pre_all: {
         'toc_gen.site_pre_processors.ContentsGenerator' : { }
+    }
+}
+
+SITE_POST_PROCESSORS = {
+    _pre_all: {
+        'toc_gen.site_post_processors.ContentsLinkupProcessor' : { }
     }
 }
 
@@ -95,15 +102,6 @@ CONTENT_PROCESSORS = {
         '*.*' : 
             ('hydeengine.content_processors.PassthroughProcessor',)
             }
-}
-
-SITE_POST_PROCESSORS = {
-    # 'media/js': {
-    #        'hydeengine.site_post_processors.FolderFlattener' : {
-    #                'remove_processed_folders': True,
-    #                'pattern':"*.js"
-    #        }
-    #    }
 }
 
 CONTEXT = {
