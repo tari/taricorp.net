@@ -39,11 +39,12 @@ body {
     border: 1px solid #564b47; 
     border-top-style: none;
     background-color: #fff;
+    overflow: hidden;
 }
 
 #content #navi {
     float: right;
-    width: 250px;
+    width: 14em;
     background-color: #c4cad4;
     margin: 0px 0px 20px 20px;
     border-bottom-left-radius: 10px;
@@ -57,7 +58,7 @@ body {
     text-decoration: none;
 }
 #content #navi #break {
-    margin: .25em 1em .25em auto;
+    margin: .25em auto .25em 1em;
     border: 0;
     height: 1pt;
     color: #564b47;
