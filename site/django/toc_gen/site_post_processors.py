@@ -7,7 +7,8 @@ class ContentsLinkupProcessor(object):
         class Processor:
             def visit_file(self, thefile):
                 soup = BeautifulSoup(thefile.read_all())
-                for heading in soup.findAll(['h2', 'h3', 'h4', 'h5', 'h6']):
+                headings = soup.findAll(['h2', 'h3', 'h4', 'h5', 'h6'])
+                for heading in headings:
                     heading['id'] = urlquote(heading.text)
                 # Explicit conversion to unicode; prettify gives a UTF-8
                 # encoded string, not a unicode object, and hyde goes through
@@ -18,5 +19,6 @@ class ContentsLinkupProcessor(object):
                 # unicode() and prettify() double certain tags.
                 out = unicode(str(soup), 'utf-8')
                 thefile.write(out)
+                print "%s: patched %i headings." %(thefile, len(headings))
         folder.walk(Processor(), "*.html")
         
