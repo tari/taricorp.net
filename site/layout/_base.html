@@ -55,7 +55,14 @@
         {% endif %}
     </a>
     {% for n in page.node.ancestors reversed %}
-        &lt; <a href="/{{n.url}}">{{n.name}}</a>
+        {% with n.url|length_is:"0" as is_root %}
+            &lt; <a href="
+                {% if is_root %}
+                    /
+                {% else %}
+                    {{n.url}}
+                {% endif %}">{{n.name}}</a>
+        {% endwith %}
     {% endfor %}
 </div>
 
