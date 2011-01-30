@@ -11,13 +11,21 @@
 
 {% block main_content %}
     <h2>carp</h2>
+    <div class="fbox">basic fbox</div>
     {% lorem 2 p %}
     <h3>too hardcore?</h3>
-    {% lorem 1 p random %}
+    <div class="fbox">
+        <img src="http://img717.imageshack.us/img717/5880/1282849363205.jpg"
+             style="height:240px" alt="Let me tell you why that's bullshit" />
+        <p>Image caption</p>
+    </div>
+    {% lorem 3 p random %}
     <h3>how to kill</h3>
     {% lorem 2 p random %}
     <h2>leatherworking</h2>
     {% lorem 2 p random %}
     <h3>carp leather</h3>
     {% lorem 1 p random %}
+    <h3>another h3</h3>
+    {% lorem 4 p random %}
 {% endblock %}

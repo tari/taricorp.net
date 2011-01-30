@@ -69,6 +69,31 @@ body {
     text-align: right;
 }
 
+.fbox {
+    background-color: #DDDDDD;
+    float: left;
+    clear: left;
+    margin: 1px .5em;
+    padding: .4em;
+    border-radius: .25em;
+}
+
+.fbox img {
+    border: 1px solid black;
+}
+
+.fbox pre {
+    margin: 0;
+    border: 1px dashed black;
+    background-color: white;
+    color: black;
+}
+
+.fbox p, ul, ol {
+    padding: 0;
+    margin-left: .25em;
+}
+
 p, ul, ol{
     margin: 0;
     padding: 0 1.5em .3em .75em;
