@@ -17,3 +17,6 @@ serve:
 
 deploy: all
 	$(FABRIC) deploy
+    
+clean:
+	rm -r $(DEPLOY)
