@@ -1,7 +1,7 @@
 {% extends "_base.html" %}
 
 {% block main_content %}
-    {% for page in page.node.walk_pages %}
+    {% for node in page.node.walk %}
         {% include "_listing_inner.html" %}
     {% endfor %}
 {% endblock %}

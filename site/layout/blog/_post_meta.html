@@ -1,9 +1,16 @@
 
-<a href="{{post.url}}">
-    {% if post.title %}
-        {{ post.title }}
-    {% else %}
-        {{ post.page_name|remove_date_prefix|unslugify }}
+<div class="post_meta">
+    <h2><a href="{{post.url}}">
+        {% if post.title %}
+            {{ post.title }}
+        {% else %}
+            {{ post.page_name|remove_date_prefix|unslugify }}
+        {% endif %}
+    </a></h2>
+    {% if post.created %}
+        <p>Created {{ post.created|date:"M j, Y" }}</p>
     {% endif %}
-</a>
-{% render_excerpt post %}
+</div>
+<div class="post_body">
+    {% render_excerpt post %}
+</div>
