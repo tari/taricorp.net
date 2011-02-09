@@ -1,0 +1,9 @@
+
+<a href="{{post.url}}">
+    {% if post.title %}
+        {{ post.title }}
+    {% else %}
+        {{ post.page_name|remove_date_prefix|unslugify }}
+    {% endif %}
+</a>
+{% render_excerpt post %}
