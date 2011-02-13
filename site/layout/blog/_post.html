@@ -1,7 +1,24 @@
 {% extends "_base.html" %}
 
 {% block main_content %}
-    {% block article %}
+    {% with page as post %}
+        {% include "blog/_post_meta.html" %}
+    {% endwith %}
     
-    {% endblock %}
+    <div class="post_body">
+        {% block post %}
+        {% endblock %}
+    </div>
+    <div class="nav_prev_next">
+    {% if page.next %}
+        <span style="float:left">
+            <a href="{{ page.next.url }}">&lt;-- Next oldest</a>
+        </span>
+    {% endif %}
+    {% if page.prev %}
+        <span style="float: right">
+            <a href="{{ page.prev.url }}">Next newest --></a>
+        </span>
+    {% endif %}
+    </div>
 {% endblock %}

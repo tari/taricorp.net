@@ -65,7 +65,7 @@ if _platform == 'win32':
 SITE_PRE_PROCESSORS = {
     _pre_all: {
         'toc_gen.site_pre_processors.ContentsGenerator' : { }
-    }
+    },
 }
 
 SITE_POST_PROCESSORS = {

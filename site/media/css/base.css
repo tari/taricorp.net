@@ -120,10 +120,22 @@ ul {
     padding: 0 1.5em .3em .75em;
     list-style-position: inside;
 }
+a {
+    color: #463b37;
+}
+a:hover {
+    text-decoration: none;
+}
 
 #footer {
     padding: 0 0 1em .5em;
     font-size: 75%;
+}
+.nav_prev_next {
+    font-size: 75%;
+}
+.nav_prev_next span {
+    padding: .1em .25em .1em .5em;
 }
 
 .right {
@@ -132,12 +144,6 @@ ul {
 
 .post_meta h2 {
     padding-bottom: 0;
-}
-.post_meta a{
-    color: #463b37;
-}
-.post_meta a:hover {
-    text-decoration: none;
 }
 .post_meta p {
     font-size: 75%;

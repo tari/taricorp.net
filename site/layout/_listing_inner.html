@@ -12,15 +12,12 @@
 
 {# List pages #}
 
-{% recent_posts recents 5 node %}
-{{ recents }}
-
-{% comment %}{% for list_page in recent_posts %}
+{% for list_page in node.pages %}
     {% ifnotequal list_page node.listing_page %}
         {% if list_page.display_in_list %}
             {% with list_page as post %}
-                {% include "blog/_post_meta.html" %}
+                {% include "blog/_post_mini.html" %}
             {% endwith %}
         {% endif %}
     {% endifnotequal %}
-{% endfor %}{% endcomment %}
+{% endfor %}

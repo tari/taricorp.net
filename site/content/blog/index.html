@@ -1,7 +1,25 @@
-{% extends "_listing.html" %}
+{% extends "_base.html" %}
 
 {%hyde
-    title: "Archives"
-    meta_description: "Blog index"
+    title: "Index"
     listing: True
 %}
+
+{% block nav_custom %}
+    <hr id="break"/>
+    <p>Blog archives:<br />&nbsp;
+    {% for sub in page.node.walk %}
+        {% ifnotequal sub page.node %}
+            <a href="{{ sub.url }}">{{ sub.name }}</a>
+        {% endifnotequal %}
+    {% endfor %}
+{% endblock %}
+
+{% block main_content %}
+
+{% recent_posts newest_posts 5 page.node %}
+{% for post in newest_posts %}
+    {% include "blog/_post_mini.html" %}
+{% endfor %}
+
+{% endblock %}

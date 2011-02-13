@@ -89,6 +89,9 @@
             {% load unordered_list_a %}
             <ul>{{ page.contents|unordered_list_a }}</ul>
         {% endif %}
+        
+        {% block nav_custom %}
+        {% endblock %}
     </div>
     
     {% block main_content %}
