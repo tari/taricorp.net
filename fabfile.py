@@ -1,7 +1,7 @@
 from fabric.api import *
 from fabric.contrib.console import confirm
 
-env.hosts = ['tari@ec2.taricorp.net']
+env.hosts = ['tari@taricorp.net']
 
 def deploy():
     TEMP_ARC = '/tmp/deploy.tar.bz2'
