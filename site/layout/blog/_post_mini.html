@@ -2,4 +2,8 @@
 {% include "blog/_post_meta.html" %}
 <div class="post_body">
     {% render_excerpt post %}
+    
+    <div class="post_more">
+        <a href="{{post.url}}">Read more..</a>
+    </div>
 </div>

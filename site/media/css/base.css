@@ -153,3 +153,9 @@ a:hover {
 .post_body {
     border-bottom: 1px solid #CCCCCC;
 }
+.post_more {
+    background-color: #e1ddd9;
+    border-top-right-radius: .4em;
+    padding: 0 0 .1em .4em;
+    width: 7em;
+}
