@@ -72,7 +72,7 @@
             <table style="width: 100%">
                 <tr>
                     <td><a href="/">Home</a></td>
-                    <td class="right"><a href="/about/">About</a></td>
+                    <td class="right"><a href="/about.html">About</a></td>
                 </tr>
                 <tr>
                     <td><a href="/blog/">Blog</a></td>
@@ -80,11 +80,11 @@
                 </tr>
                 <tr>
                     <td><a href="/muse/">Muse</a></td>
-                    <td class="right"><a href="/contact/">Contact</a></td>
+                    <td class="right"><a href="/contact.html">Contact</a></td>
             </table>
         </div>
         {% if page.contents %}
-            <hr id="break"/>
+            <hr class="break"/>
             <h2>Contents</h2>
             {% load unordered_list_a %}
             <ul>{{ page.contents|unordered_list_a }}</ul>
