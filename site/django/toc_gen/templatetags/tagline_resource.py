@@ -5,4 +5,5 @@ taglines = [
     'Where good ideas come to die',
     'Better than an iron sunrise',
     'Burning paradise to the ground',
+    'Dancing through the ashes',
 ]

@@ -64,7 +64,7 @@ body {
     text-decoration: underline;
 }
 
-#content #navi #break {
+#content #navi .break {
     margin: .25em auto .25em 1em;
     border: 0;
     height: 1pt;
@@ -77,14 +77,17 @@ body {
 #content #navi a:hover {
     text-decoration: none;
 }
+#content #navi p {
+    padding: 0 1em .1em;
+}
 
 .fbox {
     background-color: #DDDDDD;
-    float: left;
     clear: left;
-    margin: 1px .5em;
+    margin: 0 1em .4em;
     padding: .4em;
     border-radius: .25em;
+    width: 35em;
 }
 
 .fbox img {
@@ -101,6 +104,13 @@ body {
 .fbox p, ul, ol {
     padding: 0;
     margin-left: .25em;
+}
+
+.fleft {
+    float: left;
+}
+.fright {
+    float: right;
 }
 
 p, ul, ol{
@@ -151,10 +161,10 @@ a:hover {
 }
 
 .post_body {
-    border-bottom: 1px solid #CCCCCC;
+    border-bottom: 1px solid #C4CAC4;
 }
 .post_more {
-    background-color: #e1ddd9;
+    background-color: #C4CAC4;
     border-top-right-radius: .4em;
     padding: 0 0 .1em .4em;
     width: 7em;
