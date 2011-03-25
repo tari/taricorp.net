@@ -87,7 +87,7 @@ body {
     margin: 0 1em .4em;
     padding: .4em;
     border-radius: .25em;
-    width: 35em;
+    width: 40em;
 }
 
 .fbox img {
@@ -96,9 +96,11 @@ body {
 
 .fbox pre {
     margin: 0;
+    padding: .25em;
     border: 1px dashed black;
     background-color: white;
     color: black;
+    overflow: auto;
 }
 
 .fbox p, ul, ol {
