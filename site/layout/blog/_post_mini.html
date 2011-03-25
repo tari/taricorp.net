@@ -2,8 +2,10 @@
 {% include "blog/_post_meta.html" %}
 <div class="post_body">
     {% render_excerpt post 500 %}
-    
-    <div class="post_more">
-        <a href="{{post.url}}">Read more..</a>
-    </div>
+
+    {% if not post.excerpt_only %}
+        <div class="post_more">
+            <a href="{{post.url}}">Read more..</a>
+        </div>
+    {% endif %}
 </div>
