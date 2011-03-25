@@ -16,7 +16,7 @@ serve:
 	cd $(DEPLOY); $(PYTHON) -m SimpleHTTPServer 8080
 
 deploy: all
-	$(FABRIC) deploy
+	s3cmd -P sync deploy/ s3://www.taricorp.net/
     
 clean:
 	rm -r $(DEPLOY)
