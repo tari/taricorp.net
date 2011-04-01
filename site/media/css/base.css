@@ -175,17 +175,7 @@ a:hover {
     width: 7em;
 }
 
-/* Disqus styling overrides */
-#disqus_thread {
-    margin: .5em 1.5em 0 .5em;
+/* Intense Debate styling overrides */
+#idc-container-parent #idc-container {
+    margin: .25em 1em;
 }
-/*#dsq-content h3 {
-    margin-bottom: .5em
-}*/
-#dsq-content #dsq-global-toolbar {
-    margin-top: 0;
-    margin-bottom: .5em;
-}
-/*#dsq-content #dsq-reply {
-    margin-top: 0;
-}*/

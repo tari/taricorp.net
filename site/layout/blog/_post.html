@@ -10,19 +10,13 @@
         {% endblock %}
     </div>
     
-<div id="disqus_thread"></div>
-<script type="text/javascript">
-    var disqus_shortname = 'taricorp-net';
-    var disqus_url = '{{page.url}}';
-    //var disqus_developer = 1; //Testing use
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+<script>
+var idcomments_acct = '808ce8ad057036ef48ef4def8ba80df0';
+var idcomments_post_id;
+var idcomments_post_url;
 </script>
-<noscript>Javascript is required to view comments via
-<a href="http://disqus.com/?ref_noscript">Disqus.</a></noscript>
+<span id="IDCommentsPostTitle" style="display:none"></span>
+<script type='text/javascript' src='http://www.intensedebate.com/js/genericCommentWrapperV2.js'></script>
 
     <div class="nav_prev_next">
     {% if page.next %}
