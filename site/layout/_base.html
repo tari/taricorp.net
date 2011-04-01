@@ -6,6 +6,7 @@
     <!-- What, you expected highly compressed markup? -->
     <link rel="stylesheet" type="text/css" href="{{site.url}}/media/css/base.css" />
     <link rel="icon" type="image/png" href="{{site.url}}/media/img/favicon.png" />
+    <link rel="contents" href="#content" />
     <link rel="home" href="/{{site.url}}" />
 
     {% block page_meta %}
@@ -30,7 +31,7 @@
 </head>
 
 <body>
-<h1 id="pagehead">
+<h1 id="pagehead"><a href="/">
     <!-- aside: setting lang here for the benefit of screen readers and
          friends so nobody tries to pronounce that erroneously -->
     <span lang="ja">
@@ -41,7 +42,7 @@
         {% load tagline %}
         {% r_tagline %}
     </span>
-</h1>
+</a></h1>
 
 <div id="location">
 <!-- breadcrumbs -->

@@ -15,6 +15,9 @@ body {
     margin: 0;
     padding: 0 0 4pt 0;
 }
+#pagehead a {
+    text-decoration: none;
+}
 #tagline {
     margin-left: .5em;
     font-size: 50%;
