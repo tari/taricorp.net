@@ -4,7 +4,7 @@ SITE = site
 DEPLOY = deploy
 
 ifeq ("$(shell uname -o)","Cygwin")
-	PYTHON = "/cygdrive/g/Program Files/Python26/python.exe"
+	PYTHON = "/cygdrive/g/Program Files/Python27/python.exe"
 else
 	PYTHON = "$(shell which python2)"
 endif
