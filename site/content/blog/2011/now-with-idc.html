@@ -1,0 +1,25 @@
+{% extends "blog/_post.html" %}
+
+{%hyde
+    title: "Now With Commenting!"
+    created: 2011-04-01
+    excerpt_only: True
+%}
+
+{% block post %}
+
+{% excerpt %}
+    <p>I've now successfully implemented commenting on the site, using
+    <a href="http://intensedebate.com/">IntenseDebate</a>'s service.  I tried
+    <a href="http://disqus.com/">Disqus</a> first, but strange brokenness that
+    I didn't feel like troubleshooting pushed me away, at which point I found
+    IntenseDebate, which I've been happy with thus far.
+    ID seems somewhat cleaner and easier to customize overall, which is
+    always a bonus in my book.</p>
+    <p>I've also tweaked my own styling a little,
+    especially cleaning up the floating boxes I use to contain images and
+    other semi-inline content (no longer a fixed width, they match the size
+    of the child elements).</p>
+{% endexcerpt %}
+
+{% endblock %}
