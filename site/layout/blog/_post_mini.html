@@ -3,9 +3,13 @@
 <div class="post_body">
     {% render_excerpt post 500 %}
 
+    <div class="post_comments">
+        <a href="{{post.url}}#comments">Comments</a>
+    </div>
     {% if not post.excerpt_only %}
         <div class="post_more">
             <a href="{{post.url}}">Read more..</a>
         </div>
     {% endif %}
+    <div style="clear: both"></div>
 </div>

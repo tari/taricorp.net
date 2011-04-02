@@ -90,7 +90,7 @@ body {
     margin: 0 1em .4em;
     padding: .4em;
     border-radius: .25em;
-    width: 40em;
+    display: inline-block;
 }
 
 .fbox img {
@@ -169,13 +169,22 @@ a:hover {
     border-bottom: 1px solid #C4CAC4;
 }
 .post_more {
+    float: left;
     background-color: #C4CAC4;
     border-top-right-radius: .4em;
-    padding: 0 0 .1em .4em;
-    width: 7em;
+    padding: .1em .25em;
+}
+.post_comments {
+    float: right;
+    background-color: #C4CAC4;
+    border-top-left-radius: .4em;
+    padding: .1em .25em;
 }
 
 /* Intense Debate styling overrides */
 #idc-container-parent #idc-container {
     margin: .25em 1em;
+}
+#idc-container .idc-id {
+    display: none
 }

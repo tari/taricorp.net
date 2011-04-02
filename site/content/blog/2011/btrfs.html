@@ -54,12 +54,12 @@ After creating my new /boot partition, it was a simple matter of copying the con
 <pre>$ mount /dev/sda1 /mnt/boot
 $ cp -a /boot /mnt/boot
 $ rm -r /boot</pre>
-Moving contents of /boot
+<p>Moving contents of /boot</p>
 </div>
 <div class="fbox">
 <pre>/dev/sda1       /boot   ext3    defaults    0 1
 /dev/sda2       /       btrfs   defaults    0 1</pre>
-New fstab
+<p>New fstab</p>
 </div>
 
 <h2>Finishing up</h2>
@@ -84,7 +84,7 @@ However, there's also a ssd_spread option:
 
 <div class="fbox fright">
 <pre>/dev/sda2       /       btrfs   defaults,noatime,ssd_spread    0 1</pre>
-Final fstab line for /
+<p>Final fstab line for /</p>
 </div>
 
 That sounds exactly like my situation- a less expensive SSD device which is
