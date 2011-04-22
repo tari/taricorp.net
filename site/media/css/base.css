@@ -83,6 +83,9 @@ body {
 #content #navi p {
     padding: 0 1em .1em;
 }
+#content #navi ul {
+    padding-left: 0.75em;
+}
 
 .fbox {
     background-color: #DDDDDD;
@@ -122,17 +125,18 @@ p, ul, ol{
     margin: 0;
     padding: 0 1.5em .75em 1em;
 }
-h2 {
+h2, h3 {
     margin: 0;
+}
+h2 {
     padding: .2em 1em .25em .5em;
 }
 h3 {
-    margin: 0;
     padding: 0 1.5em .1em 1em;
 }
 ul {
     margin: 0;
-    padding: 0 1.5em .3em .75em;
+    padding: 0 1.5em .3em;
     list-style-position: inside;
 }
 a {
