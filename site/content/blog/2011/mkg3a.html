@@ -18,11 +18,13 @@ interesting device, and the programmers over on
 [Cemetech](http://www.cemetech.net/) seem to have found it worthwhile to make
 the Prizm do their bidding in software.
 
-The Prizm device itself is based around some sort of SuperH core, identified
-at times in the system software as a SH7305.  No such device appears in the
-family documentation provided by Renesas, but others report it's some sort of
-[SH4](http://www.renesas.com/products/core_license/cpu_cores/child_folder/sh4_child.jsp)
-(I'd speculate it to be a SH4-400 core on a Casio-developed ASIC).  Whatever
+The Prizm device itself is based around some sort of SuperH core, 
+<del>identified at times in the system software as a SH7305</del>
+a "SH7780 or thereabouts".  The
+[7780](http://www.renesas.com/products/mpumcu/superh/sh7780/sh7780_landing.jsp)
+is not an exact device, though, and it's likely a
+[licensed SH4](http://www.renesas.com/products/core_license/cpu_cores/child_folder/sh4_child.jsp)
+core in a Casio ASIC.  Whatever
 the case, GCC targeted for sh and compiling without the FPU (-m4a-nofpu) and
 in big-endian mode (-mb) seems to work on the hardware provided.
 
