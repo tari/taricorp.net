@@ -16,6 +16,7 @@
         {% if page.meta_keywords %}
             <meta name="keywords" content="{{page.meta_keywords|join:','}}" />
         {% endif %}
+        <meta name="keywords" content="taricorp"/>
     {% endblock %}
     
     <title>
@@ -44,66 +45,68 @@
     </span>
 </a></h1>
 
-<div id="location">
-<!-- breadcrumbs -->
-<!-- Cyprinus carpio < Cyprinidae < Cypriniformes < Actinopterygii <
-     Chordata < Animalia ... -->
-    <a href="#content">
-        {% if page.title %}
-            {{page.title}}
-        {% else %}
-            {{page.page_name|unslugify}}
-        {% endif %}
-    </a>
-    {% for n in page.node.ancestors reversed %}
-        {% with n.url|length_is:"0" as is_root %}
-            &lt; <a href="
-                {% if is_root %}
-                    /">{{n.name}}
-                {% else %}
-                    {{n.url}}">{{n.name|unslugify}}
-                {% endif %}</a>
-        {% endwith %}
-    {% endfor %}
-</div>
-
-<div id="content">
-    <div id="navi">
-        <div id="navlinks">
-            <table style="width: 100%">
-                <tr>
-                    <td><a href="/">Home</a></td>
-                    <td class="right"><a href="/about.html">About</a></td>
-                </tr>
-                <tr>
-                    <td><a href="/blog/">Blog</a></td>
-                    <td class="right"><a href="/projects/">Projects</a></td>
-                </tr>
-                <tr>
-                    <td><a href="/muse/">Muse</a></td>
-                    <td class="right"><a href="/contact.html">Contact</a></td>
-            </table>
-        </div>
-        {% if page.contents %}
-            <hr class="break"/>
-            <h2>Contents</h2>
-            {% load unordered_list_a %}
-            <ul>{{ page.contents|unordered_list_a }}</ul>
-        {% endif %}
-        
-        {% block nav_custom %}
-        {% endblock %}
+<div id="navi">
+    <div id="navlinks">
+        <table style="width: 100%">
+            <tr>
+                <td><a href="/">Home</a></td>
+                <td class="right"><a href="/about.html">About</a></td>
+            </tr>
+            <tr>
+                <td><a href="/blog/">Blog</a></td>
+                <td class="right"><a href="/projects/">Projects</a></td>
+            </tr>
+            <tr>
+                <td><a href="/muse/">Muse</a></td>
+                <td class="right"><a href="/contact.html">Contact</a></td>
+        </table>
     </div>
+    {% if page.contents %}
+        <hr class="break"/>
+        <h2>Contents</h2>
+        {% load unordered_list_a %}
+        <ul>{{ page.contents|unordered_list_a }}</ul>
+    {% endif %}
     
-    {% block main_content %}
+    {% block nav_custom %}
     {% endblock %}
-    
-    {{ contents }}
 </div>
+    
+<div id="container">
+    <div id="location" class="cleanborder">
+    <!-- breadcrumbs -->
+    <!-- Cyprinus carpio < Cyprinidae < Cypriniformes < Actinopterygii <
+         Chordata < Animalia ... -->
+        <a href="#content">
+            {% if page.title %}
+                {{page.title}}
+            {% else %}
+                {{page.page_name|unslugify}}
+            {% endif %}
+        </a>
+        {% for n in page.node.ancestors reversed %}
+            {% with n.url|length_is:"0" as is_root %}
+                &lt; <a href="
+                    {% if is_root %}
+                        /">{{n.name}}
+                    {% else %}
+                        {{n.url}}">{{n.name|unslugify}}
+                    {% endif %}</a>
+            {% endwith %}
+        {% endfor %}
+    </div>
 
-<div id="footer">
-    Contents &copy; {% now "Y" %} Peter Marheine, last generated  {% now "Ymd\THisO" %}.
-    <!-- ISO 8601 date format, for the interested reader -->
+    <div id="content" class="cleanborder">
+        {% block main_content %}
+        {% endblock %}
+        
+        {{ contents }}
+    </div>
+
+    <div id="footer">
+        Contents &copy; {% now "Y" %} Peter Marheine, last generated  {% now "Ymd\THisO" %}.
+        <!-- ISO 8601 date format, for the interested reader -->
+    </div>
 </div>
 </body>
 </html>

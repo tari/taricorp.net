@@ -23,11 +23,15 @@ body {
     font-size: 50%;
 }
 
+div.cleanborder {
+    border: 1px solid #564b47; 
+}
 #location {
     text-align: right;
     padding: .25em 1em .25em 0;
+    overflow: hidden;
     border-top-left-radius: .25em;
-    border-top-right-radius: .25em;
+    border-bottom-style: none;
     color: #564b47;
     background-color: #9d9587;  /* .org $9D93 \ .db $bb,$6d */
 }
@@ -40,50 +44,47 @@ body {
 }
 
 #content {
-    border: 1px solid #564b47; 
     border-top-style: none;
     background-color: #fff;
     overflow: hidden;
 }
 
-#content #navi {
+#navi {
     float: right;
     width: 14em;
     background-color: #c4cad4;
-    margin: 0 0 1.5em 1.5em;
-    border-bottom-left-radius: .75em;
-    padding-left: .25em;
-    padding-bottom: .25em;
+    padding-bottom: .3em;
+    border-radius: 0 .75em .75em 0;
 }
 
-#content #navi #navlinks {
+#navi #navlinks {
     font-size: 1.1em;
     margin: .25em 1.25em;
 }
-#content #navi #navlinks a {
+#navi #navlinks a {
     text-decoration: none;
 }
-#content #navi #navlinks a:hover {
+#navi #navlinks a:hover {
     text-decoration: underline;
 }
 
-#content #navi .break {
+#navi .break {
     margin: .25em auto .25em 1em;
     border: 0;
     height: 1pt;
     background-color: #564b47;
     width: 75%;
 }
-#content #navi a {
+#navi a {
     color: #463b37;
 }
-#content #navi a:hover {
+#navi a:hover {
     text-decoration: none;
 }
-#content #navi p {
+#navi p {
     padding: 0 1em .1em;
 }
-#content #navi ul {
+#navi ul {
     padding-left: 0.75em;
 }
 
