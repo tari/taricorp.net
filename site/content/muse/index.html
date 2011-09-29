@@ -1,0 +1,23 @@
+{% extends "_base.html" %}
+
+{%hyde
+    title: "Index"
+    listing: True
+%}
+
+{# This template would be better extending _listing, but that one's #}
+{# currently tailored to the blog. #}
+
+{% block main_content %}
+    {% for node in page.node.walk %}
+    <ul>
+        {% for page in node.pages %}
+        {% if not page.listing %} {# avoids recursion #}
+            <li><a href="{{ page.url }}">{{ page.title }}</a>
+            {% render_excerpt page %}
+            </li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+    {% endfor %}
+{% endblock %}
