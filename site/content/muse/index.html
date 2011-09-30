@@ -9,6 +9,10 @@
 {# currently tailored to the blog. #}
 
 {% block main_content %}
+    <p>This section of the site holds items which I feel have some intrinsic
+    value, usually because they represent some sort of generally useful
+    knowledge, or if I simply wanted to muse on some topic and took the time
+    to format my thoughts more clearly.</p>
     {% for node in page.node.walk %}
     <ul>
         {% for page in node.pages %}
