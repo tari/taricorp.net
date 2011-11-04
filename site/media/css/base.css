@@ -47,6 +47,7 @@ div.cleanborder {
     border-top-style: none;
     background-color: #fff;
     overflow: hidden;
+    padding-top: .5em;
 }
 
 #navi {
