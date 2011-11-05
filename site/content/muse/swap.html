@@ -1,0 +1,204 @@
+{% extends "_muse.html" %}
+
+{%hyde
+    title: "The Case for Swap"
+    excerpt_only: False
+    created: 2011-11-05
+%}
+
+{% block notes %}
+<p>Really, you should probably use swap.</p>
+{% endblock %}
+
+{% block post %}
+{% markdown %}
+{% excerpt %}
+
+I frequently hear from people that they "don't need swap" because their computer
+has a large amount of memory (nowadays, 4/8 GiB or even more).  To a certain extent,
+this is true.  However, it is still important to have swap space available in most
+situations.
+
+{% endexcerpt %}
+
+It's true that few desktop applications require anywhere near the full capacity
+of a typical modern PC's memory, and even the complete set of programs someone
+might be running at a given time is unlikely to use the whole of available
+memory.  Keeping that in mind, it often doesn't make sense to allocate disk
+space that will seemingly never be needed as virtual memory.
+
+On the other hand, not having any place for your kernel to hold
+dirty pages when memory pressure increases can severely degrade performance.
+I present here a case for why you should always have some swap available, and
+offer some advice on how best to allocate it.
+
+[I'm targeting Linux systems here, but this advice should apply to other operating
+ systems with little modification.]
+
+<h2>The case for swap</h2>
+Most power users are aware of the huge latency difference between physical
+memory and typical spinning disks<sup>[1](#seek)</sup>, and thus understand
+why allowing the system to swap virtual memory pages out to disk
+<sup>[2](#vm)</sup> can be harmful to performance.
+
+[If you don't understand how virtual memory works and ignored that footnote in
+ the previous sentence, read that then come back.]
+
+What many users seem to ignore is that the operating system developers also
+know that there's a large penalty involved with swapping data out to disk, so
+they will design the system to only swap when it is advantageous.
+If your system is swapping a lot (such as if there's a lot of disk activity
+when you restore a previously minimized application), the situation can often
+be improved just be adding more memory.
+
+Even when there's plenty of memory available, however, it's possible to see a
+large perfomance hit even when there is ostensibly a large amount of free
+memory.
+
+<h2>Disk caches</h2>
+All modern operating systems are aware of the large penalties involved with
+accessing non-volatile storage (anything that isn't in RAM), so they keep disk
+caches in memory.  On Linux, the disk caches are held in the page cache, which
+is effectively the set of all virtual memory pages currently in RAM.
+
+The memory used by the disk cache is usually reported as unused, because the
+system can evict pages owned by the disk cache at will to free memory when
+applications request it.  When nothing else needs the memory, the system may
+refer to data in the disk cache (when the desired data is indeed in the cache)
+and see large speedups.
+
+In order to keep I/O operations fast, the system might opt to swap pages owned
+by one of your programs out to disk (on a UNIX system, for example, cron might be a good
+candidate to swap out) in order to make the disk cache larger.  This means
+that the program will be slower to resume execution, but the system as a whole
+will be faster until then.
+
+<h2>The degradation case</h2>
+So, what happens when you have a very slow storage device (such as a USB thumb
+drive) connected?  Your operating system usually tries to cache operations on
+that device a lot, since it's very slow<sup>[3](#flash)</sup>.  If you write a
+lot of data to it, the write will seem to complete much faster than is actually
+did, because the system is caching those writes in RAM and actually writing to
+the device as possible, which is rather slowly.
+
+<h2>How much swap?</h2>
+
+Now that we have established that it's a good idea to have some amount of swap
+available, how much should you have?  There's no point in wasting disk space
+for swap you're never going to use, but you want enough to be useful.
+
+<h3>2 x RAM</h3>
+
+The old guideline for Linux was to allocate twice as much swap on disk as you
+have physical memory.  On a modern system, following that rule can consume
+large amounts of disk space to no useful effect.  While storage density
+has increased with time in a fashion similar to main memory capacity, the
+amount of space required for swap has greatly increased relative to the amount
+of data a typical user will need to store.
+
+Taking my desktop workstation for example, it currently
+contains about 3 gigabytes of data which I consider irreplaceable, in a total
+of about 1.5 terabytes of total data.  If I were to follow the old
+recommendations, the 16 GiB swap space would dwarf the data which I truly value.
+On a system with several terabytes of total storage, that's not a lot of space,
+but many gigabytes of storage space seemingly going to waste doesn't sit well
+with many users (myself included).  There's got to be a better approach, and
+indeed there is.
+
+<h3>Discretionary swap</h3>
+
+A good, simple rule of thumb for allocating swap space on a modern system is
+to have as much swap as you do physical memory.  For typical operating
+conditions, that's still going to be much more swap than you will ever need.
+However, that normally-unused space is not going to waste, because Linux uses
+your swap space to store the contents of main memory when the system suspends
+to disk ('Hibernation' in the parlance of most end-user systems).
+
+Of course, some users don't ever use the system's suspend-to-disk functionality.
+For those situations, you'll need to use your own discretion and strike a
+balance between wasted space and resistance to memory pressure.  More swap will
+allow the system to absorb periods of high memory pressure more gracefully
+(and possibly avoid invoking the OOM killer in extreme situations), but
+will be mostly idle in the lulls.
+
+For my part, I find a 2 GB swap partition
+to be acceptable on my previously-mentioned desktop workstation, yielding a
+total virtual memory capacity of roughly 10 GiB.  10 GiB is more memory than
+I anticipate ever needing for the system (barring the occasional buggy
+prototype piece of software, in which case I should fix it anyway), but the
+relatively small amount of disk-backed virtual memory can allow I/O-heavy
+workloads to push applications which aren't in use out to disk to improve
+I/O performance.
+
+As a real-world case, when I've been transferring large amounts of data to
+a slow USB device and attempted to do other things, my system has come to
+a painful halt while the kernel has flushed dirty pages over USB when another
+application (such as Firefox) has requested more memory.  It takes a long time
+for some memory to become available for Firefox, during which time it fails to
+accept any input, since the kernel is busy handling its page faults and
+making space in main memory for it.
+
+<h2>What about SSDs?</h2>
+You may be wondering now, "But I have a solid-state disk in my system!  Won't
+putting swap on that wear it out?"<sup>[4](#ssd)</sup>
+You're right, but it's probably not enough to be concerned about.
+
+Newer SSD controllers are very intelligent about
+wear-leveling in order to extend the life of the memory, which is already pretty
+good (on the order of 100000 writes).  On a 64 GiB device, that translates to
+an overall write endurance of 64 petabytes before the backing memory is running
+out-of-spec.  If you write 64 GiB to it per day, it would require over 2000 years
+of operation to reach that point.
+
+If you're still paranoid about the lifetime of your storage device, you could
+always push swap onto a spinning disk, which sidesteps the write endurance
+problem at the cost of some performance.
+
+<h2>Conclusion</h2>
+
+As always, there are going to be cases where the 'best practice' (having swap)
+is not actually going to be best for you.  However, I have tried to outline the
+facts here, to allow readers to make informed decisions.
+
+In the overwhelming majority of situations, you should have some swap available,
+and if you're not happy with exactly how the system handles it, Linux has some
+knobs for tweaking that behaviour.<sup>[5](#lwn)</sup>
+
+<h3>The counterexample</h3>
+Just to illustrate why understanding what's going on and using personal
+discretion is important, a counterexample:
+
+My netbook doesn't need swap, and really shouldn't have any.  I only have once
+storage device in the machine, which is a very slow SSD with what is likely
+and extremely simple controller (that does little to no wear-leveling).
+Because the primary storage in that machine is so slow, I'm probably never
+going to see any reasonable performance improvement by putting a swap partition
+on it.  The machine does have a couple SD card slots, however, and it might
+be reasonable to put swap on an SD card.
+
+<h2>Notes</h2>
+
+<a id="seek" />[1] A midrange modern processor cycles 2 billion times per
+    second (or more), and a typical consumer-grade hard drive will take around
+    7ms to seek on a good day, meaning you waste 1.4 million instruction cycles
+    waiting for data from the disk.  By comparison, something in main memory on
+    the same processor can be accessed in about 60 nanoseconds, or 120 clock
+    cycles.
+
+<a id="vm" />[2] See [Wikipedia](http://en.wikipedia.org/wiki/Virtual_Memory)
+    or [this
+    article](http://distilledb.com/blog/archives/date/2009/02/22/swap-files-in-linux.page)
+    for a primer on how virtual memory works.
+
+<a id="flash" />[3] Oftentimes only a few megabytes per second.
+
+<a id="ssd" />[4] Flash memory, which backs most solid-state storage on the
+    market right now, can only be written some amount of times before it wears
+    out and stops working properly.
+
+<a id="lwn" />[5] [LWN](https://lwn.net/Articles/83588/) has a very good
+    overview of the swap-tweaking knobs available in 2.6 Linux kernels.
+
+
+{% endmarkdown %}
+{% endblock %}

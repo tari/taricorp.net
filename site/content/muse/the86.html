@@ -1,4 +1,4 @@
-{% extends "_base.html" %}
+{% extends "_muse.html" %}
 
 {%hyde
     title: "The 86"
@@ -6,8 +6,7 @@
     created: 2011-07-29
 %}
 
-{% block nav_custom %}
-<hr class="break"/>
+{% block notes %}
 <p>This page contains some of my notes on features of the TI-86, which first
 appeared on my Freewebs site sometime around 2005.  I've made an effort to
 correct and clarify some things, but it may still be only partially accurate
@@ -16,7 +15,7 @@ in some places.</p>
 The Guide</a> useful.</p>
 {% endblock %}
 
-{% block main_content %}
+{% block post %}
 {% markdown %}
 
 {% excerpt %}
