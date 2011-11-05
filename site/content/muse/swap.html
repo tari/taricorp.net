@@ -81,6 +81,23 @@ lot of data to it, the write will seem to complete much faster than is actually
 did, because the system is caching those writes in RAM and actually writing to
 the device as possible, which is rather slowly.
 
+So what happens when a running program requests memory from the system and
+RAM is full of dirty pages waiting to be written to your slow device?  The
+kernel will start evicting the dirty pages and writing them to your very slow
+device.  Meanwhile, whatever program requested the memory is still waiting for
+it, unable to act.  The act of requesting memory causes a page fault,
+preempting the program until the kernel can fulfill the request.
+
+As a real-world case (the investigation of which prompted me to write this),
+when I've been transferring large amounts of data to
+a slow USB device and attempted to do other things, my system has come to
+a painful halt while the kernel has flushed dirty pages over USB when another
+application (such as Firefox) has requested more memory.  It takes a long time
+for some memory to become available for Firefox, during which time it fails to
+accept any input, since the kernel is busy making space in main memory for it.
+By adding some swap on a faster device in the system, it can swap some other
+things out and keep everything running.
+
 <h2>How much swap?</h2>
 
 Now that we have established that it's a good idea to have some amount of swap
@@ -129,14 +146,6 @@ prototype piece of software, in which case I should fix it anyway), but the
 relatively small amount of disk-backed virtual memory can allow I/O-heavy
 workloads to push applications which aren't in use out to disk to improve
 I/O performance.
-
-As a real-world case, when I've been transferring large amounts of data to
-a slow USB device and attempted to do other things, my system has come to
-a painful halt while the kernel has flushed dirty pages over USB when another
-application (such as Firefox) has requested more memory.  It takes a long time
-for some memory to become available for Firefox, during which time it fails to
-accept any input, since the kernel is busy handling its page faults and
-making space in main memory for it.
 
 <h2>What about SSDs?</h2>
 You may be wondering now, "But I have a solid-state disk in my system!  Won't
