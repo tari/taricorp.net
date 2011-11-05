@@ -13,9 +13,11 @@ all:
 	$(PYTHON) $(HYDE) -g -s $(SITE) -d $(DEPLOY)
 
 serve:
-	cd $(DEPLOY); $(PYTHON) -m SimpleHTTPServer 8080
+	cd $(DEPLOY); $(PYTHON) -m SimpleHTTPServer 8000
 
 deploy: all
+	hg commit
+	hg push
 	s3cmd -P sync deploy/ s3://www.taricorp.net/
     
 clean:
