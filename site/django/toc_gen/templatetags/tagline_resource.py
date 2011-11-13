@@ -6,4 +6,7 @@ taglines = [
     'Better than an iron sunrise',
     'Burning paradise to the ground',
     'Dancing through the ashes',
+    'A mildly interesting place',
+    'Definitely not legal advice',
+    'Never going quietly into the night',
 ]
