@@ -9,4 +9,5 @@ taglines = [
     'A mildly interesting place',
     'Definitely not legal advice',
     'Never going quietly into the night',
+    'いつもひとりであるいてた',
 ]
