@@ -1,0 +1,35 @@
+---
+layout: default
+---
+
+<div class="home">
+
+  <h1 class="page-heading">Posts</h1>
+  <hr />
+
+  {% for post in paginator.posts %}
+  <header class="post-header">
+      <h2 class="post-title"><a href="{{ post.url | prepend: site.baseurl }}">{{post.title}}</a></h2>
+      <p class="post-meta">
+          {{ post.date | date: "%b %-d, %Y" }}
+          {% if post.author %} &middot; {{ post.author }} {% endif %}
+          {% if post.meta %} &middot; {{ post.meta }} {% endif %}
+      </p>
+  </header>
+  <article class="post-content">
+      {{ post.excerpt}}
+  </article>
+  <hr />
+  {% endfor %}
+
+<div class="pagination">
+  {% if paginator.previous_page %}
+    <a href="{{ paginator.previous_page_path }}" class="previous">Previous &laquo;</a>
+  {% endif %}
+  <span class="page_number ">Page: {{ paginator.page }} of {{ paginator.total_pages }}</span>
+  {% if paginator.next_page %}
+    <a href="{{ paginator.next_page_path }}" class="next">Next &rqauo;</a>
+  {% endif %}
+</div>
+
+</div>

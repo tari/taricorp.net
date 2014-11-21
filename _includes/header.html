@@ -1,0 +1,30 @@
+<header id="banner">
+
+<h1><a href="{{ site.baseurl}}/">{{ site.title }}</a></h1>
+<h2 id="subtitle">{% comment %}{{ site.subtitle }}{% endcomment %}Blood for the blood god!</h2>
+
+</header>
+
+<nav id="page-navigation">
+    <!-- Octopress wraps this in ul class=subscription -->
+    <a id="master-rss" href="{{ "feed.xml" | prepend: site.baseurl | prepend: site.url }}">RSS</a>
+
+    <form id="master-search" action="https://www.duckduckgo.com/" method="get">
+        <fieldset role="search">
+            <!-- See https://duckduckgo.com/search_box -->
+            <input type="hidden" name="site" value="{{ site.baseurl | prepend: site.url }}" />
+            <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+            <input type="image" src="{{ site.baseurl }}/images/magnifier12.svg" alt="Search" id="search-button"/>
+        </fieldset>
+    </form>
+
+    <ul id="main-navigation">
+        {% for page in site.pages %}
+          {% if page.title %}
+          <li>
+              <a class="page-link" href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>
+          </li>
+          {% endif %}
+        {% endfor %}
+    </ul>
+</nav>

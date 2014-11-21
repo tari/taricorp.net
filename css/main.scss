@@ -1,0 +1,178 @@
+---
+# Only the main Sass file needs front matter (the dashes are enough)
+---
+@charset "utf-8";
+
+@mixin media-query($device) {
+    @media screen and (max-width: $device) {
+        @content;
+    }
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: .25em;
+}
+
+/// Page banner (title and tagline)
+$banner-color: #e2e2e2;
+$banner-bgcolor: #848a94;
+#banner {
+    color: $banner-color;
+    background-color: $banner-bgcolor;
+    padding: .5em 1em .5em;
+
+    a, a:visited, a:hover {
+        color: $banner-color;
+        text-decoration: none;
+    }
+
+    #subtitle {
+        font-size: 1em;
+    }
+}
+
+/// Navigation bar
+$nav-bgcolor: #c4cad4;
+$nav-color: #4a576c;
+$nav-hovercolor: #151a22;
+nav#page-navigation {
+    background-color: $nav-bgcolor;
+    color: $nav-color;
+    padding: .5em;
+    font-family: sans-serif;
+    border-top: 1px solid $banner-color;
+    border-bottom: 1px solid #7a889e;
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    a, a:visited {
+        color: $nav-color;
+        text-decoration: none;
+    }
+    a:hover {
+        color: $nav-hovercolor;
+    }
+
+    #master-rss, #master-search {
+        float: right;
+        padding-left: .5em;
+        
+        > fieldset {
+            border: none;
+        }
+    }
+    #main-navigation {
+        float: left;
+
+        > li {
+            display: inline;
+        }
+        > li:before {
+            content: '\2219';
+            color: black;
+        }
+        > li:first-child:before {
+            content: '';
+        }
+    }
+}
+nav#page-navigation:after {
+    // Force bottom edge to clear internal floats.
+    content: "";
+    display: table;
+    clear: both;
+}
+// TODO search button: want inset in text box
+input#search-button {
+    height: 1em;
+}
+
+footer#site-footer {
+    padding: 0 .5em .5em;
+    background-color: $nav-bgcolor;
+    border-top: 1px solid $banner-bgcolor;
+}
+
+
+#main {
+    // Fills in the margin, shading the sidebar area.
+    background-color: #f2f2f2;
+
+    $sidebar-width: 18em;
+
+    > #page-content {
+        margin-right: $sidebar-width;
+        background-color: white;
+
+        > div {
+            float: left;
+            width: 100%;
+            box-sizing: border-box;
+            padding: .5em;
+        }
+
+        > aside.sidebar {
+            clear: none;
+            float: left;
+            margin-right: -100%;
+            width: $sidebar-width;
+            box-sizing: border-box;
+            padding: .5em;
+        }
+    }
+    #page-content:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+
+pre {
+    background-color: #f0f0f0;
+    padding: .5em;
+
+    > code {
+        counter-reset: line-numbering;
+        overflow-x: auto;
+
+        > a[name|=line]:before {
+            content: counter(line-numbering);
+            counter-increment: line-numbering;
+            padding-right: .5em;
+            border-right: 1px solid black;
+            margin-right: .5em;
+        }
+        > a[name|=line]:nth-of-type(2n) {
+            background-color: #d0d0d0;
+        }
+    }
+}
+
+.post-title {
+    > a {
+        color: #444;
+        text-decoration: none;
+    }
+}
+.post-meta {
+    width: 100%;
+    text-align: right;
+    font-size: 90%;
+    color: #666;
+}
+
+// Import partials from `sass_dir` (defaults to `_sass`)
+@import
+        //"base",
+        //"layout",
+        "syntax-highlighting"
+;
