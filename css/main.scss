@@ -150,10 +150,24 @@ pre {
             padding-right: .5em;
             border-right: 1px solid black;
             margin-right: .5em;
+            color: black;
         }
         > a[name|=line]:nth-of-type(2n) {
             background-color: #d0d0d0;
         }
+    }
+}
+
+iframe {
+    width: 100%;
+}
+
+.figure-right {
+    float: right;
+    width: 30%;
+
+    img {
+        width: 100%;
     }
 }
 

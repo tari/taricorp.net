@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Analogue Cosplay</title>
+        <script type="text/javascript">
+characters = {
+    'Hyun-Ae': {
+        body: ['Schoolgirl', 'Detective', 'Hanbok', 'Maid', 'Scientist'],
+        face: ['Afraid', 'Anxious', 'Apologize Blush', 'Apologize', 'Argh', 'Awkward', 'Baffled', 'Busy', 'Calm', 'Cautious', 'Cheer', 'Disappoint2', 'Disappoint', 'Embarrassed', 'Enthusiastic Blush', 'Enthusiastic', 'Flirt', 'Genki', 'Gomen', 'Grr', 'Guilt', 'Hate', 'Hmm2', 'Hmm', 'Huh', 'Insist', 'Look Open', 'Look', 'Lost', 'Mad2', 'Mad Blush', 'Mad', 'Melancholic', 'Moe', 'Neutral2', 'Neutral', 'Neutral Side', 'Oops', 'Pain', 'Pissed', 'Pity', 'Question Blush', 'Question', 'Rage', 'Really', 'Sad2', 'Sad3', 'Sad', 'Scrutiny2', 'Scrutiny', 'Serious Blush', 'Serious', 'Shame', 'Shy', 'Smile2', 'Smile Blush', 'Smile', 'Sorry', 'Spirited', 'Sulk', 'Suspicious', 'Talk', 'Tired2', 'Tired', 'Touched', 'Tough2', 'Tough', 'Troubled2', 'Troubled', 'Tsundere', 'Uncertain', 'Unsure', 'Wow', 'Yes']
+    },
+    'Mute': {
+        body: ['Mute'],
+        face: ['Abashed', 'Annoyed2', 'Annoyed3', 'Annoyed4', 'Annoyed', 'Astonished', 'Awesome', 'Bitter', 'Brag', 'Cocky', 'Complain', 'Cry', 'Damn', 'Disbelief', 'Doubt', 'Embarrassed', 'Enthusiastic Blush', 'Enthusiastic', 'Evil', 'Friendly', 'Give up', 'Heh', 'Insecure', 'Laugh', 'Look Blush', 'Look Open', 'Look', 'Mad', 'Neutral', 'Pissed', 'Pressure', 'Proud', 'Query', 'Ridicule', 'Scorn Open', 'Scorn', 'Serious', 'Shame', 'Sigh Blush', 'Sigh', 'Smile Blush', 'smile', 'Sob', 'Spirited', 'Sulk', 'Suspicious', 'Talk', 'Tch', 'Tired', 'Tsundere', 'Worry', 'Worry Side', 'Yeah']
+    }
+}        
+
+function character() {
+    var select = document.getElementById('selectcharacter');
+    return select.options[select.selectedIndex].value;
+}
+
+function clearSelect(id) {
+    var s = document.getElementById('select' + id);
+    while (s.length > 0) {
+        s.remove(0);
+    }
+}
+
+function populateSelect(id) {
+    var s = document.getElementById('select' + id);
+    var c = character();
+    characters[c][id].forEach(function (prop) {
+        var o = document.createElement('option');
+        o.value = prop;
+        o.text = prop;
+        s.add(o);
+    });
+}
+
+function getSelectValue(id) {
+    return document.getElementById('select' + id).value;
+}
+
+function characterChanged() {
+    clearSelect('body');
+    clearSelect('face');
+
+    populateSelect('face');
+    populateSelect('body');
+    document.getElementById('selectbody').disabled = getSelectValue('character') == 'Mute';
+    document.getElementById('selectglasses').disabled = getSelectValue('character') != 'Hyun-Ae';
+    regenerateDisplay();
+}
+
+function regenerateDisplay() {
+    ['face', 'body'].forEach(function (thing) {
+        var src = [getSelectValue('character'),
+                   thing,
+                   getSelectValue(thing)
+        ].join('/') + '.png';
+        document.getElementById(thing).src = src;
+    });
+    document.getElementById("glasses").style.display =
+        getSelectValue('character') == 'Hyun-Ae' &&
+        document.getElementById('selectglasses').checked ?
+        'inherit' : 'none';
+}
+        </script>
+        <style>
+html { background-image: url("bg.png"); }
+#images { position: relative; }
+#overlay > img { position: absolute; left: 0; top: 0; }
+#controls {
+    position: fixed;
+    z-index: 10;
+}
+#controls > p > * { width: 100%; }
+        </style>
+    </head>
+    <body>
+        <div id="controls">
+            <p>
+                Character <br />
+                <select id="selectcharacter" onchange="characterChanged()"></select>
+            </p>
+            <p>
+                Body <br />
+                <select id="selectbody" onchange="regenerateDisplay()"></select>
+            </p>
+            <p>
+                Face <br />
+                <select id="selectface" onchange="regenerateDisplay()"></select>
+            </p>
+            <p>
+                <label>
+                    <input type="checkbox" id="selectglasses" onchange="regenerateDisplay()" />
+                    Glasses
+                </label>
+            </p>
+
+        </div>
+        <div id="images">
+            <img id="body" src="Hyun-Ae/body/Schoolgirl.png" />
+            <div id="overlay">
+                <img id="face" src="Hyun-Ae/face/Cheer.png" />
+                <img id="glasses" src="Hyun-Ae/face/Glasses.png" />
+            </div>
+        </div>
+        <p>
+            Images shamelessly extracted from
+            <a href="http://ahatestory.com/">Analogue: A Hate Story</a>. You
+            should read it.</a>
+            <br />
+            This page designed by
+            <a href="http://www.taricorp.net/">Peter Marheine</a>.
+        </p>
+        <script>
+function initialize() {            
+    var characterSelector = document.getElementById('selectcharacter');
+    for (var character in characters) {
+        var o = document.createElement('option');
+        o.value = character;
+        o.text = character;
+        characterSelector.add(o);
+    }
+    characterChanged();
+};
+initialize();
+        </script>
+    </body>
+</html>
