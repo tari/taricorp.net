@@ -151,8 +151,12 @@ pre {
             border-right: 1px solid black;
             margin-right: .5em;
             color: black;
+            // TODO doesn't seem to be functional; want to make line numbers
+            // expand to the widest necessary. Eg, "9\n10" should have the same
+            // line number width.
+            min-width: 2.5em;
         }
-        > a[name|=line]:nth-of-type(2n) {
+        > a[name|=line]:nth-of-type(2n):before {
             background-color: #d0d0d0;
         }
     }
@@ -162,13 +166,15 @@ iframe {
     width: 100%;
 }
 
+figure {
+    * {
+        max-width: 100%;
+    }
+}
+
 .figure-right {
     float: right;
     width: 30%;
-
-    img {
-        width: 100%;
-    }
 }
 
 .post-title {
