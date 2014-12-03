@@ -165,16 +165,16 @@ pre {
 blockquote {
     background-color: #f2f2f2;
     padding: .25em .25em .25em 3em;
+}
 
-    :before {
-        display: block;
-        height: 0;
-        position: relative;
-        left: -1em;
-        top: -.25em;
-        content: "\201C";
-        font-size: 200%;
-    }
+blockquote:before {
+    display: block;
+    height: 0;
+    position: relative;
+    left: -1em;
+    top: .25em;
+    content: "\201C";
+    font-size: 200%;
 }
 
 iframe {

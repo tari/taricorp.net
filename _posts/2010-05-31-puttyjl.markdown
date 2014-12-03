@@ -1,0 +1,33 @@
+---
+author: No Content Found
+comments: true
+date: 2010-05-31 01:39:59+00:00
+layout: post
+slug: puttyjl
+title: PuTTYJL
+wordpress_id: 93
+categories:
+- Miscellanea
+---
+
+After putting up with the lack of support for Windows 7's [jump
+lists](http://windows.microsoft.com/en-us/windows7/products/features/jump-lists)
+in PuTTY for a while, I finally got tired enough of it to do something.  Nothing
+as cool as patching PuTTY to do them itself, but I wrote a wrapper which indexes
+the saved sessions, allowing the user to select which ones should be included in
+the list.
+
+From the [project page](https://www.taricorp.net/projects/puttyjl):
+
+> PuTTYJL is a wrapper and patch for
+> [PuTTY](http://www.chiark.greenend.org.uk/%7Esgtatham/putty/) written in C#
+> for .NET 3.5 and Windows 7,  adding support for the new [Jump
+> Lists](http://windows.microsoft.com/en-us/windows7/products/features/jump-lists),
+> allowing you to create jump list  entries for saved sessions in the registry
+> and optionally just launch  the wrapper to start a default session in
+> PuTTY.
+
+Get it [here](/projects/puttyjl).
+
+**Update 2014-12-01**: PuTTY gained official support for jump lists in
+version 0.61, released back in 2011. You probably want to use that instead.

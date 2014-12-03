@@ -1,0 +1,23 @@
+/*
+ * @command=neato
+ */
+digraph g {
+	" " [color=red];
+	" " -> d [label="0.66"];
+	" " -> z [label="0.33"];
+	z -> e [label="0.5"];
+	z -> i [label="0.5"];
+	e -> z [label="1.0"];
+	i -> " " [label="0.5"];
+	i -> f [label="0.5"];
+	f -> a [label="1.0"];
+	a -> d [label="1.0"];
+	d -> i [label="0.33"];
+	d -> r [label="0.33"];
+	r -> " " [label="0.5"];
+	r -> o [label="0.5"];
+	o -> o [label="0.5"];
+	o -> l [label="0.5"];
+	l -> z [label="1.0"];
+	z -> " " [label="1.0"];
+}

@@ -244,5 +244,6 @@ clunky to work with. I will keep DRBD in mind for similar uses in the future,
 though, and may revisit the issue at a later date when my network layout
 changes.
 
-**Update 26.1.2012:** I've [revisited](../2012/high-availability-home-revisited)
+**Update 26.1.2012:** I've
+[revisited](../2012/high-availability-home-revisited.html)
 this concept in a simpler (and less automatic) fashion.

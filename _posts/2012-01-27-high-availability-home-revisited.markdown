@@ -19,7 +19,7 @@ tags:
 
 About a month ago, I wrote about my experiments in ways to [keep my home
 directory consistently
-available](../2011/experiments-with-a-high-availability-home). I ended up
+available](../2011/experiments-with-a-high-availability-home.html). I ended up
 concluding that DRBD is a neat solution for true high-availability systems, but
 it's not really worth the trouble for what I want to do, which is keeping my
 home directory available and in-sync across several systems.

@@ -11,6 +11,7 @@ twitter_username: pmarheine
 github_username:  tari
 sidebar: ["sidebar/foo"]
 
+permalink: '/:year/:title.html'
 paginate: 10
 excerpt_separator: "<!-- more -->"
 
@@ -18,4 +19,4 @@ excerpt_separator: "<!-- more -->"
 markdown: redcarpet-pygments
 
 redcarpet:
-    extensions: ["superscript"]
+    extensions: ["superscript", "footnotes"]
