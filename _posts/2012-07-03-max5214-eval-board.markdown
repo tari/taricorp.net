@@ -78,7 +78,7 @@ it shouldn't be very difficult to write a custom firmware to open up a
 communication protocol to the device (perhaps change its device class to a [USB
 CDC](https://en.wikipedia.org/wiki/USB_communications_device_class) for easier
 interfacing). Reprogramming the device requires some sort of JTAG adapter, but I
-can probably make a [Bus Pirate](/tag/bus-pirate) do the job.
+can probably make a [Bus Pirate](http://dangerousprototypes.com/docs/Bus_Pirate) do the job.
 
 With some custom software, this could become a handy little function generator-
 its precision is good and it has a handy USB connection. On the downside, the

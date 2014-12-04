@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>RX Bitrate calculator</title>
+    <!--    <script type="text/javascript" src="brr-calc.js"></script>-->
+    <style type="text/css">
+label {
+    float: left;
+    clear: left;
+    width: 5em;
+}
+label.nf {
+    float: none;
+    width: 3em;
+}
+input.button {
+    float: right;
+}
+#calculator {
+    width: 34em;
+}
+#input {
+    width: 17em;
+    height: 6em;
+    float: left;
+    padding: 0.25em;
+    background-color: #a0aaba;
+    border-radius: .25em 0 0 .25em;
+}
+#output {
+    width: 16em;
+    height: 6em;
+    float: right;
+    padding: 0.25em;
+    background-color: #d4cec4;
+    border-radius: 0 .25em .25em 0;
+}
+    </style>
+    </head>
+    <body>
+<script type="text/javascript">
+function bestRegs(pclk, bitrate, sync) {
+    var regs = {abcs: 0,
+        brr: 0,
+        cks: 0,
+        error: Infinity};
+
+    // See RX62N / RX621 hardware users manual, section 29.2.1.9:
+    // Bit Rate Register (BRR)
+    for (n=0; n < 4; n++) {
+        for (abcs = 0; abcs <= 1; abcs++) {
+            var N = pclk * 1e6;
+            var error = N;
+            if (sync) {
+                var abcs_m = 8;
+            } else {
+                var abcs_m = abcs ? 32 : 64;
+            }
+
+            var divider = abcs_m * bitrate;
+            divider *= Math.pow(2, 2*n - 1);
+            N /= divider;
+            N--;
+            N = Math.round(N);
+
+            // Clamp to 8-bit values
+            N = Math.max(N, 0);
+            N = Math.min(N, 255);
+
+            error /= abcs_m * bitrate;
+            error /= Math.pow(2, 2*n - 1);
+            error /= N + 1;
+            error--;
+
+            if (Math.abs(error) < Math.abs(regs.error)) {
+                regs.abcs = abcs;
+                regs.brr = N;
+                regs.cks = n;
+                regs.error = error;
+            }
+        }
+    }
+    return regs;
+}
+
+function brr_recalculate() {
+    var get = function(e) { return document.getElementById(e) }
+    var sync = get('sync').checked;
+    var regs = bestRegs(get('pclk').value, get('bitrate').value, sync);
+
+    get('abcs').value = regs.abcs;
+    get('brr').value = regs.brr;
+    get('cks').value = regs.cks;
+    get('error').value = (regs.error * 100).toFixed(2);
+}
+</script>
+    <div id="calculator">
+    <div id="input">
+        <div>
+            <label for="bitrate">Bit rate</label>
+            <input id="bitrate" name="bitrate"
+             onChange="brr_recalculate()"/> bps
+        </div>
+        <div>
+            <label for="pclk">PCLK</label>
+            <input id="pclk" name="pclk" onChange="brr_recalculate()"/> MHz
+        </div>
+        <label for="async" class="nf" checked>Async</label>
+        <input type="radio" name="vsync" value="async" id="async"
+         onChange="brr_recalculate()"/>
+        <label for="sync" class="nf">Sync</label>
+        <input type="radio" name="vsync" value="sync" id="sync"
+         onChange="brr_recalculate()"/>
+    </div>
+
+    <div id="output">
+        <div>
+        <label>BRR</label>
+        <input id="brr" readonly="readonly" />
+        </div>
+        <div>
+        <label>CKS[1:0]</label>
+        <input id="cks" readonly="readonly" />
+        </div>
+        <div>
+        <label>ABCS</label>
+        <input id="abcs" readonly="readonly" />
+        </div>
+        <div>
+        <label>Error</label>
+        <input id="error" readonly="readonly" /> %
+        </div>
+    </div>
+    </div>
+    </body>
+</html>
+

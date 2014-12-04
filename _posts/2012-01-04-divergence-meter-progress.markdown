@@ -16,7 +16,7 @@ tags:
 
 One project which I've been working on since about October and just got around
 to creating a project page for is the [divergence
-meter](/projects/divergence-meter).
+meter](/projects/divergence-meter.html).
 
 There's not a lot to see there yet, but I've recorded my notes on what the
 design needs and the outline for the control and power supply module.  I ordered

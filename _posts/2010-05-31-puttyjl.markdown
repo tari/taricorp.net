@@ -17,7 +17,7 @@ as cool as patching PuTTY to do them itself, but I wrote a wrapper which indexes
 the saved sessions, allowing the user to select which ones should be included in
 the list.
 
-From the [project page](https://www.taricorp.net/projects/puttyjl):
+From the [project page](https://www.taricorp.net/projects/puttyjl.html):
 
 > PuTTYJL is a wrapper and patch for
 > [PuTTY](http://www.chiark.greenend.org.uk/%7Esgtatham/putty/) written in C#
@@ -27,7 +27,7 @@ From the [project page](https://www.taricorp.net/projects/puttyjl):
 > and optionally just launch  the wrapper to start a default session in
 > PuTTY.
 
-Get it [here](/projects/puttyjl).
+Get it [here](/projects/puttyjl.html).
 
 **Update 2014-12-01**: PuTTY gained official support for jump lists in
 version 0.61, released back in 2011. You probably want to use that instead.

@@ -47,7 +47,7 @@ building libpng is very similar to that for zlib:
 Building against libpng then requires png.h, pngconf.h, pnglibconf.h and
 png.lib.  To build against these libraries, I simply put the include files in an
 'include' directory, the .lib files in a 'lib' directory, and [pointed cmake at
-it](locating-packages-with-cmake.html).
+it](/2012/locating-packages-with-cmake.html).
 
 Warnings about runtime libraries when linking a program against these static
 libraries is an indication that you'll probably see random crashes, since it

@@ -26,11 +26,17 @@ infringement.
     </a>
 </figure>
 
-fb-hitler? Oh, that's some [Free Software](/projects/fb-hitler) I wrote. I disputed the claim, simply stating that fb-hitler.tar.bz2 is a piece of software that I created (and thus own the copyright to). As of tonight, I've heard nothing back about it, and the file is still inaccessible. Here's the link to it, for future reference:
+fb-hitler? Oh, that's some [Free Software](/projects/fb-hitler.html) I wrote. I
+disputed the claim, simply stating that fb-hitler.tar.bz2 is a piece of software
+that I created (and thus own the copyright to). As of tonight, I've heard
+nothing back about it, and the file is still inaccessible. Here's the link to
+it, for future reference:
 
 > [http://www.mediafire.com/?mhnmnjztyn3](http://www.mediafire.com/download/mhnmnjztyn3/fb-hitler.tar.bz2) (.tar.bz2, 477 KB)
 
-And here's the complete message I got. Notice it somehow got pulled in by somebody looking to get links to Dragonball Z downloads removed, and that the link to fb-hitler itself isn't even in the (absurdly long) list of URLs given.
+And here's the complete message I got. Notice it somehow got pulled in by
+somebody looking to get links to Dragonball Z downloads removed, and that the
+link to fb-hitler itself isn't even in the (absurdly long) list of URLs given.
 
 <blockquote style="height: 15em; overflow: auto;">
 <p>Dear MediaFire User:</p>

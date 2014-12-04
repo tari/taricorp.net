@@ -17,12 +17,12 @@ tags:
 ---
 
 Somebody had asked me about the schematics for my [divergence
-meter](/projects/divergence-meter) project.  All the design files are in the
+meter](/projects/divergence-meter.html) project.  All the design files are in the
 mercurial repository on
 [Bitbucket](https://bitbucket.org/tari/divergence-meter), but here's a
 high-resolution capture of the schematic for those unable or unwilling to use
 Eagle to view the schematic:
-[dm-rev1.1.png](http://www.taricorp.net/wp-content/uploads/2012/06/dm-rev1.1.png). 
+[dm-rev1.1.png](/images/2012/dm-rev1.1.png). 
 Be advised that this version of the schematic does not reflect the current
 design, as I have not updated it with a FET driver per my last post on this
 project.
