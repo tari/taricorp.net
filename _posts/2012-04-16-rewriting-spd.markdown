@@ -38,7 +38,7 @@ information is the Serial Presence Detect, or SPD, and it includes information
 on the type of memory, the timings it requires for correct operation, and some
 information about the manufacturer.  (I've got a copy of the exact specification
 mirrored here:
-[SPDSDRAM1.2a](http://www.taricorp.net/wp-content/uploads/2012/04/SPDSDRAM1.2a1.pdf).) 
+[SPDSDRAM1.2a](/images//2012/SPDSDRAM1.2a1.pdf).) 
 If I could rewrite the SPD on one of these DIMMs, I could find values that make
 it work intermittently or not at all, or even report a different size (by
 modifying the row and column address width parameters).

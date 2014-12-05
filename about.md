@@ -5,7 +5,7 @@ date: 2010-04-11 10:26:01+00:00
 layout: page
 slug: about
 title: About
-wordpress_id: 2
+in_global_nav: true
 ---
 
 

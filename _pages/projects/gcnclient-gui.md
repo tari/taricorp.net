@@ -9,7 +9,11 @@ type: page
 published: true
 ---
 
-This is a basic GUI for configuring the [globalCalcNet][gcn] client program, written in C#.  It's known to work on Windows, and should be capable of operating properly on non-Windows platforms with minimal modification. You may also want to see the [discussion thread for this program on Cemetech][discussion].
+This is a basic GUI for configuring the [globalCalcNet][gcn] client program,
+written in C#.  It's known to work on Windows, and should be capable of
+operating properly on non-Windows platforms with minimal modification. You may
+also want to see the [discussion thread for this program on
+Cemetech][discussion].
 
 <figure>
     <img src="/images/2011/clientgui-1.1.png" />
@@ -22,7 +26,7 @@ Current version is 1.1.
 and [ZIP
 archive](/images/2011/GCNClient_GUI.zip)
 (program only) are available. If you're interested in seeing how it does
-something or modifying it, you can also grab the [source package](http://www.taricorp.net/wp-content/uploads/2011/12/gcnclientGUI-1.1-src.zip).
+something or modifying it, you can also grab the [source package](/images/2011/gcnclientGUI-1.1-src.zip).
 
 If you are unable to run the program, ensure you have the .NET 3.5 or newer
 runtimes (or equivalent, for non-Windows systems) installed. It can be

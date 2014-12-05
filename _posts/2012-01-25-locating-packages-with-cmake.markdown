@@ -18,7 +18,7 @@ tags:
 
 When building programs with cmake on non-UNIX systems, it can be a pain to
 specify the location of external libraries.  I've been upgrading
-[mkg3a](https://www.taricorp.net/projects/mkg3a) to support using libpng to load
+[mkg3a](/projects/mkg3a.html) to support using libpng to load
 icons in addition to the old bmp loader, but that means I need to link against
 libpng, and also zlib (since libpng depends on zlib to handle the image
 compression).  Compiling it all on Windows, however, is not an easy task, since

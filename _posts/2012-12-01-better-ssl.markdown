@@ -25,5 +25,3 @@ Technica](http://arstechnica.com/information-technology/2012/11/securing-your-we
 have a decent walk through the process (though they target nginx for
 configuration, which may not be useful to those running other web servers).
 
-For convenience, you can follow [this link](https://www.taricorp.net/) to switch
-to the HTTPS site.

@@ -17,7 +17,7 @@ as cool as patching PuTTY to do them itself, but I wrote a wrapper which indexes
 the saved sessions, allowing the user to select which ones should be included in
 the list.
 
-From the [project page](https://www.taricorp.net/projects/puttyjl.html):
+From the [project page](/projects/puttyjl.html):
 
 > PuTTYJL is a wrapper and patch for
 > [PuTTY](http://www.chiark.greenend.org.uk/%7Esgtatham/putty/) written in C#

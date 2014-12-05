@@ -39,7 +39,7 @@ With that, we can build binaries targetting sh and linked such that they'll run
 on the Prizm, but that alone isn't very useful. Jon also created
 [libfxcg](https://github.com/Jonimoose/libfxcg), a library providing access to
 the syscalls on the platform. Finally, I created
-[mkg3a](http://www.taricorp.net/projects/mkg3a), a tool to pack the raw binaries
+[mkg3a](/projects/mkg3a.html), a tool to pack the raw binaries
 output by the linker into the g3a files accepted by the device.
 
 Rumor has it the whole set of tools works. I haven't been able to verify that

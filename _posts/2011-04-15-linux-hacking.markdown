@@ -25,7 +25,7 @@ such as that provided by Linux can be very useful when developing something new.
 ## A short story
 
 I was doing nothing of particular importance yesterday afternoon when I was
-booting up my [previously mentioned](http://www.taricorp.net/2011/btrfs)
+booting up my [previously mentioned](/2011/btrfs.html)
 netbook. The machine usually runs on a straight framebuffer powered by
 [KMS](https://wiki.archlinux.org/index.php/Kernel_Mode_Setting) on i915
 hardware, and my kernel is configured to show the famous [Tux
@@ -89,5 +89,5 @@ function to get the number of CPUs active in the system.
 
 Next up in my source-diving adventures will be finding the code which controls
 what happens when the user presses control+alt+delete, in anticipation of
-sometime rewriting [fb-hitler](http://www.taricorp.net/projects/fb-hitler) into
+sometime rewriting [fb-hitler](/projects/fb-hitler.html) into
 a standalone kernel rather than a program running on top of Linux..
