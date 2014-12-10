@@ -7,22 +7,16 @@ tags: []
 status: publish
 type: page
 published: true
-meta:
-  _edit_last: '1'
-  _wp_page_template: default
-author:
-  login: tari
-  email: peter@taricorp.net
-  display_name: tari
-  first_name: Peter
-  last_name: Marheine
 in_global_nav: true
 ---
 
 This section of the site contains a variety of things that I've created through
 the pursuit of meaning in existence.
 
-{% for page in site.pages %}{% if page.url contains "/projects" and page.url != "/projects/index.html" %}{{ page.title }}{% endif %}{% endfor %}
+## Subpages
+
+{% for page in site.pages %}{% if page.url contains "/projects" and page.url != "/projects/index.html" and page.title %} * [{{ page.title }}]({{page.url}})
+{% endif %}{% endfor %}
 
 # License
 

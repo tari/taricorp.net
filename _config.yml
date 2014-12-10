@@ -6,7 +6,7 @@ description: > # this means to ignore newlines until "baseurl:"
   line in _config.yml. It will appear in your document head meta (for
   Google search results) and in your feed.xml site description.
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://beta.example.net/" # the base hostname & protocol for your site
+url: "http://beta.taricorp.net" # the base hostname & protocol for your site
 twitter_username: pmarheine
 github_username:  tari
 sidebar: ["sidebar/foo"]
@@ -14,6 +14,7 @@ sidebar: ["sidebar/foo"]
 permalink: '/:year/:title.html'
 paginate: 10
 excerpt_separator: "<!-- more -->"
+date_format: "%Y-%m-%d"
 
 # Build settings
 markdown: redcarpet-pygments

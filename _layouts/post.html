@@ -5,7 +5,7 @@ layout: default
     <header class="post-header">
         <h1 class="post-title"><a href="">{{ page.title }}</a></h1>
         <p class="post-meta">
-            {{ page.date | date: "%b %-d, %Y" }}
+            {{ page.date | date: site.date_format }}
             {% if page.author %} &middot; {{ page.author }} {% endif %}
             {% if page.meta %} &middot; {{ page.meta }} {% endif %}
         </p>
@@ -20,7 +20,7 @@ layout: default
         <div id="archives-links">
             {% if page.previous.url %}
             <a href="{{ page.previous.url }}" title="Previous post: {{ page.previous.title }}">
-                &laquo; {{ page.previous.title }}
+                &larr; {{ page.previous.title }}
             </a>
             {% endif %}
             {% if page.previous.url or page.next.url %}
@@ -28,7 +28,7 @@ layout: default
             {% endif %}
             {% if page.next.url %}
             <a href="{{ page.next.url }}" title="Previous post: {{ page.next.title }}">
-                {{ page.next.title }} &raquo;
+                {{ page.next.title }} &rarr;
             </a>
             {% endif %}
         </div>
