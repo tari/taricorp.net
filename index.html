@@ -18,6 +18,9 @@ layout: default
   </header>
   <article class="post-content">
       {{ post.excerpt}}
+      {% if post.excerpt != post.content %}
+      <p class="excerpt-cutoff"><a href="{{ post.url }}">Post continues. Read the rest..</a></p>
+      {% endif %}
   </article>
   <hr />
   {% endfor %}
