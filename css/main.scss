@@ -137,27 +137,28 @@ footer#site-footer {
 }
 
 pre {
-    background-color: #f0f0f0;
-    padding: .5em;
+    background-color: #49483e;
+    color: #f8f8f2;
+    padding: .5em .5em .5em 0;
 
     > code {
         counter-reset: line-numbering;
         overflow-x: auto;
 
         > a[name|=line]:before {
+            color: #f8f8f2;
             content: counter(line-numbering);
             counter-increment: line-numbering;
-            padding-right: .5em;
-            border-right: 1px solid black;
+            padding: 0 .5em;
+            border-right: 1px solid #f8f8f2;
             margin-right: .5em;
-            color: black;
-            // TODO doesn't seem to be functional; want to make line numbers
-            // expand to the widest necessary. Eg, "9\n10" should have the same
-            // line number width.
-            min-width: 2.5em;
+            // Help ensure line numbers are always the same size unless they
+            // are very long (3-4 digits?)
+            display: inline-block;
+            min-width: 2em;
         }
         > a[name|=line]:nth-of-type(2n):before {
-            background-color: #d0d0d0;
+            background-color: #79786e;
         }
     }
 }
@@ -182,6 +183,7 @@ iframe {
 }
 
 figure {
+    text-align: center;
     * {
         max-width: 100%;
     }
@@ -211,7 +213,5 @@ figure {
 
 // Import partials from `sass_dir` (defaults to `_sass`)
 @import
-        //"base",
-        //"layout",
         "syntax-highlighting"
 ;
