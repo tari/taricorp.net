@@ -24,7 +24,7 @@ module Jekyll
         else
           STDERR.puts "Invalid Markdown processor: #{@config['markdown']}"
           STDERR.puts " Valid options are [ maruku | rdiscount | kramdown | redcarpet-pygments ]"
-          raise FatalException.new("Invalid Markdown process: #{@config['markdown']}")
+          raise Jekyll::Errors::FatalException.new("Invalid Markdown process: #{@config['markdown']}")
         end
         @setup = true
       end
@@ -71,9 +71,8 @@ module Jekyll
             end 
           end
         rescue LoadError
-          STDERR.puts 'You are missing a library required for Markdown. Please run:'
-          STDERR.puts '  $ [sudo] gem install redcarpet'
-          raise FatalException.new("Missing dependency: redcarpet")
+          STDERR.puts 'Failed to load redcarpet. Ensure redcarpet and pygments.rb are installed.'
+          raise Jekyll::Errors::FatalException.new("Failed to load redcarpet")
         end
 
         def convert(content)

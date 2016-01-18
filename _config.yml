@@ -16,6 +16,8 @@ paginate: 10
 excerpt_separator: "<!-- more -->"
 date_format: "%Y-%m-%d"
 
+gems: ["jekyll-paginate", "redcarpet"]
+
 # Build settings
 markdown: redcarpet-pygments
 
