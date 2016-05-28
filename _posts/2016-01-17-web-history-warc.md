@@ -247,6 +247,24 @@ data, everything moved along at a nice clip.
 
 [mariadb]: https://mariadb.org/
 
+As the process went on, it seemed to slow down- early on everything was
+I/O-bound and status messages were scrolling by too fast for me to see, but
+after a few hundred thousand records had been processed I could see a
+significant slowdown. Looking at resource usage, the database was the limiting
+factor.
+
+It turned out that though I had created indexes in the database on the rows that
+get queried frequently, it was still performing a full table scan to satisfy the
+requirement that records be processed in the order which they appear in the WARC
+file. (I determined this by manually running some queries and having mariadb
+`ANALYZE` them for information on how it processed the query.) After creating a
+composite index of the `copy_number` and `warc_offset` columns (which I wasn't
+even aware was possible until I read the grammar for `CREATE INDEX` carefully,
+and had to experiment to discover that the order in which they are specified
+matters), the process again became I/O-bound. Where the first 1.2 million
+records or so were processed in about 16 hours, the last 500 thousand were
+completed in only about an hour after I created that index.
+
 ### `warcrefs`
 
 Compared to the earlier parts, `warcrefs` is a quite docile tool, perhaps in
@@ -273,9 +291,50 @@ inspection[^zless]).
 
 [zless-man]: http://man.he.net/man1/zless
 
-That's it! I can write a deduplicated WARC file, hopefully saving some gigabytes
-from my archives! There are of course some rough edges that could be cleaned up,
-though.
+### `warcrefs` revisited
+
+I'm writing this section after the above-mentioned run of `warccollres`
+finished and I got to run `warcrefs` over about 30 gigabytes of data. It turned
+out a few additional changes were required.
+
+1. I forgot to recompile the jar after changing its use of file offsets to use
+   `long`s, at which point I found the error reporting was awful in that the
+   program only printed the error message and nothing else. It bailed out on
+   reaching a file offset not representable as an int, but I couldn't tell that
+   until I made it print a proper stack trace.
+2. Portions of `revisit` records were processed as strings but have lengths in
+   bytes. Where multibyte characters are used this yields a wrong size.
+   Fortunately, the WARC library used to write output checks these so I just had to
+   fix it to use byte lengths everywhere.
+3. Reading records to deduplicate reopened the input file for every record and
+   never closed them, causing the program to eventually reach the system open
+   file limit and fail. I had to make it close those.
+
+## Results
+
+I got surprisingly good savings out of deduplication on my initial large
+dataset. Turns out web browser history has a lot more duplication than a typical
+archive: about 50% on my data, where Eldakar cited a number closer to 15% for
+general archives.
+
+```
+$ ls -lh
+total 47G
+-rw-r--r-- 1 tari users  14G Jan 18 15:07 mega_dedup.warc.gz
+-rw-r--r-- 1 tari users  33G Jan 17 10:45 mega.warc.gz
+-rw-r--r-- 1 tari users 275M Jan 17 11:39 mega.warcsum
+-rw-r--r-- 1 tari users 415M Jan 18 13:50 warccollres.txt
+```
+
+The input file was 33 gigabytes, reduced to only 14 after deduplication. I've
+manually checked that all the records appear to be there, so that appears to be
+true deduplication only. There are 1709118 response records in the archive
+(that's the number of lines in the warcsum file), with only 210467 unique
+responses[^copynum], making an average of about 8 copies per response. Perhaps
+predictably, this implies that the duplicated records tend to be small since
+the overall savings was much less than 8 times.
+
+[^copynum]: `SELECT count(id) FROM warcsums WHERE copy_num = 1`
 
 ## Improvements
 
@@ -311,10 +370,12 @@ often the case on modern web sites, especially "social" ones.
 
 ## Concluding
 
-It's now 17:00 on Sunday the 18th of January, and I've been working on this for
-approximately 25 of the last 32 hours (with short breaks for food and sleep). I
-might not call it "pleasant", but the feeling of hammering out a huge pile of
-code and information is good.
+I ended up spending the majority of a weekend hammering out most of this code,
+from about 11:00 on Saturday through about 18:00 on Sunday with only about an
+hour total for food-breaks and a too-much-yet-not-enough 6-hour pause to sleep.
+I might not call it pleasant, but it's a good feeling to build something like
+this successfully and before losing interest in it for an indeterminate amount
+of time.
 
 I have long-term plans regarding software to automate archiving tasks like this
 one, and that was where my work here started early on Saturday. I'd hope that
