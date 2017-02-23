@@ -25,6 +25,19 @@ with [LUKS](https://code.google.com/p/cryptsetup/) on Linux. Mainly due to
 rather troublesome design on the Windows side of this setup, it was not as easy
 as I might have hoped. I did eventually get it working, however.
 
+## Admonishment
+
+Truecrypt was [https://www.grc.com/misc/truecrypt/truecrypt.htm]("Discontinued")
+in 2014, but still works okay. [VeraCrypt](https://veracrypt.codeplex.com/) is
+substantially a drop-in replacement if you're looking for a piece of software
+that is still actively maintained. As of this update (early 2017) the only
+non-commercial option for an encrypted Windows system booted from UEFI is
+Windows' native BitLocker (with which [dual-booting is
+possible](https://superuser.com/questions/287071/can-bitlocker-be-used-in-a-dual-boot-system-with-windows-on-one-drive-linux-on)
+but it won't be possible to read the encrypted Windows partition from Linux),
+but if you're booting via legacy BIOS these instructions should still work for
+TrueCrypt or VeraCrypt.
+
 # Windows
 
 Installing Windows on the machine was easy enough, following the usual
@@ -41,7 +54,7 @@ another location, with the ability to boot it via
 merely burn a disc as necessary). The solution to this was to re-invoke the
 volume creation wizard with the noisocheck option:
 
-    C:\Program Files\TrueCrypt>TrueCrypt Format.exe /noisocheck
+    C:\\Program Files\\TrueCrypt>TrueCrypt Format.exe /noisocheck
 
 One reboot followed, and I was able to let TrueCrypt go through and encrypt the
 system. It was then time to set up Linux.
