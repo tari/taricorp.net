@@ -3,10 +3,20 @@ date: 2017-02-23
 title: Quick and dirty web image optimization
 subtitle: An exercise in measurement
 layout: post
+tags:
+  - web
+  - png
+  - jpeg
+  - optipng
+  - jpegtran
+  - jupyter
+  - python
+  - science
+  - csv
 ---
 
 Given a large pile of images that nominally live on a [web server][cemetech], I
-want to make them smaller and more friendly to server to clients. This is hardly
+want to make them smaller and more friendly to serve to clients. This is hardly
 novel: for example, Google offer [detailed advice on reducing the size of images
 for the web][google-advice]. I have mostly JPEG and PNG images, so, `jpegtran`
 and `optipng` are the tools of choice for bulk lossless compression.
@@ -28,7 +38,7 @@ displayed at a reduced resolution before the entire image has been downloaded).
 
 Where things get a little more interesting is when I output the name and size of
 each located file (`-printf ...`) and store those in a file (`>
-delta.csv`)[^csv]. This is so I can collect more information about the changes
+delta.csv`).[^csv] This is so I can collect more information about the changes
 that were made.
 
 [^csv]: Assumption: none of the file names contain commas, since I'm calling
@@ -63,14 +73,18 @@ original_sizes = [orig for (_, orig, _) in deltas]
 final_sizes = [new for (_, _, new) in deltas]
 shrinkage = [orig - new for (_, orig, new) in deltas]
 
-pct_total_change = 100 * (sum(original_sizes) - sum(final_sizes)) / sum(original_sizes)
+pct_total_change = 100 * (sum(original_sizes) -
+                          sum(final_sizes)) / sum(original_sizes)
 
-pct_change = [shrinkage / orig for (shrinkage, orig) in zip(shrinkage, original_sizes)]
+pct_change = [shrinkage /
+              orig for (shrinkage, orig) in zip(shrinkage, original_sizes)]
 avg_pct_change = 100 * sum(pct_change) / len(pct_change)
 
-print('Total size reduction:', sum(shrinkage), 'bytes ({}%)'.format(round(pct_total_change, 2)))
+print('Total size reduction:', sum(shrinkage),
+      'bytes ({}%)'.format(round(pct_total_change, 2)))
 avg = sum(shrinkage) / len(shrinkage)
-print('Average reduction per file:', avg, 'bytes ({}%)'.format(round(avg_pct_change, 2)))
+print('Average reduction per file:', avg,
+      'bytes ({}%)'.format(round(avg_pct_change, 2)))
 ```
 
 This is by no means good code, but that's why this short write-up is "quick and
@@ -128,9 +142,11 @@ images.
 ## That's all
 
 I saved about 20 MiB for around 5000 files- not bad. A [copy of the
-notebook][notebook] I used to do measurements is available, useful if you want
-to do something similar with your own images. I would not recommend doing it to
-ones that are not meant purely for web viewing, since the optimization process
-may strip metadata that is useful to preserve.
+notebook][notebook] I used to do measurements is available (check out
+[nbviewer][nbviewer] for an online viewer), useful if you want to do something
+similar with your own images. I would not recommend doing it to ones that are
+not meant purely for web viewing, since the optimization process may strip
+metadata that is useful to preserve.
 
 [notebook]: /images/2017/image-optimization.ipynb
+[nbviewer]: https://nbviewer.jupyter.org/
