@@ -1,0 +1,88 @@
+---
+author: tari
+comments: true
+date: 2012-07-03 03:05:11+00:00
+layout: post
+slug: max5214-eval-board
+title: MAX5214 Eval Board
+wordpress_id: 709
+categories:
+- Embedded Systems
+- Hacking/Tweaking
+tags:
+- bus pirate
+- Hacking/Tweaking
+- hardware
+- maxim
+- spi
+---
+
+I caught on to a promotion from AVNet last week, in which one may get a
+[free](http://www.em.avnet.com//en-us/design/featuredpromotions/Pages/Maxim-MAX5214LITE-Evaluation-Kit-and-Signal-Generator-Offer.aspx?intcmp=aehomepage_whatsnew_maximjuly)
+[MAX5214 eval
+board](http://www.maximintegrated.com/en/products/analog/data-converters/digital-to-analog-converters/MAX5214DACLITE.html)
+(available through August 31), so hopped on it because really, why wouldn't I
+turn down free hardware? I promptly forgot about it until today, when a box
+arrived from AVNet.
+
+## What's on the board
+
+The board features four Maxim ICs:
+
+  * **MAX8510**- small low-power LDO.  Not terribly interesting.
+  * **MAXQ622**- 16-bit microcontroller with USB.  I didn't even know Maxim make microcontrollers!
+  * **MAX5214**- 14-bit SPI DAC. The most interesting part.
+  * **MAX6133**- precision 3V LDO (provides supply for the DAC)
+
+<div>
+    <figure>
+        <img src="/images/2012/473912_3308372040576_1355710238_o.jpg" />
+        <figcaption>Board schematic</figcaption>
+    </figure>
+    <figure>
+        <img src="/images/2012/DSC_3109.jpg" />
+        <figcaption>Board, front side</figcaption>
+    </figure>
+    <figure>
+        <img src="/images/2012/DSC_3108.jpg" />
+        <figcaption>Board, back side</figcaption>
+    </figure>
+</div>
+
+The MAXQ622 micro (U2) is connected to a USB mini-B port for data, and USB also
+supplies power for the 5V rail.  The MAX8510 (U4) supplies power for the
+microcontroller and also the MAX6133 (U3).  The microcontroller acts as a USB
+bridge to the MAX5214 DAC (U1), which it communicates with over SPI.  The SPI
+signals are also broken out to a 4-pin header (J6).
+
+## Software
+
+The software included with the board is fairly straightforward, providing a
+small variety of waveforms that can be generated. It's best demonstrated
+photographically, as below. Those familiar with National Instruments' LabView
+environment will probably recognize that this interface is actually just a
+LabView VI (Virtual Instrument).
+
+<figure>
+    <img src="/images/2012/575412_3308374280632_1108603260_n.jpg" />
+    <figcaption>Waveform generator GUI</figcaption>
+</figure>
+
+## Hacking
+
+Rather more interesting than the stock software is the possibility of
+reprogramming the microcontroller. Looking at the board photos, we can see that
+there's a header that breaks out the JTAG signals. With the right
+[tools](http://www.maximintegrated.com/en/products/microcontrollers/development_tools.cfm/view/low-power),
+it shouldn't be very difficult to write a custom firmware to open up a
+communication protocol to the device (perhaps change its device class to a [USB
+CDC](https://en.wikipedia.org/wiki/USB_communications_device_class) for easier
+interfacing). Reprogramming the device requires some sort of JTAG adapter, but I
+can probably make a [Bus Pirate](http://dangerousprototypes.com/docs/Bus_Pirate) do the job.
+
+With some custom software, this could become a handy little function generator-
+its precision is good and it has a handy USB connection. On the downside, the
+slew rate on the DAC is not anything special (0.5V/µs, -3dB bandwidth is 100
+kHz), and its output current rating is pretty pathetic (5 mA typical). With a
+unity-gain amplifier on the output though, it could easily drive decent loads
+and act as a handy low-cost waveform generator. Let's get hacking?

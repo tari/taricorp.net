@@ -1,0 +1,48 @@
+---
+author: tari
+comments: true
+date: 2011-05-03 02:31:21+00:00
+layout: post
+slug: mkg3a
+title: mkg3a
+wordpress_id: 232
+categories:
+- Software
+tags:
+- Hacking/Tweaking
+- Software
+---
+
+Casio's [FX-CG](http://www.casioeducation.com/prizm), or Prizm, is a rather
+interesting device, and the programmers over on
+[Cemetech](http://www.cemetech.net/) seem to have found it worthwhile to make
+the Prizm do their bidding in software.
+
+The Prizm device itself is based around some sort of SuperH core,
+<del>identified at times in the system software as a SH7305</del> a "SH7780 or
+thereabouts". The
+[7780](http://www.renesas.com/products/mpumcu/superh/sh7780/index.jsp) is not an
+exact device, though, and it's likely a [licensed
+SH4](http://web.archive.org/web/20110605001516/http://www.renesas.com:80/products/core_license/cpu_cores/child_folder/sh4_child.jsp)
+core in a Casio ASIC. Whatever the case, GCC targeted for sh and compiling
+without the FPU (-m4a-nofpu) and in big-endian mode (-mb) seems to work on the
+hardware provided.
+
+Between [Jonimus](http://jonimoose.net/) and myself (with input from other users
+on what configurations will work), we've assembled a GCC-based toolchain
+targeting the Prizm. Jon put together a cross-compiler for sh with some
+supporting scripts, while I contributed a linker script and runtime
+initialization routine (crt0), both of which were adapted from
+[Kristaba's](https://github.com/Kristaba) work.
+
+With that, we can build binaries targetting sh and linked such that they'll run
+on the Prizm, but that alone isn't very useful. Jon also created
+[libfxcg](https://github.com/Jonimoose/libfxcg), a library providing access to
+the syscalls on the platform. Finally, I created
+[mkg3a](/projects/mkg3a.html), a tool to pack the raw binaries
+output by the linker into the g3a files accepted by the device.
+
+Rumor has it the whole set of tools works. I haven't been able to verify that
+myself since I don't have a Prizm of my own, but it's all out there. Tarballs of
+the whole package are over on [Jon's
+site](http://jonimoose.net/calcstuff/prizm/), for anyone interested.
