@@ -1,8 +1,6 @@
 ---
-date: 
-layout: post
-slug: 
 title: Evaluating async I/O
+date: 2017-02-28
 categories:
 - Software
 ---

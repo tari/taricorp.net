@@ -2,10 +2,8 @@
 date: 2015-09-13
 title: Claude Shannon hates this one weird trick!
 subtitle: Checking dubious claims with Rust, Quickcheck, and TDD.
-layout: post
+draft: true
 ---
-
-DRAFT DRAFT DRAFT DRAFT
 
 There was a question posted to /r/AskComputerScience recently: ["does this
 compression scheme look fishy to you?"][reddit]. [The algorithm in

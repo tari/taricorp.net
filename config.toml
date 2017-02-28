@@ -1,4 +1,7 @@
 languageCode = "en-us"
-title = "My New Hugo Site"
-baseurl = "http://example.org/"
+title = "タリ"
+baseurl = "http://beta.taricorp.net"
 theme = "twentyfourteen"
+PygmentsCodeFences = true
+pygmentsstyle = default
+relativeURLs = true

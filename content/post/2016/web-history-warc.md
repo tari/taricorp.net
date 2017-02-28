@@ -2,7 +2,6 @@
 date: 2016-01-17
 title: Web history archival and WARC management
 subtitle: I should sleep more
-layout: post
 ---
 
 I've been a sort of 'rogue archivist' along the lines of the [Archive
@@ -48,7 +47,7 @@ process since Firefox maintains all of this data in
 Extracting history from `places.sqlite` is as simple as running a query that
 emits timestamps and corresponding URLs. For example:
 
-```
+```sh
 sqlite3 places.sqlite \
     "SELECT visit_date, url FROM moz_places, moz_historyvisits \
      WHERE moz_places.id = moz_historyvisits.place_id \
@@ -76,7 +75,7 @@ Again using sqlite and the `cookies.sqlite` file we got from Firefox, it's
 relatively easy to extract a [cookies.txt][cookiestxt] file that can be read by
 many tools:
 
-```
+```sh
 sqlite3 -separator ' ' cookies.sqlite << EOF
 .mode tabs
 .header off
@@ -103,7 +102,7 @@ With the list of URLs and cookies, it's again not difficult to capture a
 out of convenience. Taking advantage of a UNIX shell, I usually do the
 following, piping the URL list into wget:
 
-```
+```sh
 cut -d '|' -f 2- urls.txt | \
     wget --warc-file=`date` --warc-cdx --warc-max-size=1G \
          -e robots=off -U "Inconspicuous Browser" \
@@ -127,10 +126,9 @@ of what the browser's user is actually doing.
 
 ## Deduplication
 
-<figure>
-    <img src="/images/2016/lottawarcs.png" />
-    <figcaption>Mostly nondescript files, but there's a lot here.</figcaption>
-</figure>
+{{< figure src="/images/2016/lottawarcs.png"
+           alt="A directory listing showing many WARC files, each larger than a gigabyte."
+           caption="Mostly nondescript files, but there's a lot here." >}}
 
 On completion, I'm presented with a directory containing some number of
 compressed WARC files. That's a reasonable place to leave it, but this weekend

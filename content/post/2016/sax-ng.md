@@ -2,7 +2,6 @@
 date: 2016-05-27
 title: sax-ng
 subtitle: Building a small chat service
-layout: post
 ---
 
 Over on [Cemetech][cemetech], we've long had an embedded chat widget called
@@ -342,9 +341,7 @@ Most notably, the http-bind interface for ejabberd was initially exposed on port
 5280 (the default for http-bind). Users behind certain restrictive firewalls
 can't connect to that port, so we quickly reconfigured our web server to
 reverse-proxy to http-bind and solve that problem. Doing so also means the XMPP
-server doesn't need its own copy of the server's SSL certificate, which would
-otherwise require periodic maintenance to give it a freshly-renewed
-certificate.
+server doesn't need its own copy of the server's SSL certificate.
 
 There are still some pieces of the web site that emit messages containing HTML
 entities in accordance with the old system. The new system.. doesn't emit HTML

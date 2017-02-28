@@ -2,7 +2,6 @@
 date: 2017-02-23
 title: Quick and dirty web image optimization
 subtitle: An exercise in measurement
-layout: post
 tags:
   - web
   - png
@@ -42,8 +41,8 @@ delta.csv`).[^csv] This is so I can collect more information about the changes
 that were made.
 
 [^csv]: Assumption: none of the file names contain commas, since I'm calling
-  this a CSV (comma-separated values) file. It's true in this instance, but may
-  not be in others.
+        this a CSV (comma-separated values) file. It's true in this instance,
+        but may not be in others.
 
 ## Check the JPEGs
 
