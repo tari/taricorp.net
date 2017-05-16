@@ -3,5 +3,5 @@ title = "タリ"
 baseurl = "http://beta.taricorp.net"
 theme = "twentyfourteen"
 PygmentsCodeFences = true
-pygmentsstyle = default
+pygmentsstyle = "default"
 relativeURLs = true
