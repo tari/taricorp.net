@@ -1,0 +1,20 @@
+{{ partial "header.html" . }}
+
+<div id="main-content" class="main-content">
+	<div id="primary" class="content-area">
+		<div id="content" class="site-content" role="main">
+            <p>The requested page was not found on this server. Try searching
+            instead, or see below.</p>
+
+            <div id="wb404">
+            <script src="https://archive.org/web/wb404.js"></script>
+            <noscript>If your browser supported scripts we could automatically
+            see if the Wayback Machine has an archived version of a page at
+            this address, but you can still try to
+            <a href="http://web.archive.org/">find one manually</a>.</noscript>
+		</div><!-- #content -->
+	</div><!-- #primary -->
+	{{ partial "sidebar.html" . }}
+</div><!-- #main-content -->
+
+{{ partial "footer.html" . }}
