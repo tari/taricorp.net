@@ -1059,7 +1059,7 @@ span + .edit-link:before,
 .site-content .entry-meta,
 .page-content {
 	margin: 0 auto;
-	max-width: 474px;
+	max-width: 50em;
 }
 
 .page-content {
@@ -3434,21 +3434,6 @@ a.post-thumbnail:hover {
 
 	.search-toggle {
 		margin-right: 0;
-	}
-
-	/* Fixed Header */
-
-	.masthead-fixed .site-header {
-		position: fixed;
-		top: 0;
-	}
-
-	.admin-bar.masthead-fixed .site-header {
-		top: 32px;
-	}
-
-	.masthead-fixed .site-main {
-		margin-top: 48px;
 	}
 
 	/* Navigation */

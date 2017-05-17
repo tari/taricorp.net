@@ -13,15 +13,14 @@
 			</span>
 		</div>
 
-		<h1 class="entry-title">{{ .Title }}</h1>
+        <h1 class="entry-title"><a href="{{ .Permalink }}" rel="bookmark">{{ .Title }}</a></h1>
 
 		<div class="entry-meta">
 			<span class="entry-date">
-				<a href="{{ .Permalink }}/index.html" rel="bookmark">
-					<time class="entry-date" datetime="{{ .Date }}">
-						{{ .Date.Format "January 2" }}
-					</time>
-				</a>
+                Published
+                <time class="entry-date" datetime="{{ .Date }}">
+                    {{ .Date.Format "January 02, 2006" }}
+                </time>
 			</span>
 		</div><!-- .entry-meta -->
 

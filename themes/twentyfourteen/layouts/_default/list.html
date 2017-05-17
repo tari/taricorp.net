@@ -9,11 +9,16 @@
 				<h1 class="archive-title">{{ .Title }} Archive</h1>
 			</header>
 
-			{{ range where .Data.Pages "Section" "post" }}
+            {{ range .Paginator.Pages }}
 				{{ partial "content.html" . }}
 			{{ end }}
 		
 		</div><!-- #content -->
+        <nav class="navigation paging-navigation" role="navigation">
+            <div class="pagination loop-pagination">
+                {{ partial "pagination.html" . }}
+            </div>
+        </nav>
 	</div><!-- #primary -->
 	{{ partial "sidebar.html" . }}
 </div><!-- #main-content -->

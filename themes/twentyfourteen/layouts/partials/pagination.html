@@ -1,0 +1,33 @@
+{{ $pag := $.Paginator }}
+    {{ if gt $pag.TotalPages 1 }}
+        {{ if $pag.HasPrev }}
+        <a class="prev page-numbers" href="{{ $pag.Prev.URL }}">← Previous</a>
+        {{ end }}
+
+        {{ if gt $pag.PageNumber 2 }}
+        <a class="page-numbers" href="{{ $pag.First.URL }}">1</a>
+            {{ if gt $pag.PageNumber 3 }}
+            <span class="page-numbers dots">&hellip;</span>
+            {{ end }}
+        {{ end }}
+
+        {{ if $pag.HasPrev }}
+        <a class="page-numbers" href="{{ $pag.Prev.URL }}">{{ $pag.Prev.PageNumber }}</a>
+        {{ end }}
+        <span class="page-numbers current">{{ $pag.PageNumber }}</span>
+        {{ if $pag.HasNext }}
+        <a class="page-numbers" href="{{ $pag.Next.URL }}">{{ $pag.Next.PageNumber }}</a>
+        {{ end }}
+
+        {{ if lt $pag.PageNumber (sub $pag.TotalPages 1) }}
+            {{ if lt $pag.PageNumber (sub $pag.TotalPages 2) }}
+            <span class="page-numbers dots">&hellip;</span>
+            {{ end }}
+            <a class="page-numbers" href="{{ $pag.Last.URL }}">{{ $pag.Last.PageNumber }}</a>
+        {{ end }}
+
+
+        {{ if $pag.HasNext }}
+        <a class="next page-numbers" href="{{ $pag.Next.URL }}">Next →</a>
+        {{ end }}
+    {{ end }}

@@ -5,11 +5,16 @@
 	<div id="primary" class="content-area">
 		<div id="content" class="site-content" role="main">
 
-			{{ range first 10 .Data.Pages }}
+            {{ range .Paginator.Pages }}
 				{{ partial "content.html" . }}
 			{{ end }}
 		
 		</div><!-- #content -->
+        <nav class="navigation paging-navigation" role="navigation">
+            <div class="pagination loop-pagination">
+                {{ partial "pagination.html" . }}
+            </div>
+        </nav>
 	</div><!-- #primary -->
 	{{ partial "sidebar.html" . }}
 </div><!-- #main-content -->

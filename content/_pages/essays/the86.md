@@ -1,7 +1,7 @@
 ---
 layout: page
 title: The TI-86
-date: sometime in 2008
+date: 2008-06-20
 last_revised: 2011-07-29 22:23:20.000000000 -06:00
 categories: []
 tags: []
