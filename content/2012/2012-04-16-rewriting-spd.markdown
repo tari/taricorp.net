@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2012-04-16 15:24:26+00:00
-layout: post
 slug: rewriting-spd
 title: Rewriting SPD
 wordpress_id: 630

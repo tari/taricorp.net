@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2012-01-25 17:26:44+00:00
-layout: post
 slug: locating-packages-with-cmake
 title: Locating packages with cmake
 wordpress_id: 510

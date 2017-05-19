@@ -2,7 +2,6 @@
 author: No Content Found
 comments: true
 date: 2010-10-08 19:59:58+00:00
-layout: post
 slug: oh-hi
 title: Oh, Hi
 wordpress_id: 186

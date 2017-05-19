@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2011-12-11 06:27:45+00:00
-layout: post
 slug: a-few-small-projects
 title: A few small projects
 wordpress_id: 330

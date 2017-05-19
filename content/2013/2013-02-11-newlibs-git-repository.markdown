@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2013-02-11 00:01:21+00:00
-layout: post
 slug: newlibs-git-repository
 title: Newlib's git repository
 wordpress_id: 972

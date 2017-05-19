@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2012-03-13 23:31:19+00:00
-layout: post
 slug: ssl-enabled
 title: SSL enabled
 wordpress_id: 607

@@ -2,7 +2,6 @@
 author: No Content Found
 comments: true
 date: 2010-06-23 23:36:19+00:00
-layout: post
 slug: wednesday-link-dump
 title: Wednesday link dump
 wordpress_id: 147

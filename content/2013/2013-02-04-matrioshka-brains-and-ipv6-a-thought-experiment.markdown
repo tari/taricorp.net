@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2013-02-04 02:34:40+00:00
-layout: post
 slug: matrioshka-brains-and-ipv6-a-thought-experiment
 title: 'Matrioshka brains and IPv6: a thought experiment'
 wordpress_id: 872

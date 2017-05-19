@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2012-01-25 04:39:19+00:00
-layout: post
 slug: rtorrent-scripting-considered-harmful
 title: rtorrent scripting considered harmful
 wordpress_id: 495

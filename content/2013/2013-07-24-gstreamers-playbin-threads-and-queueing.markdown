@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2013-07-24 02:54:09+00:00
-layout: post
 slug: gstreamers-playbin-threads-and-queueing
 title: GStreamer's playbin, threads and queueing
 wordpress_id: 988

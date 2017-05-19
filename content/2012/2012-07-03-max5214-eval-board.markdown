@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2012-07-03 03:05:11+00:00
-layout: post
 slug: max5214-eval-board
 title: MAX5214 Eval Board
 wordpress_id: 709

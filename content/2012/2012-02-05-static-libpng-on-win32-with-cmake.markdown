@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2012-02-05 19:35:55+00:00
-layout: post
 slug: static-libpng-on-win32-with-cmake
 title: Static libpng on win32 with CMake
 wordpress_id: 582

@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2011-12-26 19:48:16+00:00
-layout: post
 slug: experiments-with-a-high-availability-home
 title: Experiments with a high-availability /home
 wordpress_id: 392

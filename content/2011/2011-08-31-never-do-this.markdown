@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2011-08-31 02:35:45+00:00
-layout: post
 slug: never-do-this
 title: How not to distribute software
 wordpress_id: 236

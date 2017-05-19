@@ -2,7 +2,6 @@
 author: No Content Found
 comments: true
 date: 2010-07-18 18:50:36+00:00
-layout: post
 slug: markov-py
 title: markov.py
 wordpress_id: 166

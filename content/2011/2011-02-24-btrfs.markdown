@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2011-02-24 01:46:09+00:00
-layout: post
 slug: btrfs
 title: Btrfs
 wordpress_id: 203

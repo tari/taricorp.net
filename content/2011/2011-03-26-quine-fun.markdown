@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2011-03-26 01:51:49+00:00
-layout: post
 slug: quine-fun
 title: Obfuscation for Fun and Profit
 wordpress_id: 214

@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2012-06-01 22:36:29+00:00
-layout: post
 slug: a-divergence-meter-note
 title: A divergence meter note
 wordpress_id: 683

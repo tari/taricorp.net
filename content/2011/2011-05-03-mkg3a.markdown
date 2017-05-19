@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2011-05-03 02:31:21+00:00
-layout: post
 slug: mkg3a
 title: mkg3a
 wordpress_id: 232

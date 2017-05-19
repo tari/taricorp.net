@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2012-02-12 20:17:30+00:00
-layout: post
 slug: d-meter-updates
 title: D-meter updates
 wordpress_id: 596

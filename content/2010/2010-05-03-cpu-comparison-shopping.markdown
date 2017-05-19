@@ -2,7 +2,6 @@
 author: No Content Found
 comments: true
 date: 2010-05-03 22:18:08+00:00
-layout: post
 slug: cpu-comparison-shopping
 title: CPU Comparison Shopping
 wordpress_id: 74

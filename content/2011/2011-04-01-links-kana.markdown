@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2011-04-01 01:57:38+00:00
-layout: post
 slug: links-kana
 title: Of Links and Kana
 wordpress_id: 218

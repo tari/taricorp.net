@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2012-04-30 22:08:32+00:00
-layout: post
 slug: chainloading-truecrypt
 title: Chainloading Truecrypt
 wordpress_id: 664

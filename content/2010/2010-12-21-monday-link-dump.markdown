@@ -2,7 +2,6 @@
 author: No Content Found
 comments: true
 date: 2010-12-21 01:13:59+00:00
-layout: post
 slug: monday-link-dump
 title: Monday Link Dump
 wordpress_id: 198

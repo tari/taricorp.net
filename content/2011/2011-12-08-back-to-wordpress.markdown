@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2011-12-08 02:40:56+00:00
-layout: post
 slug: back-to-wordpress
 title: Back to wordpress
 wordpress_id: 283

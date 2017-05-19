@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2014-10-14 04:32:15+00:00
-layout: post
 slug: a-sufficiently-smart-compiler
 title: '"A Sufficiently Smart Compiler"'
 wordpress_id: 1119

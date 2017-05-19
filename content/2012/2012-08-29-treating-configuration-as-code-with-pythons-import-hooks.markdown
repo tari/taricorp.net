@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2012-08-29 00:32:11+00:00
-layout: post
 slug: treating-configuration-as-code-with-pythons-import-hooks
 title: Treating configuration as code with Python's import hooks
 wordpress_id: 799

@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2012-01-27 04:28:43+00:00
-layout: post
 slug: high-availability-home-revisited
 title: High-availability /home revisited
 wordpress_id: 530

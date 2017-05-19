@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2012-01-04 21:22:59+00:00
-layout: post
 slug: divergence-meter-progress
 title: Divergence meter progress
 wordpress_id: 468

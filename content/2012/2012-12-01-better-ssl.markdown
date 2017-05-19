@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2012-12-01 03:57:15+00:00
-layout: post
 slug: better-ssl
 title: Better SSL
 wordpress_id: 835

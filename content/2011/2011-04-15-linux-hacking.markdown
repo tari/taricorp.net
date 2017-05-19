@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2011-04-15 02:00:26+00:00
-layout: post
 slug: linux-hacking
 title: Pointless Linux Hacks
 wordpress_id: 225

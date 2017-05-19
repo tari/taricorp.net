@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2012-05-15 18:32:12+00:00
-layout: post
 slug: divergence-meter-high-voltage-supply-and-fet-drivers
 title: 'Divergence meter: high-voltage supply and FET drivers'
 wordpress_id: 627

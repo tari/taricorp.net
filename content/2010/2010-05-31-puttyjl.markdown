@@ -2,7 +2,6 @@
 author: No Content Found
 comments: true
 date: 2010-05-31 01:39:59+00:00
-layout: post
 slug: puttyjl
 title: PuTTYJL
 wordpress_id: 93

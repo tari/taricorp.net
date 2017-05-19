@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2013-01-17 02:17:28+00:00
-layout: post
 slug: of-cable-modems-and-the-dumb-solution
 title: Of Cable Modems and the Dumb Solution
 wordpress_id: 841

@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2014-03-28 20:55:01+00:00
-layout: post
 slug: reverse-engineering-renpy-packages
 title: Reverse-engineering Ren'py packages
 wordpress_id: 997

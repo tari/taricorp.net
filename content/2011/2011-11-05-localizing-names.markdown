@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2011-11-05 02:47:15+00:00
-layout: post
 slug: localizing-names
 title: Of Names and Localization
 wordpress_id: 259

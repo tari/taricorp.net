@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2013-02-01 21:35:10+00:00
-layout: post
 slug: fourier-transform
 title: '"Four"ier transform'
 wordpress_id: 924

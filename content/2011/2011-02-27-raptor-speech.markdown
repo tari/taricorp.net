@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2011-02-27 01:49:18+00:00
-layout: post
 slug: raptor-speech
 title: Raptor Speech
 wordpress_id: 211

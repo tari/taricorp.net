@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2011-09-03 02:41:49+00:00
-layout: post
 slug: chronos-docs
 title: Some Chronos Documentation
 wordpress_id: 253

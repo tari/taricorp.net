@@ -2,7 +2,6 @@
 author: tari
 comments: true
 date: 2012-08-08 03:06:35+00:00
-layout: post
 slug: copyright-is-broken
 title: Copyright is broken
 wordpress_id: 732
