@@ -12,16 +12,20 @@
     
     <link href="{{ .Site.BaseURL }}/index.xml" rel="alternate" type="application/rss+xml" title="{{ .Site.Title }}" />
 
-    <link rel='stylesheet' id='twentyfourteen-lato-css'  href='//fonts.googleapis.com/css?family=Lato%3A300%2C400%2C700%2C900%2C300italic%2C400italic%2C700italic&#038;subset=latin%2Clatin-ext' type='text/css' media='all' />
-
-    <link rel='stylesheet' id='genericons-css' href='{{ .Site.BaseURL }}/genericons/genericons.css' type='text/css' media='all' />
 	<link rel='stylesheet' id='twentyfourteen-style-css' href='{{ .Site.BaseURL }}/css/style.css' type='text/css' media='all' />
-	<!--[if lt IE 9]>
-	<link rel='stylesheet' id='twentyfourteen-ie-css'  href='/css/ie.css' type='text/css' media='all' />
-	<![endif]-->
-	<script type='text/javascript' src='{{ .Site.BaseURL }}/js/jquery/jquery.js'></script>
-	<script type='text/javascript' src='{{ .Site.BaseURL }}/js/jquery/jquery-migrate.min.js'></script>
+	<script defer type='text/javascript' src='{{ .Site.BaseURL }}/js/jquery/jquery.js'></script>
+	<script defer type='text/javascript' src='{{ .Site.BaseURL }}/js/jquery/jquery-migrate.min.js'></script>
+    <script defer type='text/javascript' src='//comments.taricorp.net/js/embed.min.js' data-isso='//comments.taricorp.net/'></script>
 	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous" />
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            renderMathInElement(document.body);
+        });
+    </script>
 </head>
 
 <body class="home blog masthead-fixed list-view full-width grid">
@@ -31,11 +35,12 @@
 			<h1 class="site-title"><a href="{{ .Site.BaseURL }}/index.html" rel="home">{{ .Site.Title }}</a></h1>
 
 			<div class="search-toggle">
-				<a href="#search-container" class="screen-reader-text">Search</a>
+                <input id="search-input" type="text" placeholder="Search"/>
+                <button type="submit">&#x1f50d</button>
 			</div>
 
 			<nav id="primary-navigation" class="site-navigation primary-navigation" role="navigation">
-				<button class="menu-toggle">Primary Menu</button>
+                <button class="menu-toggle">Menu</button>
 				<a class="screen-reader-text skip-link" href="#content">Skip to content</a>
 				<div class="nav-menu">
 					<ul>
