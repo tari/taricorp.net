@@ -17,3 +17,14 @@
 [ ] figures are wonky (xref matroishka)
 [ ] audit jquery use (functions.js in particular)
 [ ] xref header link tags against current
+[ ] what's up with \_pages?
+
+## Optimization
+
+Set up to minify resources with `gulp`. First `npm install`, then invoke `gulp`
+to (by default) copy Hugo's output to the `public-min` directory and minify the
+appropriate resources.
+
+Borrowed from https://github.com/bonnici/gulp-hugo-workflow/. Also supports
+watching for updates and automatically reloading which might be interesting to
+try out.
