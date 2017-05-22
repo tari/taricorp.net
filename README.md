@@ -11,3 +11,9 @@
 [ ] broken post permalinks, eg hodorCSE and older
 [x] pagination styling
 [ ] include last updated time next to first published time
+[ ] responsive reflow seems wonky, xref wordpress (maybe just take the whole
+    wordpress stylesheet
+[ ] change searchform.html to use ddg (or a choice?)
+[ ] figures are wonky (xref matroishka)
+[ ] audit jquery use (functions.js in particular)
+[ ] xref header link tags against current

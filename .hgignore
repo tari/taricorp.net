@@ -1,1 +1,3 @@
 ^public/
+^public-min/
+^node_modules/
