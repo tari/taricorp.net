@@ -74,3 +74,8 @@ dedicated syntax chronologically appears to be in
 MSDN cites responsiveness in GUIs as the main motivation, enabled specifically
 by dedicated syntax. Can be easier than threads as a result, since things look
 like they block but don't because the compiler does magic under the hood.
+
+fibers are generally defined as cooperative threads rather than preemptive
+ones. You can avoid unnecessary context switch costs when IO-bound processing
+might be preempted, but should not run CPU-bound operations on a fiber because
+you can starve other fibers from doing their IO-bound processing.
