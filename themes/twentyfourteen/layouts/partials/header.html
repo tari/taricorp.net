@@ -20,10 +20,8 @@
 	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous" />
 
-     <!-- External scripts -->
-	<script defer type='text/javascript' src='{{ .Site.BaseURL }}/js/jquery/jquery.js'></script>
-	<script defer type='text/javascript' src='{{ .Site.BaseURL }}/js/jquery/jquery-migrate.min.js'></script>
-    <script defer type='text/javascript' src='//comments.taricorp.net/js/embed.min.js' data-isso='//comments.taricorp.net/'></script>
+    <!-- External scripts -->
+    <script async type='text/javascript' src='//comments.taricorp.net/js/embed.min.js' data-isso='//comments.taricorp.net/'></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
 </head>
@@ -40,17 +38,7 @@
 			</div>
 
 			<nav id="primary-navigation" class="site-navigation primary-navigation" role="navigation">
-                <button class="menu-toggle">Menu</button>
 				<a class="screen-reader-text skip-link" href="#content">Skip to content</a>
-				<div class="nav-menu">
-					<ul>
-						{{ range .Site.Menus.main }}
-						<li class="page_item"> 
-							<a href="{{ .URL }}">{{ .Name }}</a>
-						</li>
-						{{ end }}
-					</ul>
-				</div>
 			</nav>
 		</div>
 

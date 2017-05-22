@@ -839,8 +839,10 @@ span + .edit-link:before {
 	margin: 0;
 
 	/* Nav-toggle width + search-toggle width - gutter = 86px */
+    /* TODO obsolete.
 	max-width: -webkit-calc(100% - 86px);
 	max-width:         calc(100% - 86px);
+    */
 }
 
 .site-title a,
@@ -859,7 +861,6 @@ span + .edit-link:before {
 	cursor: pointer;
 	float: right;
 	height: 48px;
-	margin-right: 54px;
 	text-align: center;
 	width: auto;
 }
@@ -2719,10 +2720,6 @@ a.post-thumbnail:hover {
 		padding: 0 30px;
 	}
 
-	.search-toggle {
-		margin-right: 18px;
-	}
-
 	.search-box .search-field {
 		width: 50%;
 	}
@@ -2811,10 +2808,6 @@ a.post-thumbnail:hover {
 
 	.header-main {
 		padding-right: 0;
-	}
-
-	.search-toggle {
-		margin-right: 0;
 	}
 
 	/* Navigation */
