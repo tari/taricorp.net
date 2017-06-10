@@ -3,7 +3,13 @@ title: Evaluating async I/O
 draft: true
 date: 2017-02-28
 categories:
-- Software
+ - Software
+tags:
+ - optimization
+ - concurrency
+ - threading
+ - async
+ - tokio
 ---
 
 A common belief among software engineers of a certain temperament seems to be

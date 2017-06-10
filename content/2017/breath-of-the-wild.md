@@ -1,7 +1,15 @@
 ---
 title: Reflecting on Breath of the Wild
 draft: true
-date: 2017-05-22
+date: 2017-06-10
+categories:
+ - Miscellanea
+tags: 
+ - zelda
+ - games
+ - lovecraft
+ - horror
+ - deep time
 ---
 
 I've been enjoying [The Legend of Zelda: Breath of the Wild][botw] recently, and

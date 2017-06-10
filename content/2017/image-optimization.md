@@ -2,6 +2,9 @@
 date: 2017-02-23
 title: Quick and dirty web image optimization
 subtitle: An exercise in measurement
+categories:
+ - Software
+ - Hacking/Tweaking
 tags:
   - web
   - png

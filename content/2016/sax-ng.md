@@ -2,6 +2,19 @@
 date: 2016-05-27
 title: sax-ng
 subtitle: Building a small chat service
+categories:
+ - Software
+ - Linux
+tags:
+ - cemetech
+ - sax
+ - xmpp
+ - chat
+ - ejabberd
+ - irc
+ - javascript
+ - http
+ - python
 ---
 
 Over on [Cemetech][cemetech], we've long had an embedded chat widget called

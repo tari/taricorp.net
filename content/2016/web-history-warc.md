@@ -2,6 +2,15 @@
 date: 2016-01-17
 title: Web history archival and WARC management
 subtitle: I should sleep more
+categories:
+ - Software
+ - Linux
+tags:
+ - warc
+ - wget
+ - firefox
+ - cookies
+ - archiving
 ---
 
 I've been a sort of 'rogue archivist' along the lines of the [Archive
