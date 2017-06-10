@@ -26,6 +26,27 @@ operations when there's still CPU time available.
 So use a thread pool without a fixed size, spawning threads when there are no
 idle ones available.
 
+---
+
+Even better: spawn more threads when utilization is low. You need to be able
+to measure utilization though.
+
+On Linux, /proc/n/task enumerates threads, task/n/stat gives CPU statistics,
+including run state (Running, Sleeping, D for uninterruptible, Zombie). You
+could sample this for workers and look at whether they're runnable but not running
+(need to know how many CPUs you have an compare to the number of runnable threads
+I guess). If too many threads are runnable at any given time, stop spawning threads
+and instead queue requests (or shed load!). See kernel Documentation/filesystesm/proc.txt
+(Table 1-2).
+
+It may also be possible to use cgroups for this, creating a cgroup might be useful
+so the kernel does CPU accounting for you. Have a look at cgroups(7), kernel
+Documentation/cgroup-v1/cpuacct.txt
+
+This is of course not portable. Would need some work there.
+
+---
+
 This has a cost in stacks, since reusing a thread that has used a larger amount
 of stack will have memory committed to those stacks which is not in use.
 Periodically stop threads to free memory, or madvise to free it or something.
