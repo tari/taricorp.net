@@ -1,10 +1,14 @@
 #!/bin/sh
 
 typeset build=true
+typeset hugoopts=""
 
 while [ "$#" -gt "0" ]
 do
     case $1 in
+        -D)
+            hugoopts="$hugoopts -D"
+            ;;
         --no-build)
             build=false
             ;;
@@ -16,11 +20,12 @@ do
             exit 1
             ;;
     esac
+    shift
 done
 
 if [ "$build" = "true" ]
 then
-    hugo
+    hugo $hugoopts
 fi
 
 rsync -azx --delete public/ shirabe:/var/www/beta.taricorp.net/public_html/
