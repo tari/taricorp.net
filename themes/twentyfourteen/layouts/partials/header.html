@@ -32,20 +32,9 @@
 		<div class="header-main">
 			<h1 class="site-title"><a href="{{ .Site.BaseURL }}/index.html" rel="home">{{ .Site.Title }}</a></h1>
 
-			<div class="search-toggle">
-                <input id="search-input" type="text" placeholder="Search"/>
-                <button type="submit">&#x1f50d</button>
-			</div>
-
 			<nav id="primary-navigation" class="site-navigation primary-navigation" role="navigation">
 				<a class="screen-reader-text skip-link" href="#content">Skip to content</a>
 			</nav>
-		</div>
-
-		<div id="search-container" class="search-box-wrapper hide">
-			<div class="search-box">
-                {{ partial "searchform.html" . }}
-			</div>
 		</div>
 	</header><!-- #masthead -->
 
