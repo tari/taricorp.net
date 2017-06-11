@@ -1,7 +1,7 @@
 ---
 title: Reflecting on Breath of the Wild
-draft: true
-date: 2017-06-10
+draft: false
+date: 2017-06-11
 categories:
  - Miscellanea
 tags: 
@@ -15,7 +15,7 @@ tags:
 I've been enjoying [The Legend of Zelda: Breath of the Wild][botw] recently, and
 reflected some on what makes it interesting to me from a non-gameplay
 perspective. This document is a version of those musings organized for
-publishing, though perhaps less well organized than my usual writings- I am by
+publication, though perhaps less well organized than my usual writings- I am by
 no means a skilled critic, but spending longer in composing this would likely
 just delay its completion to little benefit.
 
@@ -37,8 +37,8 @@ interesting (and was bad at it). Similarly, some time later I tried [Ocarina of
 Time][oot] and failed to find anything compelling about it. Claiming that those
 games are simply not fun would be disingenuous, given both of them appear in
 multiple lists of "greatest video games ever" compiled by various parties. The
-correct question to answer here is then what differences between those earlier
-games and Breath of the Wild that makes the latter interesting to me, but the
+correct question to answer here is then which of the differences between those earlier
+games and Breath of the Wild make the latter interesting to me, but the
 former not.
 
 [lttp]: https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_A_Link_to_the_Past
@@ -146,7 +146,7 @@ the standards of other contemporary gaming platforms.
 I noted earlier that Breath of the Wild does not seem to take it as given that
 the player's character is destined to become a great hero and save the world,
 but an alternate interpretation might be that the player already has hero
-credentials. It is shown early on that Link was some kind of royally-appointed
+credentials. It is shown early on that Link was some kind of royally appointed
 champion, and it is then implied that those selfsame credentials derive to some
 extent from Link being an embodiment of a spirit that protects the world through
 time immemorial.
@@ -164,8 +164,8 @@ effective. Putting this kind of backstory in-line might have been distracting
 and taken away from the feel of a desolate and ruined world, which makes for
 some of the most intriguing parts of the setting.
 
-It is a bit unusual among games (with this kind of budget available to them) in
-general that this one largely does without voice acting- most characters (the
+It is a bit unusual among games (those with this kind of budget available at
+least) that this one largely does without voice acting- most characters (the
 player included) "speak" in what amounts to grunts, except in flashbacks and
 with a few major characters who are fully voiced. This works well I find; they
 are not particularly wordy, and suggest some kind of connection between Link and

@@ -1,6 +1,6 @@
-+++
-date = "2017-05-16T10:20:43+10:00"
-title = "An illustrated guide to LLVM"
+---
+date: 2017-05-16T10:20:43+10:00
+title: An illustrated guide to LLVM
 categories:
  - Software
 tags:
@@ -9,7 +9,7 @@ tags:
  - compilers
  - presentation
  - meetup
-+++
+---
 
 At the most recent [Rust Sydney][meetup] meetup (yesterday, "celebrating" Rust's
 [second birthday][birthday]) I gave a talk intended to provide an introduction
