@@ -219,7 +219,9 @@ know that the smallest serrated-looking bits at the bottom of the stack are the
 FETs. Working from that, the entire interconnect stack is about (1 +
 1.4 + 2 + 3 + 4) &times; 40 = 456 nanometers tall, assuming the metal
 pitch is proportional to its thickness. That's a small fraction of the wafer's
-overall thickness, which is 925000 nanometers.
+overall thickness, which is 925000 nanometers.[^authority]
+
+[^authority]: As a more informed estimate, somebody who works in the semiconductor industry estimates in a talk from HoPE in 2012 that [the total stackup on Intel's 22nm process is about 100 microns](https://youtu.be/NGFhc8R_uO4?t=36m37s), still only about a tenth of the wafer thickness.
 
 But enough of things that don't enter into our computations. Back to the real work!
 
