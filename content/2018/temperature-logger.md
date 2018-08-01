@@ -1,6 +1,6 @@
 ---
 title: "Building a terrible 'IoT' temperature logger"
-draft: true
+draft: false
 date: 2018-07-31
 categories:
   - Software
@@ -235,15 +235,13 @@ is just plain text based on a simple template.
 
 ```python
 class Exporter(BaseHTTPRequestHandler):
-    METRIC_HEADER = ('# HELP w1therm_temperature Temperature in Kelvin of the
-sensor.\n'
+    METRIC_HEADER = ('# HELP w1therm_temperature Temperature in Kelvin of the sensor.\n'
                      '# TYPE w1therm_temperature gauge\n')
 
     def build_exposition(self, sensor_states):
         out = self.METRIC_HEADER
         for sensor, temperature in sensor_states.items():
-            out += 'w1therm_temperature{{id="{}"}} {}\n'.format(sensor,
-temperature)
+            out += 'w1therm_temperature{{id="{}"}} {}\n'.format(sensor, temperature)
         return out
 ```
 
