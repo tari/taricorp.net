@@ -37,7 +37,7 @@ sensors provided by the above co-worker), I threw something together. It also
 turned out that the deadline was quite short (brewing began just two days after
 this initial exchange), but I made it work in time.
 
-<!-- more -->
+<!--more-->
 
 ## Interfacing the thermometer
 
