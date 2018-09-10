@@ -28,4 +28,4 @@ then
     hugo $hugoopts
 fi
 
-rsync -azx --delete public/ shirabe:/var/www/beta.taricorp.net/public_html/
+rsync -avzx --delete public/ shirabe:/var/www/beta.taricorp.net/public_html/

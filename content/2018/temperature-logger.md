@@ -37,6 +37,8 @@ sensors provided by the above co-worker), I threw something together. It also
 turned out that the deadline was quite short (brewing began just two days after
 this initial exchange), but I made it work in time.
 
+<!-- more -->
+
 ## Interfacing the thermometer
 
 As noted above, the core of this temperature logger is a DS18B20 temperature
