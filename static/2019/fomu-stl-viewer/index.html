@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<head>
+    <title>Fomu jig viewer</title>
+    <style>
+        #stl_cont {
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+        }
+        #attribution {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+        }
+    </style>
+<body>
+    <div id="loadInfo">
+        Loading..
+        <br>
+        <progress id="loadProgress"></progress>
+    </div>
+
+    <div id="attribution">
+        Powered by <a href="https://www.viewstl.com/">ViewSTL</a>.
+    </div>
+
+    <div id="stl_cont">
+        <noscript>This viewer requires Javascript.</noscript>
+    </div>
+
+    <script src="stl_viewer.min.js"></script>
+    <script type="text/javascript">
+        var progress = document.getElementById("loadProgress");
+        function load_callback(status, session) {
+            var loaded = 0;
+            var total = 0;
+
+            status.forEach(function(model) {
+                loaded += model.loaded;
+                total += model.total;
+            });
+            progress.value = loaded / total;
+        }
+
+        function load_complete_callback() {
+            var load_info = document.getElementById("loadInfo");
+            load_info.style.display = "none";
+        }
+
+        var stl_viewer = new StlViewer(
+            document.getElementById("stl_cont"),
+            {
+                models: [{
+                    filename: "../fomu-jig.stl",
+                    color: "#4080f0",
+                    opacity: 0.95,
+                    view_edges: true,
+                    rotationx: -Math.PI / 2,
+                }],
+                camerax: 30,
+                cameray: 40,
+                loading_progress_callback: load_callback,
+                all_loaded_callback: load_complete_callback,
+            }
+        );
+    </script>
+</body>

@@ -28,3 +28,14 @@ appropriate resources.
 Borrowed from https://github.com/bonnici/gulp-hugo-workflow/. Also supports
 watching for updates and automatically reloading which might be interesting to
 try out.
+
+## Images
+
+optimage: https://github.com/sk-/optimage
+In particular zopflipng gets good compression
+
+butteraugli makes it easier to evaluate lossy compressions:
+https://github.com/google/butteraugli
+
+pngquant can do nice possibly-lossless compression of PNGs,
+pngcrush too
