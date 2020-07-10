@@ -1,10 +1,10 @@
-+++
-title = "Fomu: a beginner's guide"
-description = ""
-date = "2019-03-06"
-tags = ['fpga', 'fomu', 'tomu', 'icestorm', 'hacking', '3d printing', 'raspberry pi', 'debugging']
-categories = ['Embedded Systems', 'Hacking']
-+++
+---
+title: "Fomu: a beginner's guide"
+description: ""
+date: "2019-03-06"
+tags: ['fpga', 'fomu', 'tomu', 'icestorm', 'hacking', '3d printing', 'raspberry pi', 'debugging']
+categories: ['Embedded Systems', 'Hacking']
+---
 
 FPGAs are pretty cool pieces of hardware for tinkering with, and have become
 remarkably easy to approach as a hobbyist in recent years. Boards like the
