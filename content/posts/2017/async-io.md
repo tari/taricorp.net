@@ -1,5 +1,6 @@
 ---
 title: Evaluating async I/O
+slug: async-io
 draft: true
 date: 2017-02-28
 categories:

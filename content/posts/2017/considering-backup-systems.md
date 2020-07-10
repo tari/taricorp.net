@@ -1,6 +1,7 @@
 ---
 date: 2017-11-07
 title: Considering my backup systems
+slug: considering-backup-systems
 categories:
  - Software
 tags:

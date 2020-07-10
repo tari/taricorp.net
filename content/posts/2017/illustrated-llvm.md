@@ -1,6 +1,7 @@
 ---
 date: 2017-05-16T10:20:43+10:00
 title: An illustrated guide to LLVM
+slug: illustrated-llvm
 categories:
  - Software
 tags:

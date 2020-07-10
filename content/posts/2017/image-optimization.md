@@ -1,6 +1,7 @@
 ---
 date: 2017-02-23
 title: Quick and dirty web image optimization
+slug: quick-and-dirty-web-image-optimization
 subtitle: An exercise in measurement
 categories:
  - Software

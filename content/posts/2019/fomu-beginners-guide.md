@@ -1,5 +1,6 @@
 ---
 title: "Fomu: a beginner's guide"
+slug: fomu-beginners-guide
 description: ""
 date: "2019-03-06"
 tags: ['fpga', 'fomu', 'tomu', 'icestorm', 'hacking', '3d printing', 'raspberry pi', 'debugging']

@@ -1,5 +1,6 @@
 ---
 title: Reflecting on Breath of the Wild
+slug: breath-of-the-wild
 draft: false
 date: 2017-06-11
 categories:

@@ -1,6 +1,7 @@
 ---
 date: 2015-09-13
 title: Claude Shannon hates this one weird trick!
+slug: quickcheck-source-coding
 subtitle: Checking dubious claims with Rust, Quickcheck, and TDD.
 draft: true
 ---

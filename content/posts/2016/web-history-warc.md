@@ -1,6 +1,7 @@
 ---
 date: 2016-01-17
 title: Web history archival and WARC management
+slug: web-history-warc
 subtitle: I should sleep more
 categories:
  - Software

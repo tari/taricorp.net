@@ -1,5 +1,6 @@
 ---
 title: "Temperature Logging: Redux"
+slug: temperature-logging-redux
 date: 2018-08-22
 draft: true
 categories:

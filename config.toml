@@ -5,3 +5,6 @@ theme = "twentyfourteen"
 PygmentsCodeFences = true
 pygmentsstyle = "default"
 relativeURLs = true
+
+[permalinks]
+posts = "/:year/:slug/"

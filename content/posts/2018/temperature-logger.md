@@ -1,5 +1,6 @@
 ---
 title: "Building a terrible 'IoT' temperature logger"
+slug: temperature-logger
 draft: false
 date: 2018-07-31
 categories:
