@@ -1,0 +1,27 @@
+# Should match the backend app's configuration on gitlab
+site_url: https://beta.taricorp.net
+
+collections:
+  - name: "post" # Used in routes, ie.: /admin/collections/:slug/edit
+    label: "Post" # Used in the UI, ie.: "New Post"
+    folder: "site/content" # The path to the folder where the documents are stored
+    create: true # Allow users to create new documents in this collection
+    fields: # The fields each document in this collection have
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Draft", name: "draft", widget: "boolean", default: false}
+      - {label: "Publish Date", name: "date", widget: "datetime"}
+      # TODO: make a collection for categories and make this a relation
+      - {label: "Categories", name: "categories", widget: "list"}
+      # TODO: as above, make a collection?
+      - {label: "Tags", name: "tags", widget: "list"}
+      - {label: "Body", name: "body", widget: "markdown"}
+
+media_folder: "static/uploads"
+public_folder: "uploads"
+
+backend:
+  name: gitlab
+  repo: taricorp/taricorp.net
+  branch: netlify-cms
+  auth_type: implicit
+  app_id: f9450f5bbb8fae7444b02bf9f29166b0a3cb9eb96c72ce90e4ce59bc274e70be
