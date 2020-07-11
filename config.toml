@@ -1,6 +1,5 @@
 languageCode = "en-us"
 title = "タリ"
-baseurl = "http://beta.taricorp.net"
 theme = "twentyfourteen"
 PygmentsCodeFences = true
 pygmentsstyle = "default"
@@ -8,3 +7,5 @@ relativeURLs = true
 
 [permalinks]
 posts = "/:year/:slug/"
+projects = "/projects/:slug/"
+essays = "/essays/:slug/"
