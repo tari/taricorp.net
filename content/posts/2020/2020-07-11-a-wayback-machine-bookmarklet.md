@@ -19,7 +19,7 @@ tags:
 ---
 Sometimes I find it useful to be able to quickly save a page to the [Wayback Machine](https://en.wikipedia.org/wiki/Wayback_Machine), often to be able to provide a stable link to a page that I don’t control- for instance if I’m pointing somebody to a document that describes something they’re asking about, then it’s nice to ensure that there will still be an archived copy if the original goes away.
 
-{{< figure src="save-page-now.png" alt="The 'Save Page Now' field in the wayback machine. There is a 'Save Page' button associated with a URL entry field." >}}
+{{< figure src="/images/save-page-now.png" alt="The 'Save Page Now' field in the wayback machine. There is a 'Save Page' button associated with a URL entry field." >}}
 
 While the landing page on web.archive.org has a “save now” form to quickly save a page given its URL, this is still more cumbersome than I’d like- it involves copying the desired URL, opening a new tab to web.archive.org, pasting the URL into the form and pressing the save button- in exactly that order.
 
