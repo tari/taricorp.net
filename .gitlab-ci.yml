@@ -1,0 +1,15 @@
+image: registry.gitlab.com/pages/hugo:latest
+
+.hugo:
+  stage: deploy
+  script:
+    - hugo -b ${HUGO_BASEURL}
+  artifacts:
+    paths:
+      - public
+
+pages:
+  extends: .hugo
+  variables:
+    HUGO_BASEURL: https://taricorp.gitlab.io/taricorp.net/
+
