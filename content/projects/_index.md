@@ -15,8 +15,9 @@ the pursuit of meaning in existence.
 
 ## Subpages
 
-{% for page in site.pages %}{% if page.url contains "/projects" and page.url != "/projects/index.html" and page.title %} * [{{ page.title }}]({{page.url}})
-{% endif %}{% endfor %}
+{{ range .Pages }}
+  {{ .Render "title" }}
+{{ end }}
 
 # License
 
