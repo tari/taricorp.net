@@ -4,24 +4,70 @@ site_url: https://beta.taricorp.net
 collections:
   - name: "post" # Used in routes, ie.: /admin/collections/:slug/edit
     label: "Post" # Used in the UI, ie.: "New Post"
-    folder: "site/content" # The path to the folder where the documents are stored
+    folder: "content/posts"
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{year}}/{{slug}}"
+    # Create page bundles
+    #path: "{{year}}/{{slug}}/index"
+    # Put media next to post data
+    media_folder: ""
+    public_folder: ""
     create: true # Allow users to create new documents in this collection
     fields: # The fields each document in this collection have
       - {label: "Title", name: "title", widget: "string"}
-      - {label: "Draft", name: "draft", widget: "boolean", default: false}
+      - {label: "Slug", name: "slug", widget: "string"}
+      - {label: "Draft", name: "draft", widget: "boolean", default: true}
       - {label: "Publish Date", name: "date", widget: "datetime"}
       # TODO: make a collection for categories and make this a relation
       - {label: "Categories", name: "categories", widget: "list"}
       # TODO: as above, make a collection?
       - {label: "Tags", name: "tags", widget: "list"}
       - {label: "Body", name: "body", widget: "markdown"}
+  - name: "page"
+    label: "Page"
+    files:
+      - name: "404"
+        label: "404"
+        file: "content/404.md"
+        fields:
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Body", name: "body", widget: "markdown"}
+      - name: "About"
+        label: "About"
+        file: "content/about.md"
+        fields:
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Body", name: "body", widget: "markdown"}
+  - name: "project"
+    label: "Project"
+    folder: "content/projects"
+    create: true
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Slug", name: "slug", widget: "string"}
+      - {label: "Draft", name: "draft", widget: "boolean", default: true}
+      - {label: "Publish date", name: "date", widget: "datetime"}
+      - {label: "Last updated", name: "updated", widget: "datetime"}
+      - {label: "Body", name: "body", widget: "markdown"}
+  - name: "essay"
+    label: "Essay"
+    folder: "content/essays"
+    create: true
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Slug", name: "slug", widget: "string"}
+      - {label: "Draft", name: "draft", widget: "boolean", default: true}
+      - {label: "Publish date", name: "date", widget: "datetime"}
+      - {label: "Last updated", name: "updated", widget: "datetime"}
+      - {label: "Body", name: "body", widget: "markdown"}
 
-media_folder: "static/uploads"
-public_folder: "uploads"
+
+media_folder: "static/images"
+public_folder: "images"
 
 backend:
   name: gitlab
   repo: taricorp/taricorp.net
-  branch: netlify-cms
+  branch: master
   auth_type: implicit
   app_id: f9450f5bbb8fae7444b02bf9f29166b0a3cb9eb96c72ce90e4ce59bc274e70be
