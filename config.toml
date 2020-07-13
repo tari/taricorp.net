@@ -1,11 +1,49 @@
 languageCode = "en-us"
 title = "タリ"
-theme = "twentyfourteen"
-PygmentsCodeFences = true
-pygmentsstyle = "default"
+theme = "hugo-flex"
+
 relativeURLs = true
+
+enableRobotsTXT = true
+paginate = 4
+summaryLength = 100
+
+# With RSS output format below, write the main feed to /feed.xml
+# rather than /index.xml
+[outputs]
+home = [ "RSS", "HTML" ]
+
+[outputFormats.RSS]
+mediatype = "application/rss"
+baseName = "feed"
+
+[markup]
+  [markup.highlight]
+    lineNos = true
+    style = "github"
+  [markup.goldmark.renderer]
+    unsafe = true
 
 [permalinks]
 posts = "/:year/:slug/"
 projects = "/projects/:slug/"
 essays = "/essays/:slug/"
+
+[params]
+  color = "black"
+  width = "60rem"
+  footer = """\
+             Reluctantly powered by atomic badgers. \
+             Contents licensed under \
+             <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">\
+             <img src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png" alt="CC-BY-SA" />\
+             </a> unless otherwise noted.\
+           """
+
+[menu]
+  nav = [
+    { name = "Blog", url = "posts/", weight = 1},
+    { name = "Projects", url = "projects/", weight = 2},
+    { name = "About", url = "about/", weight = 10},
+  ]
+  
