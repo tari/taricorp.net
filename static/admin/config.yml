@@ -1,5 +1,6 @@
 # Should match the backend app's configuration on gitlab
 site_url: https://beta.taricorp.net
+publish_mode: editorial_workflow
 
 collections:
   - name: "post" # Used in routes, ie.: /admin/collections/:slug/edit
