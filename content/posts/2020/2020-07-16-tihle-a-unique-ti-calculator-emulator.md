@@ -22,6 +22,8 @@ Read on for that discussion, or jump straight to the **[project homepage](https:
 
 I've long been involved in the community of people who program for the [TI-83+ series of graphing calculators](https://en.wikipedia.org/wiki/TI-83_series); it was on that platform that I got started programming in the first place. These days I play more of an advisory than active role in writing programs, by running much of [Cemetech](https://www.cemetech.net/) behind the scenes and providing the occasional input to others. I think calculators are an excellent way to introduce people to programming, since they are readily available devices and not too complex to get started on, while still having enough capability to support experienced developers in doing interesting things (because they are readily accessible embedded systems). I fully credit getting started with programming calculators for having ended up programming embedded systems profesionally.
 
+(some representative images here?)
+
 Unfortunately, the future of programming for TI calculators seems to be in peril. About a month ago, the news came out that new versions of the OS for the TI-84+ CE (the most recent variant of the 83+ with a color screen and improved eZ80 processor) [will remove support for running native code](https://www.cemetech.net/news/2020/5/949/_/ti-removes-asmc-programming-from-ti-83-premium-ce).
 
 ### The first one's free
