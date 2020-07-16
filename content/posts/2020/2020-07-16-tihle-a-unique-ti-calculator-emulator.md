@@ -12,7 +12,7 @@ tags:
   - calculators
   - archiving
 ---
-Today I'm publishing [tihle](https://gitlab.com/taricorp/tihle), a new emulator targeting TI graphing calculators (currently only the 83+, but maybe others later). There's rather a lot to say about it, but here I will discuss the [motivation for a new emulator]({{< relref "#motivation" >}}) and [the state of the art]({{< relref "#the-state-of-the-art" >}}) followed by [technical notes notes on the initial development process and design]({{< relref "#implementation" >}}).
+Today I'm publishing [tihle](https://gitlab.com/taricorp/tihle), a new emulator targeting TI graphing calculators (currently only the 83+, but maybe others later). There's rather a lot to say about it, but here I will discuss the \[motivation for a new emulator]({{< relref "#motivation" >}}) and \[the state of the art]({{< relref "#the-state-of-the-art" >}}) followed by \[technical notes notes on the initial development process and design]({{< relref "#implementation" >}}).
 
 Read on for that discussion, or jump straight to the **[project homepage](https://gitlab.com/taricorp/tihle)** on GitLab which has a **live demo** that runs in your web browser and other downloads.
 
@@ -37,6 +37,14 @@ In addition to the loss of a way to introduce people to programming, removing su
 (grab some CE game screenshots here)
 
 The precedent of effectively destroying the work of community members is troubling, and I am motivated to look for ways to preserve it. In much the same way that there still exist thriving communities around long-obsolete home computers like the [Apple II](https://apple2online.com/) and [Commodore 64](https://thec64community.online/) today, I think it's worthwhile to try to provide a similar opportunity by preserving the platform into a hostile future by working to give the systems and software ongoing life beyond what their creators envisioned (or perhaps more pointedly, beyond what they decided they could make money from).
+
+As a newer platform than those early home computers that still have active communities, information and resources may be rather easier to come by for these calculators because much of the information was born digital and has always been online. However this is also hazardous to preservation, because if items are readily available online there may not be any replacements available if the original goes away. For instance, TI used to [freely provide an SDK for the 83+](https://www.ticalc.org/archives/news/articles/1/19/19421.html), but have more recently made it [much more difficult to access](https://education.ti.com/en/customer-support/sdk-request). Perhaps even more concerningly, TI's web site no longer seems to provide *any* information about the [TI-84+ CSE](https://www.ticalc.org/basics/calculators/ti-84plus-cse.html), seeming to deny that it ever existed (though manuals and software are still available if you know where to look).
+
+### A calling
+
+Recognizing these concerns about the loss of a valuable resource for beginning programmers and loss of interesting history to the grind of the free market, what are we to do?
+
+There exist a number of web sites that document the calculators and offer resources related to them- I'm already involved in that, which is valuable and [generally well-preserved](https://archive.org/details/ticalc-2014-08) on [the Internet Archive](https://web.archive.org/). But if the existing resources are useless on current hardware as they largely become when large classes of programs are not runnable, new tools become required: I believe this situation calls for emulation of the calculators, to make the platform accessible to everybody.
 
 ## The state of the art
 
