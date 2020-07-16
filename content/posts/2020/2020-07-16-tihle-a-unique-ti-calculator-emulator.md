@@ -26,7 +26,7 @@ I've long been involved in the community of people who program for the [TI-83+ s
 
 Unfortunately, the future of programming for TI calculators seems to be in peril. About a month ago, the news came out that new versions of the OS for the TI-84+ CE (the most recent variant of the 83+ with a color screen and improved eZ80 processor) [will remove support for running native code](https://www.cemetech.net/news/2020/5/949/_/ti-removes-asmc-programming-from-ti-83-premium-ce).
 
-### The first one's free
+### Death of a platform
 
 While this doesn't necessarily affect older calculators or programs, in the long term it seems to spell doom for calculators as an inroad to developing embedded software in particular. Programs written in the calculators' dialect of BASIC continue to be accessible and a new Python implementation fill the void somewhat, but they lack in depth- where a user could spend time and effort developing native programs limited only by the hardware they run on before, in the future users will be limited to only those capabilities provided by TI's software.
 
