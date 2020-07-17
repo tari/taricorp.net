@@ -28,7 +28,7 @@ Unfortunately, the future of programming for TI calculators seems to be in peril
 
 ### Death of a platform
 
-While this doesn't necessarily affect older calculators or programs, in the long term it seems to spell doom for calculators as an inroad to developing embedded software in particular. Programs written in the calculators' dialect of BASIC continue to be accessible and a new Python implementation fill the void somewhat, but they lack in depth- where a user could spend time and effort developing native programs limited only by the hardware they run on before, in the future users will be limited to only those capabilities provided by TI's software.
+While this doesn't necessarily affect older calculators or programs, in the long term it seems to spell doom for calculators as an inroad to developing embedded software in particular. Programs written in the calculators' dialect of BASIC continue to be accessible and a new Python implementation fills the void somewhat, but they lack in depth- where a user could spend time and effort developing native programs limited only by the hardware they run on before, in the future users will be limited to only those capabilities provided by TI's software.
 
 In much the same way that I believe [Scratch](https://en.wikipedia.org/wiki/Scratch_(programming_language)) is a decent introduction to programming but completely hides interesting details and is not seriously used by anybody but those using it a learning tool, I also believe removal of support for running native code will ultimately mean people will no longer have calculators (which are often required school equipment!) as a useful entrypoint to serious programming.
 
