@@ -54,7 +54,7 @@ In much the same way that I believe [Scratch](https://en.wikipedia.org/wiki/Scra
 
 ### Historical interest
 
-In addition to the loss of a way to introduce people to programming, removing support for native code also effectively throws away a large existing library of programs that stretches back more than 20 years (nicely embodied in [ticalc.org](https://www.ticalc.org/), which first came online in 1996). While the 84+ CE is a young platform relative to the TI-83+ series as a whole (and is incompatible with earlier software), it already has a rich library of programs created by users that will effectively be lost when it can no longer be run.
+In addition to the loss of a way to introduce people to programming, removing support for native code also effectively throws away a large existing library of programs that stretches back more than 20 years (nicely embodied in [ticalc.org](https://www.ticalc.org/), which first came online in 1996). While the 84+ CE is a young platform relative to the TI-83+ series as a whole (and is incompatible with earlier software), it already has a rich library of programs created by users that will effectively be lost when they can no longer be run on the hardware they are designed for.
 
 <figure>
   <div style="display: flex; flex-wrap: wrap; justify-content: space-evenly;">
