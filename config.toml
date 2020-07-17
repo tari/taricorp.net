@@ -31,6 +31,7 @@ essays = "/essays/:slug/"
   summaries = true
   color = "black"
   width = "60rem"
+  css = [ "tcn.css" ]
   footer = """\
              Reluctantly powered by atomic badgers. \
              Contents licensed under \
