@@ -5,7 +5,7 @@ variables:
 .hugo:
   stage: deploy
   script:
-    - hugo -b ${HUGO_BASEURL}
+    - hugo ${HUGO_FLAGS} -b ${HUGO_BASEURL}
   artifacts:
     paths:
       - public
@@ -13,5 +13,7 @@ variables:
 pages:
   extends: .hugo
   variables:
+    # Include drafts
+    HUGO_FLAGS: -D
     HUGO_BASEURL: https://taricorp.gitlab.io/
 
