@@ -1,0 +1,11 @@
+figure {
+    padding: 1rem;
+    margin: 1rem;
+    background-color: #eee;
+    border-radius: .5rem;
+}
+
+figure figcaption {
+    padding: .5rem 0 0;
+    text-align: center;
+}
