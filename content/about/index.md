@@ -10,7 +10,11 @@ menu:
     weight: 10
 ---
 
-<style type="text/css">
+Hi, I'm Peter.
+
+<!--more-->
+
+<style>
 @media (min-width: 640px) {
   #about-me-box {
     float: right;
@@ -47,8 +51,6 @@ menu:
   margin: 2px;
 }
 </style>
-
-Hi, I'm Peter.
 
 <div id="about-me-box">
   <a href="{{< resource "portrait.jpg" >}}">
