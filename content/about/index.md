@@ -8,7 +8,11 @@ title: Peter Marheine
 in_global_nav: true
 ---
 
-<style type="text/css">
+Hi, I'm Peter.
+
+<!--more-->
+
+<style>
 @media (min-width: 640px) {
   #about-me-box {
     float: right;
@@ -45,8 +49,6 @@ in_global_nav: true
   margin: 2px;
 }
 </style>
-
-Hi, I'm Peter.
 
 <div id="about-me-box">
   <a href="{{< resource "portrait.jpg" >}}">
