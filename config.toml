@@ -33,7 +33,8 @@ essays = "/essays/:slug/"
   width = "60rem"
   css = [ "tcn.css" ]
   footer = """\
-             Reluctantly powered by atomic badgers. \
+             Reluctantly powered by
+             <a class="atomic-badgers" href="https://gitlab.com/taricorp/taricorp.net">atomic badgers</a>. \
              Contents licensed under \
              <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">\
              <img src="https://licensebuttons.net/l/by-sa/4.0/80x15.png" alt="CC-BY-SA" />\
