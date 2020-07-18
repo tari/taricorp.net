@@ -1,3 +1,9 @@
+/* Link in footer; looks like regular text. */
+.atomic-badgers {
+    color: inherit;
+    text-decoration: inherit;
+}
+
 figure {
     padding: 1rem;
     margin: 1rem;
