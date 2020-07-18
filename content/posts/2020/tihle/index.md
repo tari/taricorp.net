@@ -69,7 +69,10 @@ In addition to the loss of a way to introduce people to programming, removing su
          alt="Tetric A, a Tetris clone">
   </div>
   <figcaption>
-    A small selection of the games that are available for the TI-84+ CE today.
+    A small selection of the games that are available for the TI-84+ CE today:
+    <a href="https://www.ocf.berkeley.edu/~pad/game-ti8c-calcuzap.html">Calcuzap</a>
+    <a href="https://github.com/drdnar/open-adventure-ce">Colossal Cave Adventure</a> and
+    <a href="https://www.cemetech.net/downloads/files/1347">Tetric A</a>.
   </figcaption>
 </figure>
 
@@ -112,7 +115,7 @@ There already exist a number of emulators for TI calculators, including:
  * [jsTIfied](https://www.cemetech.net/projects/jstified/), an emulator
    available as a web application.
  * [Virtual TI](https://www.ticalc.org/archives/files/fileinfo/84/8442.html),
-   one of the earliest calculators to be created.
+   one of the earliest calculator emulators to be created.
  * [PindurTI](https://wikiti.brandonw.net/index.php?title=Emulators:PindurTI),
    which is now defunct but offered some useful capabilities in its day.
  * ..and others
@@ -221,11 +224,12 @@ fine resource in pursuit of making emulation available to all.
 
 If the goal is to freely emulate calculator programs, we recognize that while
 the boot code situation seems compatible with accurate emulation, the current
-available ***libre* OSes are insufficient**. While it is technically feasible to
+available
+***<abbr title="Software allowing anybody to use or modify it for any reason; Open Source.">libre</abbr>*
+OSes are insufficient**. While it is technically feasible to
 emulate TI's EOS (the only reasonable choice for emulating the current software
-library), legal forces make it untenable to base publicly-available emulation
-with the goal of allowing anybody to run programs for the platform on that
-operating system.
+library), legal forces make it untenable to use as a base for publicly-available
+emulation with the goal of allowing anybody to run programs for the platform.
 
 It's also worth noting that there are two major divisions in kinds of programs
 that run on these calculators: they can be implemented in the provided BASIC
@@ -266,20 +270,21 @@ owe their existence to the fact that they **don't contain any
 copyright-infringing code themselves**.
 
 On calculators, emulation of interesting programs with existing emulators
-requires a copy of the system software which requires access to a physical
-calculator to obtain in a way that can reliably be considered not to fall afoul
-of any laws. However, the programs themselves are almost entirely made available
-freely by their authors- among the hobbyists who write calculator software, the
-platform is largely open. If an emulator can do without a ROM image of a
-calculator, it is feasible to freely provide the existing library of software to
-all comers.
+requires a copy of the system software which notionally requires access to a physical
+calculator to obtain. This means the emulators can reliably be considered not to fall afoul
+of any laws, though the barrier to entry is raised. However, the programs themselves
+are almost entirely made available freely by their authors- among the hobbyists who
+write calculator software, the platform is largely open. If an emulator can do without
+a ROM image of a calculator, it is feasible to freely provide the existing library of
+software to all comers.
 
 Game system emulators tend to solve their inability to distribute the system
 firmware through high-level emulation: various operations that may be taken by
 software can be recognized, and the emulator can implement those operations
 itself. This approach both avoids any dependency on system firmware for its
 implementation and can often achieve better performance because the emulator
-need not faithfully emulate the underlying process- only its side effects.
+need not faithfully emulate the underlying process- only its side effects are
+in scope.
 Though high-level emulation tends to sacrifice accuracy in ways that can cause
 some emulated software to behave incorrectly, this is often because the emulator
 must take shortcuts to achieve acceptable performance. When emulating a
@@ -302,7 +307,7 @@ feature is to its existence: it is a **h**igh-**l**evel-**e**mulator for **TI**
 calculators.[^why-not-os2]
 
 [^why-not-os2]: Some readers might ask: "why not improve an existing *libre*
-  OS?" My answer is that doing so is too hard: while the Z80 is a
+  OS like OS2?" My answer is that doing so is too hard: while the Z80 is a
   well-understood CPU to program for, its age means much of the tooling
   available to us today that makes programmers more productive is simply not
   available. While a truly free (*libre*) EOS replacement would be ideal, I do
