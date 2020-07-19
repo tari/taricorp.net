@@ -854,3 +854,5 @@ like [many DOS games are](https://blog.archive.org/2019/10/13/2500-more-ms-dos-g
 Emscripten works; thanks SDL
 
 might improve the OS a lot over time
+
+{{< comments >}}
