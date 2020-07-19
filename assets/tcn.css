@@ -9,9 +9,19 @@ figure {
     margin: 1rem;
     background-color: #eee;
     border-radius: .5rem;
+    /* Flex/wrap images if multiple, and center them. */
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+}
+
+figure img {
+    margin: .25em;
 }
 
 figure figcaption {
     padding: .5rem 0 0;
     text-align: center;
+    /* Force this to split onto its own line */
+    width: 100%;
 }
