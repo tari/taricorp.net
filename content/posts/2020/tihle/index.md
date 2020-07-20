@@ -1,6 +1,6 @@
 ---
 title: "tihle: a unique TI calculator emulator"
-slug: tihle
+slug: introducing-tihle
 draft: true
 date: 2020-07-16T09:49:18.448Z
 categories:
@@ -272,7 +272,7 @@ Game systems tend to have small amounts of platform code that game software
 might use, which emulators tend to hide the existence of: a tiny minority of
 emulator users would have the capability to extract the firmware from a game
 system they own, and though most users probably engage in copyright infringement
-to obtain copies of game software to run on emulators, the emulators themselves
+to obtain copies of game software to run on emulators, the emulators
 owe their existence to the fact that they **don't contain any
 copyright-infringing code themselves**.
 
