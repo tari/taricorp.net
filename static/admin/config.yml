@@ -6,10 +6,9 @@ collections:
   - name: "post" # Used in routes, ie.: /admin/collections/:slug/edit
     label: "Post" # Used in the UI, ie.: "New Post"
     folder: "content/posts"
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
-    path: "{{year}}/{{slug}}"
     # Create page bundles
-    #path: "{{year}}/{{slug}}/index"
+    slug: "{{fields.slug}}"
+    path: "{{year}}/{{slug}}/index"
     # Put media next to post data
     media_folder: ""
     public_folder: ""
