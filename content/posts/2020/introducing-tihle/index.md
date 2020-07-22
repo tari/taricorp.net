@@ -40,7 +40,7 @@ I've long been involved in the community of people who program for the [TI-83+ s
   </figcaption>
 </figure>
 
-Unfortunately, the future of programming for TI calculators seems to be in peril. About a month ago, the news came out that new versions of the OS for the TI-84+ CE (the most recent variant of the 83+ with a color screen and improved eZ80 processor) [will remove support for running native code](https://www.cemetech.net/news/2020/5/949/_/ti-removes-asmc-programming-from-ti-83-premium-ce).
+Unfortunately, the future of programming for TI calculators seems to be in peril. About a month ago, the news came out that new versions of the OS for the TI-84+ CE (the most recent variant of the 83+ featuring a color screen and improved eZ80 processor) [will remove support for running native code](https://www.cemetech.net/news/2020/5/949/_/ti-removes-asmc-programming-from-ti-83-premium-ce).
 
 ### Death of a platform
 
@@ -77,7 +77,7 @@ In addition to the loss of a way to introduce people to programming, removing su
   </picture>
   <figcaption>
     A small selection of the games that are available for the TI-84+ CE today:
-    <a href="https://www.ocf.berkeley.edu/~pad/game-ti8c-calcuzap.html">Calcuzap</a>
+    <a href="https://www.ocf.berkeley.edu/~pad/game-ti8c-calcuzap.html">Calcuzap</a>,
     <a href="https://github.com/drdnar/open-adventure-ce">Colossal Cave Adventure</a> and
     <a href="https://www.cemetech.net/downloads/files/1347">Tetric A</a>.
   </figcaption>
@@ -201,7 +201,7 @@ which seems to have disappeared from the Internet except for the version
 integrated with WabbitEmu. While it seems BootFree disappeared for reasons
 related to the addition of the clickwrap agreement to the EOS downloads provided
 by TI,[^bootfree-clickwrap] [^educators-emulators] I don't think the same
-reasons apply to emulation that doesn't use the EOS- thus, BootFree seems like a
+reasons apply to emulation of non-EOS software- thus, BootFree seems like a
 fine resource in pursuit of making emulation available to all.
 
 [^bootfree-clickwrap]: WabbitEmu added support for automatically downloading an
@@ -260,7 +260,7 @@ floating-point format.[^ti-floats] I have instead chosen to work on a
   aspect is likely unnecessary, but haven't revisited that concept because I
   chose to think about the whole-machine emulation.
 
-### Novelty
+### A novel emulator: thinking like a gamer
 
 It is interesting to compare emulation of calculator programs to that of game
 systems (which are also common targets for emulation). In game systems the
@@ -320,8 +320,6 @@ calculators.[^why-not-os2]
   available. While a truly free (*libre*) EOS replacement would be ideal, I do
   not consider it to be immediately feasible.
   
-<img src="{{< resource "tihle.svg" >}}" width=360 style="margin: auto; display: block;">
-
 ## Implementation, or: the development log {#implementation}
 
 With a plan in mind, I had to start building something. I could have started
@@ -378,7 +376,7 @@ C code, so there are many options to consider. Among the most notable:
 
 I eventually settled on a core that's not part of any major emulator:
 [Manuel Sainz de Baranda y Goñi's "redcode" core](https://github.com/redcode/Z80). It's
-written in very portable C and designed to be used a library so it takes very little
+written in very portable C and designed to be used as a library so it takes very little
 setup or modification to use in my application. It does depend on a large external
 header-only library as provided, but I was able to adapt it to be more standalone
 with some work.
@@ -431,12 +429,13 @@ by any **write to port 255**, which is unused on the calculator. By putting code
 reset vector to write to port 255, we can avoid spurious termination.
 
 It quickly becomes obvious that treating termination separately from other traps
-doesn't work well. If the program decides to read a value from `0x0028` (where
-control flow jumps to execute a system routine), it would cause incorrect actions
-to be taken which would almost certainly cause the program to begin behaving
-incorrectly. What's required is a way to ensure traps are only taken when executing
-the target code, not if the system happens to read a given memory address as data.
-It wasn't an immediate problem, but this will be revisited later.
+doesn't work well. If the program decides to read a value from `0x0028` for
+instance (where control flow jumps to execute a system routine), it would cause
+incorrect actions to be taken which would almost certainly cause the program to
+begin behaving incorrectly. What's required is a way to ensure traps are only
+taken when executing the target code, not if the system happens to read a given
+memory address as data.  It wasn't an immediate problem, but this will be
+revisited later.
 
 ### MirageOS
 
@@ -446,6 +445,14 @@ out of RAM, so it was easy enough to trap on any access to Flash. This became
 problematic once emulation of Phoenix reached a certain point, because it turns
 out I had chosen to use the **MirageOS** version of Phoenix, meaning there was
 another dependency on the contents of Flash that I had not expected.[^memory-map]
+[MirageOS][mirage][^not-mirageio] is a shell implemented as a Flash application; it runs directly from Flash,
+and provides useful support routines to programs designed to take advantage of it.
+
+[mirage]: http://www.detachedsolutions.com/mirageos/
+
+[^not-mirageio]: Not to be confused with [the library operating system of the same name](https://mirage.io/),
+                 which I also have some experience with.
+
 
 [^memory-map]: On the 83+, the Z80's 64 KiB memory space is split into 4 banks.
                Typically, page 0 of Flash (which contains OS code) is always mapped
@@ -454,13 +461,9 @@ another dependency on the contents of Flash that I had not expected.[^memory-map
                parts of Flash, and the top 32 KiB is RAM. Flash applications like
                Mirage execute of out bank A.
 
-[MirageOS][mirage][^not-mirageio] is a shell implemented as a Flash application; it runs directly from Flash,
-and provides useful support routines to programs designed to take advantage of it.
-
-[mirage]: http://www.detachedsolutions.com/mirageos/
-
-[^not-mirageio]: Not to be confused with [the library operating system of the same name](https://mirage.io/),
-                 which I also have some experience with.
+<figure>
+  <img src="{{< resource "titlescreen.png" >}}" width=192 height=128 style="image-rendering: pixelated;">
+</figure>
 
 This version of Phoenix uses the `setupint` routine provided by Mirage to implement
 its timer interrupt that controls game speed. Since Mirage isn't open-source, I would
@@ -824,9 +827,10 @@ and probably more performant.
   </figcaption>
 </figure>
 
-With this, I'm rather surprised that Phoenix is playable! There's certainly more work
-to be done to improve everything, but "Phoenix is playable" was the goal I set for
-myself that must be reached before I published the project.
+With this, I'm rather surprised that Phoenix is playable! There's certainly more
+work to be done to improve everything, but "Phoenix is playable" was the goal I
+set for myself that must be reached before I published the project; so.. here we
+are.
 
 ## Current state and future
 
@@ -837,22 +841,77 @@ are notable holes that I'd like to fill:
  * Programs are loaded directly to the point in memory that they execute from.
    Programs and data should be loaded into memory as if they were managed normally
    by TI-OS, which will allow programs that want to be able to load external data
-   (such as level packs) to do so, and also enable saving of high scores.
- * Actually run shells, not just programs
- * Improve LCD emulation to support grayscale games (which rapidly switch pixels
-   between black and white).
- * Support an on-screen keyboard, useful for touchscreen devices and easier
+   (such as level packs) to do so, and also enable **saving or loading other data**,
+   such as high scores or generated programs.
+ * Rather than directly launching programs, **launch a shell** and allow users to
+   interactively select a program to run. (Though a mode to directly launch
+   programs may still be desirable.)
+ * Improve LCD emulation to support **greyscale graphics**. Programmers sometimes
+   implement rapid switching between black and white to approximate several
+   shades of grey (4-16 depending on how ambitious they are and how much
+   CPU time is worth dedicating to it for the application), which will require
+   LCD emulation to have some "memory" in order to simulate the slow response
+   time of the calculator LCD.
+ * Support an **on-screen keyboard**, useful for touchscreen devices and easier
    to navigate than pressing keys on a computer keyboard.
+ * Improved **debugging tools**, to set breakpoints and more interactively explore
+   the system state. Very useful for debugging new programs that don't yet
+   run correctly, or for developing new programs.
+ * [Your suggestion here!](https://gitlab.com/taricorp/tihle/-/issues/new)
+   (Suggestions and feature requests via Gitlab issues or other means are welcome.)
 
 I'm quite happy with the ability to run the emulator in a web browser as it
 is right now. While I can't claim much credit for it beyond choosing tools that
 would support that target,[^browser-target] it's still very gratifying to see
 everything come together to make emulation so accessible. In the longer term,
-I'd like to try to get emulation via tihle **available on the Internet Archive**,
-like [many DOS games are](https://blog.archive.org/2019/10/13/2500-more-ms-dos-games-playable-at-the-archive/).
+I'd like to try to get emulation via **tihle available on the Internet Archive**,
+like [many DOS games are
+today](https://blog.archive.org/2019/10/13/2500-more-ms-dos-games-playable-at-the-archive/).
 
-Emscripten works; thanks SDL
+[^browser-target]: I chose to implement the frontend to the emulator with SDL
+                   specifically because I knew emscripten has an SDL port that
+                   allows software using it to run in a web browser without
+                   major modification; other people have already done the heavy
+                   lifting to make Rust+SDL applications work in browsers,
+                   I just knew I'd be able to make use of it.
 
-might improve the OS a lot over time
+The "minimal" OS that's included with the emulator is currently a pretty
+significant hack that I'd like to clean up some, and in the long term it would
+be cool to make it a much **more complete TI-OS reimplementation**- possibly
+taking in most of OS2, and building on top of Brandon's work. In an ideal
+world the high-level parts of tihle might eventually become obsolete (or
+optional) if the OS implementation got good enough.
+
+### Links and further reading
+
+tihle lives on GitLab: **https://gitlab.com/taricorp/tihle**
+
+<a href="https://gitlab.com/taricorp/tihle">
+  <img src="{{< resource "tihle.svg" >}}" width=360 style="margin: auto; display: block;">
+</a>
+
+There you can read more, download binaries to run tihle yourself (or do so
+directly in your browser), read the source code as well as contribute:
+I welcome contributions, suggestions and discussion, especially if they come
+with code!
+
+You can learn more about the technical details of calculators and programming
+them at [WikiTI](https://wikiti.brandonw.net/), though many of the details can
+be rather inscrutable without additional explanation or prior knowledge.  The
+official TI-83 Plus SDK documentation can be found [on the Internet
+Archive](https://archive.org/details/83psdk); much of its contents are omitted
+from WikiTI, so it's a valuable source of basic information.  [Learn TI-83 Plus
+Assembly in 28 Days](https://gitlab.com/taricorp/83pa28d) is a decent
+introduction to the platform, intended for readers with no experience
+programming in assembly but plenty usable by more advanced readers as well, with
+its combination of simplified official documentation and community-sourced
+information.
+
+If you're looking for discussion or programs,
+[Cemetech](https://www.cemetech.net/) is one forum where experienced calculator
+programmers (and me!) hang out, and are happy to discuss things. There's also
+an area to find programs there, but
+[ticalc.org](http://ticalc.org/) is one of the oldest calculator community
+sites, and has a huge library of software to browse.
 
 {{< comments >}}
