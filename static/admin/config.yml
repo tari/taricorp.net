@@ -9,7 +9,7 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     path: "{{year}}/{{slug}}"
     # Create page bundles
-    #path: "{{year}}/{{slug}}/index"
+    path: "{{year}}/{{slug}}/index"
     # Put media next to post data
     media_folder: ""
     public_folder: ""
