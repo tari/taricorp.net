@@ -17,6 +17,41 @@ A common belief among software engineers of a certain temperament seems to be
 that asynchronous I/O is the only way to achieve good performance in a server
 application.
 
+There is also often confusion around async, since there are several ways in
+which it can appear:
+
+ * Async I/O; eventing
+ * `async` keywords in languages often using `Promise`s
+
+`async` as a keyword is often useful, though most frequently in the context
+of evented I/O under the hood. `Promise`s or `Future`s are very useful
+when taking advantage of parallelism, but many applications don't take
+any advantage of doing that kind of parallelism- they instead adopt
+`async` structures and their disadvantages through a cargo-cult assertion
+that doing so will make the programs fast. It *can*, but I think the costs
+often outweigh the benefits and most programmers would do better to
+avoid doing so.
+
+Where you do want to do multiple operations in parallel though, it is
+very nice to be able to do that; trivially; kick off two operations
+in parallel and let them complete:
+
+```
+let socket = accept(...);
+let file = open(...);
+
+let (block, eof) = file.read(...);
+while !eof {
+    let wf = socket.write_async(block);
+    block = await file.read_async();
+    await wf;
+}
+```
+
+TODO: explore this more, and what kinds of tools languages provide for it.
+It seems lacking in Rust, where people seem to want to do it everywhere but
+I need to study that some.
+
 ...
 
 [HHVM docs][hhvm] for async observe that always blocking isn't necessarily a good
