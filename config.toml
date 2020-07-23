@@ -44,6 +44,6 @@ essays = "/essays/:slug/"
   nav = [
     { name = "Blog", url = "posts/", weight = 1},
     { name = "Projects", url = "projects/", weight = 2},
-    { name = "About", url = "about/", weight = 10},
+    { name = "RSS", url = "feed.xml", weight = 100 },
   ]
   
