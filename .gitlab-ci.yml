@@ -13,5 +13,7 @@ variables:
 pages:
   extends: .hugo
   variables:
-    HUGO_BASEURL: https://taricorp.gitlab.io/
+    # Include drafts
+    HUGO_FLAGS: -D
+    HUGO_BASEURL: https://beta.taricorp.net/
 
