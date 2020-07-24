@@ -1,9 +1,8 @@
-default:
-  image: registry.gitlab.com/pages/hugo:latest
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
 
 .hugo:
+  image: registry.gitlab.com/pages/hugo:latest
   stage: deploy
   script:
     - hugo ${HUGO_FLAGS} -b ${HUGO_BASEURL}
