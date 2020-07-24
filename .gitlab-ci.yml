@@ -1,11 +1,12 @@
-image: registry.gitlab.com/pages/hugo:latest
-variables:
-  GIT_SUBMODULE_STRATEGY: recursive
+default:
+  image: registry.gitlab.com/pages/hugo:latest
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
 
 .hugo:
   stage: deploy
   script:
-    - hugo -b ${HUGO_BASEURL}
+    - hugo ${HUGO_FLAGS} -b ${HUGO_BASEURL}
   artifacts:
     paths:
       - public
@@ -17,3 +18,28 @@ pages:
     HUGO_FLAGS: -D
     HUGO_BASEURL: https://beta.taricorp.net/
 
+build:
+  extends: .hugo
+  stage: build
+  needs: []
+  variables:
+    HUGO_BASEURL: https://www.taricorp.net/
+
+deploy:
+  stage: deploy
+  only: ['master']
+  needs: [build]
+  image: 'instrumentisto/rsync-ssh'
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - umask 077
+    - mkdir -p ~/.ssh
+    - umask 133
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - umask 022
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d | ssh-add -
+  script:
+    - 'rsync -vzz --delete-after ./public/ tari@weaver.taricorp.net:'
