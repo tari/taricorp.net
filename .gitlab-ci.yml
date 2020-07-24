@@ -41,4 +41,4 @@ deploy:
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d | ssh-add -
   script:
-    - 'rsync -vzz --delete-after ./public/ tari@weaver.taricorp.net:'
+    - 'rsync -rvzz --delete-after ./public/ tari@weaver.taricorp.net:'
