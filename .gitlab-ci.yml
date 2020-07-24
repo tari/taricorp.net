@@ -12,6 +12,7 @@ variables:
 
 pages:
   extends: .hugo
+  needs: []
   variables:
     # Include drafts
     HUGO_FLAGS: -D
