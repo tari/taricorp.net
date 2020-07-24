@@ -36,7 +36,6 @@ deploy:
     - mkdir -p ~/.ssh
     - umask 133
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
     - umask 022
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d | ssh-add -
