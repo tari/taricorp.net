@@ -49,7 +49,7 @@ term it seems to spell doom for calculators as an inroad to developing embedded
 software in particular. Programs written in the calculators' dialect of BASIC
 continue to be accessible and a new Python implementation fills the void
 somewhat, but they lack in depth- where a user could spend time and effort
-developing native programs limited only by the hardware they run on before, in
+developing native programs constrained only by the hardware they run on before, in
 the future users will be **limited to only those capabilities provided by TI's
 software**.
 
@@ -323,7 +323,7 @@ calculators.[^why-not-os2]
 ## Implementation, or: the development log {#implementation}
 
 With a plan in mind, I had to start building something. I could have started
-with the core of one of the existing existing emulators, but had a few reasons
+with the core of one of the existing emulators, but had a few reasons
 to instead start from (mostly) scratch:
 
  * Code quality is highly variable, and I'm not familiar with their code.
@@ -685,11 +685,11 @@ most of the OS functionality that any program needs.
 
 ### Debugging in pictures
 
-With this work, the general structure of the emulator seems sound. Although
-I didn't want to implement an OS to begin with one is now present, though its
-complexity is strictly controlled according to whether I find it easier to
-implement routines in Z80 or as traps. It was then a matter of **implementing
-and debugging the core functions** that Phoenix needs.
+With this work, the general structure of the emulator seems sound. Although I
+didn't want to implement an OS to begin with, one is now present; however though
+its complexity is strictly controlled according to whether I find it easier to
+implement routines in Z80 or as traps, so this seems reasonable. It was then a
+matter of **implementing and debugging the core functions** that Phoenix needs.
 
 For some parts of debugging it was easier to write small programs that exercised
 only the function(s) that needed debugging; these might be good to promote
