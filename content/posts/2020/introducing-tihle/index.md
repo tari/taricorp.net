@@ -22,9 +22,22 @@ the art]({{< relref "#the-state-of-the-art" >}}) followed by technical notes on
 the [design]({{< relref "#design" >}}) and [initial development process]({{<
 relref "#implementation" >}}).
 
-Read on for that discussion, or jump straight to the **[project homepage](https://gitlab.com/taricorp/tihle)** on GitLab which has a **live demo** that runs in your web browser and other downloads.
+Read on for that discussion, or jump straight to the **[project
+homepage](https://gitlab.com/taricorp/tihle)** on GitLab which has a **live
+demo** that runs in your web browser and other downloads.
 
 <!--more-->
+
+<aside style="background-color: #eee; padding: .5em; border-radius: .5em;">
+  I've also recorded an audio version of this writing, which you might prefer
+  to listen to rather than read these 7000 words:
+
+  <audio controls preload=none style="display: block; width: 100%;">
+    <source src="{{< resource "narrated.opus" >}}" type="audio/ogg; codecs=opus"/>
+    <source src="{{< resource "narrated.mp3" >}}" type="audio/mpeg"/>
+    Failed to load audio.
+  </audio>
+</aside>
 
 {{< toc >}}
 
