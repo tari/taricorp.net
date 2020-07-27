@@ -2,10 +2,9 @@ languageCode = "en-us"
 title = "タリ"
 theme = "hugo-flex"
 
-relativeURLs = true
-
+enableGitInfo = true
 enableRobotsTXT = true
-paginate = 4
+rssLimit = 20
 summaryLength = 100
 
 # With RSS output format below, write the main feed to /feed.xml
@@ -30,6 +29,7 @@ projects = "/projects/:slug/"
 essays = "/essays/:slug/"
 
 [params]
+  summaries = true
   color = "black"
   width = "60rem"
   footer = """\
