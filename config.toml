@@ -2,7 +2,6 @@ languageCode = "en-us"
 title = "タリ"
 theme = "hugo-flex"
 
-enableGitInfo = true
 enableRobotsTXT = true
 rssLimit = 20
 summaryLength = 100
