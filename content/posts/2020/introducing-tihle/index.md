@@ -1,8 +1,8 @@
 ---
 title: "tihle: a unique TI calculator emulator"
 slug: introducing-tihle
-draft: true
-date: 2020-07-16T09:49:18.448Z
+draft: false
+date: 2020-07-29T09:00:00+10:00
 categories:
   - Software
 tags:
@@ -12,6 +12,8 @@ tags:
   - calculators
   - archiving
   - gpl
+  - rust
+  - javascript
 ---
 
 Today I'm publishing [tihle](https://gitlab.com/taricorp/tihle), a new emulator
