@@ -22,15 +22,30 @@ the art]({{< relref "#the-state-of-the-art" >}}) followed by technical notes on
 the [design]({{< relref "#design" >}}) and [initial development process]({{<
 relref "#implementation" >}}).
 
+<figure>
+  <picture>
+    <source type="image/webp" srcset="{{< resource "demo.webp" >}}">
+    <img src="{{< resource "demo.gif" >}}" loading=lazy
+         alt="tihle running Phoenix">
+  </picture>
+  <figcaption>Yes, it runs Phoenix!</figcaption>
+</figure>
+
 Read on for that discussion, or jump straight to the **[project
 homepage](https://gitlab.com/taricorp/tihle)** on GitLab which has a **live
-demo** that runs in your web browser and other downloads.
+demo** that runs in your web browser and other resources including
+source code.
 
 <!--more-->
 
 <aside style="background-color: #eee; padding: .5em; border-radius: .5em;">
-  I've also recorded an audio version of this writing, which you might prefer
-  to listen to rather than read these 7000 words:
+
+  <h2 style="margin: 0;">Audio version</h2>
+
+  I've also recorded an audio version of this writing, embedded here, which you
+  might prefer to listen to rather than read these 7000 words.[^gravis] It mostly
+  matches the written version, but drops some of the footnotes and code that is
+  difficult to narrate sensibly. Runtime is approximately 35 minutes.
 
   <audio controls preload=none style="display: block; width: 100%;">
     <source src="{{< resource "narrated.opus" >}}" type="audio/ogg; codecs=opus"/>
@@ -38,6 +53,11 @@ demo** that runs in your web browser and other downloads.
     Failed to load audio.
   </audio>
 </aside>
+
+[^gravis]: I thought I might give this a try after [Gravis commented on doing
+           something similar; it can benefit readers who don't use assistive
+           technology but are better able to consume the content in a different
+           format.
 
 {{< toc >}}
 
