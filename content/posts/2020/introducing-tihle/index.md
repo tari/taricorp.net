@@ -54,8 +54,10 @@ source code.
   </audio>
 </aside>
 
-[^gravis]: I thought I might give this a try after [Gravis commented on doing
-           something similar; it can benefit readers who don't use assistive
+[^gravis]: I thought I might give this a try after
+           [Gravis commented on doing something
+           similar](https://twitter.com/gravislizard/status/1287085874325250048);
+           it can benefit readers who don't use assistive
            technology but are better able to consume the content in a different
            format.
 
