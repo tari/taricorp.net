@@ -1,6 +1,14 @@
 ---
 title: "fb-hitler Updated"
 date: 2020-07-28T11:14:33+10:00
+categories:
+  - Software
+tags:
+  - assembly
+  - x86
+  - qemu
+  - bios
+  - jokes
 ---
 
 I updated [fb-hitler](/projects/fb-hitler/) a few years ago and never wrote
