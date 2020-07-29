@@ -23,6 +23,7 @@ build:
   stage: build
   needs: []
   variables:
+    HUGO_FLAGS: --minify
     HUGO_BASEURL: https://www.taricorp.net/
 
 deploy:
