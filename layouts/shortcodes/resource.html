@@ -1,4 +1,2 @@
 <!-- Trivial shortcode to get the correct URL for a page resource
-     in a bundle. -->
-{{ $img := $.Page.Resources.GetMatch (.Get 0)}}
-{{ $img.RelPermalink }}
+     in a bundle. -->{{ $img := $.Page.Resources.GetMatch (.Get 0)}}{{ $img.RelPermalink }}
