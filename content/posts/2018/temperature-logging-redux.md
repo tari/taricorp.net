@@ -1,8 +1,8 @@
 ---
 title: "Temperature Logging: Redux"
 slug: temperature-logging-redux
+draft: false
 date: 2018-08-22
-draft: true
 categories:
   - Software
   - Linux
