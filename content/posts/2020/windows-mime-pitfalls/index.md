@@ -1,7 +1,7 @@
 ---
 title: Windows MIME type detection pitfalls
 slug: windows-mime-pitfalls
-draft: true
+draft: false
 date: 2020-09-24T23:12:12.586Z
 categories:
   - Software
