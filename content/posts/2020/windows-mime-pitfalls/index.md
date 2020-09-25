@@ -10,6 +10,8 @@ tags:
   - python
   - django
   - mime
+  - go
+  - bugs
 ---
 I've been doing some [Django](https://djangoproject.com) development lately, and was mystified why it seemed the [debug toolbar](https://github.com/jazzband/django-debug-toolbar) on my local development instance wasn't showing up, though it had been in the past. It turns out to have been a surprising interaction between browsers sometimes enforcing that resources be served with correct MIME types and the way Windows provides system-wide MIME type configuration (which seems to have major flaws)!
 
