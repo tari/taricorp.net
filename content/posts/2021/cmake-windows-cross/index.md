@@ -12,7 +12,7 @@ tags:
   - cross-compiler
   - mingw
 ---
-I sometimes find myself wanting to cross-compile programs with CMake on a Linux machine such that I get a standalong .exe that can be given to mostly non-technical Windows users to run. This isn't hard, but finding the right options is a little bit of a challenge every time, so now I'm recording the procedure here; both as a reminder to myself, and to provide a quick recipe that future searchers can use.
+I sometimes find myself wanting to cross-compile programs with CMake on a Linux machine such that I get a standalone .exe that can be given to mostly non-technical Windows users to run. This isn't hard, but finding the right options is a little bit of a challenge every time, so now I'm recording the procedure here; both as a reminder to myself, and to provide a quick recipe that future searchers can use.
 
 Cross-compiling for Windows will of course need an appropriate toolchain, which these days tends to be [mingw-w64](http://mingw-w64.org/). Many Linux distributions provide packages for it: [`mingw-w64`](https://packages.debian.org/sid/mingw-w64) on Debian (including Ubuntu and variants), [`mingw-w64-gcc`](https://archlinux.org/packages/community/x86_64/mingw-w64-gcc/) on Arch and similar for other distributions.
 
@@ -39,7 +39,7 @@ When building binaries to share it's probably helpful to do a non-debug build by
 
 ## Libraries
 
-Libraries that you might depend on can be built in the same way, and installed to a chosen directory by setting `CMAKE_INSTALL_PREFIX` and building the install target. For instance building a libpng static library
+Libraries that you might depend on can be built in the same way, and installed to a chosen directory by setting `CMAKE_INSTALL_PREFIX` then building the install target. For instance building a libpng static library
 (which itself provides options to enable a shared library and tests which we turn off):
 
 ```
@@ -65,7 +65,7 @@ cmake -DCMAKE_SYSTEM_NAME=Windows \
 
 ### libpng notes
 
-While libpng (used as an example above) provides a nice CMake configuration for cross-compilation, it depends on zlib which does not. However zlib does distribute a Makefile intended for targeting GNU tools on Windows. So before building libpng I first compile zlib with a particular incantation:
+While libpng (used as an example above) provides a nice CMake configuration that cross-compiles cleanly, it depends on zlib which does not. However zlib does distribute a Makefile intended for targeting GNU tools on Windows. So before building libpng I first compile zlib with a particular incantation:
 
 ```
 make -f win32/Makefile.gcc \
