@@ -2,7 +2,7 @@
 title: Cross-compiling CMake projects for Windows
 slug: cmake-windows-cross
 draft: false
-date: 2021-01-20T22:17:00.442Z
+date: 2021-01-20T22:55:37.656Z
 categories:
   - Software
 tags:
@@ -62,3 +62,19 @@ cmake -DCMAKE_SYSTEM_NAME=Windows \
       -DCMAKE_PREFIX_PATH=$HOME/windows_binaries \
       path_to_sources
 ```
+
+### libpng notes
+
+While libpng (used as an example above) provides a nice CMake configuration for cross-compilation, it depends on zlib which does not. However zlib does distribute a Makefile intended for targeting GNU tools on Windows. So before building libpng I first compile zlib with a particular incantation:
+
+```
+make -f win32/Makefile.gcc \
+     BINARY_PATH=${INSTALL_DIR}/bin \
+     INCLUDE_PATH=${INSTALL_DIR}/include \
+     LIBRARY_PATH=${INSTALL_DIR}/lib \
+     SHARED_MODE=0 \
+     PREFIX=i686-w64-mingw32- \
+     install
+```
+
+Because this is just a Makefile, sadly the appropriate options need to be discovered by reading the source: projects that natively use CMake are much easier to support!
