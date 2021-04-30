@@ -830,7 +830,7 @@ The documentation leaves it at that however, when the behavior around
 multiple keys being pressed or keys being held is also important.
 
 It turns out that `_GetCSC` is implemented largely via interrupts; while servicing
-regular timer interrupts, the OS scans they keyboard for keys that are being pressed,
+regular timer interrupts, the OS scans the keyboard for keys that are being pressed,
 and if any are then stores that value in RAM. `_GetCSC` reads that value and clears
 it. If everything were that simple it would be very easy, but the interrupt
 handler also debounces some keys; the directional arrows and <kbd>del</kbd> key
