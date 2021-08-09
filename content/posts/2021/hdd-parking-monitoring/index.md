@@ -52,6 +52,8 @@ For drives made by Western Digital, the inactivity timer for parking the heads i
 
 The `idle3-tools` package allows configuring the timer on Linux, though timer values are unintuitive- the tool sets a "raw" idle3 timer value, so a value like 232 (0xe8) actually means 3120 seconds according to `idle3ctl -g105`.
 
+The tool also warns that drives need to be powered off and back on for new idle3 timer values to take effect, which is a bit of an annoyance.
+
 ### Seagate EPC
 
 Most Seagate disks have configurable Extended Power Conditions (EPC) settings that include timers for how long the disk needs to stay idle before entering various low-power modes. 
@@ -68,6 +70,12 @@ Seagate provide a "[Seachest](https://www.seagate.com/au/en/support/software/sea
 `--idle_a ...` etc. View values with `--showEPCSettings`
 
 My Seagate Archive SMR disk (which began life as an external hard drive and was retired from that role when it became too small to hold as much as I wanted to back up to it) doesn't support showing EPC settings, but does support setting timers after running `--EPCfeature enable`. I'll have to watch the park counts on that to ensure it actually worked.
+
+### Verifying settings
+
+At a glance, this seems to have done the job nicely; here is the same graph as before but on a smaller timescale that makes individual head parks visible. They stop at the time I updated the settings for the Seagate drives, and the Western Digital one hasn't changed because it needs to be powered off to change that setting and I haven't do so yet.
+
+![](prometheus-load-cycles-post-update-fs8.png)
 
 ## Monitoring SSDs
 
