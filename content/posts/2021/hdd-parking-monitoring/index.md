@@ -28,7 +28,7 @@ With the SMART metrics captured by Prometheus, it's fairly easy to write a query
 
 Somewhat more useful for monitoring is the `smartmon_load_cycle_count_raw_value`, which provides the actual number of load cycles that have been done. By taking the rate of those it becomes pretty easy to see which disks are loading and unloading most, so I choose to query with `sum(rate(smartmon_load_cycle_count_raw_value[6h])) by (disk)` to summarize by disk and get a 6-hour rolling average rate in load cycles per second, pictured here:
 
-![A Prometheus console plotting load cycle rates per disk for five disks over a period of two weeks. Three of them have nonzero rates, with /dev/sde peaking at about 4 millicycles per second, /dev/sdc around 3 millicycles per second, and /dev/sdb at a much lower maximum rate of about 0.5 millicycles per second. The remaining two disks are at zero across the entire time range.](load-cycles-prometheus-fs8.png)
+![A Prometheus console plotting load cycle rates per disk for five disks over a period of two weeks. Three of them have nonzero rates, with /dev/sde peaking at about 4 millicycles per second, /dev/sdc around 3 millicycles per second, and /dev/sdb at a much lower maximum rate of about 0.5 millicycles per second. The remaining two disks are at zero across the entire time range.](prometheus-load-cycles-fs8.png)
 
 In this case, there are at least two disks that I probably need to configure, since `/dev/sde` seems to be parking as often as about every 4 minutes (0.004 Hz) and `/dev/sdc` is only parking slightly less often. `/dev/sdb` also seems worth inspecting.
 
@@ -38,9 +38,9 @@ To prevent parking more often that is useful (for a server, usually that choice 
 
 Of the three disks that I decided need some attention, I have one Western Digital disk and two Seagate ones. From the SMART data again, they are specifically these models:
 
- * `/dev/sdc`: Seagate Archive HDD (SMR) ST8000AS0002-1NA17Z, firmware version RT17
- * `/dev/sde`: Seagate IronWolf ST8000VN004-2M2101, firmware version SC60
- * `/dev/sdb`: Western Digital Red WDC WD40EFRX-68N32N0, firmware version 82.00A82
+* `/dev/sdc`: Seagate Archive HDD (SMR) ST8000AS0002-1NA17Z, firmware version RT17
+* `/dev/sde`: Seagate IronWolf ST8000VN004-2M2101, firmware version SC60
+* `/dev/sdb`: Western Digital Red WDC WD40EFRX-68N32N0, firmware version 82.00A82
 
 ### APM
 
