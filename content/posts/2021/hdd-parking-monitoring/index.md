@@ -20,7 +20,26 @@ tags:
 
 ## Collecting SMART metrics
 
-https://github.com/prometheus-community/node-exporter-textfile-collector-scripts
+The [Prometheus Node Exporter](https://github.com/prometheus/node_exporter/) is the canonical tool for capturing machine metrics like utilization and hardware information with Prometheus, but it alone does not support probing SMART data from storage drives. It does support reading arbitrary metrics from text files written by other programs with its `textfile` collector however, which is fairly easy to integrate with arbitrary other tools.
+
+[Smartmontools](https://www.smartmontools.org/) is the typical package of tools for reading SMART information from drives on Linux, and conveniently the [community-maintained example scripts](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts) for collecting system information with Prometheus includes both a Python and shell script (`smartmon.sh` and `smartmon.py`) that generate metrics for all devices on a system that support SMART reporting. I run the shell script every 5 minutes with a systemd service triggered by a timer:
+
+```ini
+[Unit]
+Description=Export smartctl metrics to Prometheus Node Exporter
+
+[Service]
+Nice=-10
+ExecStart=/bin/sh -c 'exec /usr/local/bin/node_exporter_text_smartmon > /var/state/prometheus/smartctl.prom'
+# Write nothing except the output file
+ProtectSystem=strict
+ReadWritePaths=/var/state/prometheus
+# Shell needs a temp directory
+PrivateTmp=true
+ProtectHome=tmpfs
+```
+
+My node exporter is then configured to read text files from `/var/state/prometheus`, and Prometheus itself gathers metrics from the node exporter.
 
 ### Monitoring metrics
 
@@ -44,7 +63,35 @@ Of the three disks that I decided need some attention, I have one Western Digita
 
 ### APM
 
-APM is standardized; `hdparm -B` set to 7F for maximum timeout. This isn't persistent, but could be auto-set on each boot with a udev rule. Alternately `smartctl -s apm,off`.
+The [APM specification](https://en.wikipedia.org/wiki/Advanced_Power_Management#In_ATA_drives) dating from 1992 includes some controls for hard drives, allowing a host system to specify the desired performance level of a disk and whether standby is permitted by sending commands to a disk. On Linux, the [`hdparm`](https://sourceforge.net/projects/hdparm/) tool is most typically used to manage APM- in particular `hdparm -B` allows the user to specify a value to specify to the drive, corresponding to the table of Advanced power management levels in the ATA/ATAPI specification (Table 30 in [T13/1321D revision 3](https://web.archive.org/web/20110728081452/http://www.t13.org/Documents/UploadedDocuments/project/d1321r3-ATA-ATAPI-5.pdf)), which I also reproduce here:
+
+* Maximum performance: FEh
+* Intermediate power management levels without Standby: 81h-FDh
+* Minimum power consumption without Standby: 80h
+* Intermediate power management levels with Standby: 02h-7Fh
+* Minimum power consumption with Standby: 01h
+* Reserved: FFh
+* Reserved: 00h
+
+The specification text further elaborates on the meanings of these values:
+
+> Device  performance  may  increase  with  increasing  power  management  levels.  Device  power  consumption
+may increase with increasing power management levels. The power management levels may contain discrete
+bands. For example, a device may implement one power management method from 80h to A0h and a higher
+performance, higher power consumption method from level A1h to FEh. Advanced power management levels
+80h and higher do not permit the device to spin down to save power.
+
+If we wanted to allow the disk to still park its heads but at minimum frequency, setting the APM value to 7Fh (`hdparm -B 127`) seems to be the correct choice. To prevent parking the heads at all a value greater than 128 may do the job, but it's possible that some disks won't behave this way because the ATA specification refers only to spinning down the disk and does not specify anything about parking heads.
+
+Unfortunately, APM settings don't persist between power cycles so if we wanted to change disk settings with APM they would need to be reapplied on every boot. On a Linux system this could be done with a udev rule matching a chosen drive, for instance matching by the disk's serial number:
+
+```
+ACTION=="add", SUBSYSTEM=="block", KERNEL=="sd[a-z]", \
+    ENV{ID_SERIAL_SHORT}=="ABCDEFGH", \
+    RUN+="/usr/bin/hdparm -B 127 -S 0 /dev/%k"
+```
+
+Disk vendors typically provide their own vendor-specific ways to do persistent configuration of power management settings, so it's worth trying to use those instead since the desired configuration doesn't depend on the host system (but in some cases that might be desirable!).
 
 ### Western Digital `idle3`
 
