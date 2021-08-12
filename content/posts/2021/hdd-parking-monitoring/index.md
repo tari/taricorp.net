@@ -97,9 +97,9 @@ Disk vendors typically provide their own vendor-specific ways to do persistent c
 
 For drives made by Western Digital, the inactivity timer for parking the heads is called the `idle3` timer. Of particular note, WD Green drives ship configured to park the heads after only 8 seconds of inactivity which could notionally wear out the disk in a matter of *months* if the heads are cycling more-or-less continuously!
 
-The `idle3-tools` package allows configuring the timer on Linux, though timer values are unintuitive- the tool sets a "raw" idle3 timer value, so a value like 232 (0xe8) actually means 3120 seconds according to `idle3ctl -g105`.
+The [`idle3-tools`](http://idle3-tools.sourceforge.net/) package allows configuring the timer on Linux, though timer values are rather unintuitive- the tool sets a "raw" idle3 timer value, so a value like 232 (0xe8) actually means 3120 seconds according to `idle3ctl -g105`, and it's unclear which interpretation of a given value actually applies to a given drive- if important that would need to be determined by experiment.
 
-The tool also warns that drives need to be powered off and back on for new idle3 timer values to take effect, which is a bit of an annoyance.
+The other slight annoyance when setting the idle3 timer on WD drives is that changes only take effect when the drive is powered on, usually meaning the host computer must be fully shut down and started back up for any changes to be seen- this makes experimentation to determine how raw timer values are interpreted a slower and more tedious process.
 
 ### Seagate EPC
 
