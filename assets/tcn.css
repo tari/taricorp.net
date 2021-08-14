@@ -25,3 +25,11 @@ figure figcaption {
     /* Force this to split onto its own line */
     width: 100%;
 }
+
+blockquote {
+    border-image: linear-gradient(to right, white, #888, white) 1;
+    border-width: 1px;
+    border-style: solid;
+    border-left: none;
+    border-right: none;
+}
