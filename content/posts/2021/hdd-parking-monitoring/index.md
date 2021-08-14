@@ -65,7 +65,7 @@ Of the three disks that I decided need some attention, I have one Western Digita
 
 ### APM
 
-The [APM specification](https://en.wikipedia.org/wiki/Advanced_Power_Management#In_ATA_drives) dating from 1992 includes some controls for hard drives, allowing a host system to specify the desired performance level of a disk and whether standby is permitted by sending commands to a disk. On Linux, the [`hdparm`](https://sourceforge.net/projects/hdparm/) tool is most typically used to manage APM- in particular `hdparm -B` allows the user to specify a value to specify to the drive, corresponding to the table of Advanced power management levels in the ATA/ATAPI specification (Table 30 in [T13/1321D revision 3](https://web.archive.org/web/20110728081452/http://www.t13.org/Documents/UploadedDocuments/project/d1321r3-ATA-ATAPI-5.pdf)), which I also reproduce here:
+The [APM specification](https://en.wikipedia.org/wiki/Advanced_Power_Management#In_ATA_drives) dating from 1992 includes some controls for hard drives, allowing a host system to specify the desired performance level of a disk and whether standby is permitted by sending commands to a disk. On Linux, the [`hdparm`](https://sourceforge.net/projects/hdparm/) tool is most typically used to manage APM- in particular `hdparm -B` allows the user to specify a value to specify to the drive, corresponding to the table of Advanced Power Management levels in the ATA/ATAPI specification (Table 30 in [T13/1321D revision 3](https://web.archive.org/web/20110728081452/http://www.t13.org/Documents/UploadedDocuments/project/d1321r3-ATA-ATAPI-5.pdf)), which I also reproduce here:
 
 * Maximum performance: FEh
 * Intermediate power management levels without Standby: 81h-FDh
