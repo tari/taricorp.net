@@ -18,6 +18,8 @@ tags:
 ---
  It is [fairly well-known among techies](https://mobile.twitter.com/marcan42/status/1423974853955125250) that hard drives used in server-like workloads can suffer from poor configuration by default such that they [frequently load and unload their heads](https://superuser.com/questions/840851/how-much-load-cycle-count-can-my-hard-drive-hypotethically-sustain), which can cause disks to fail much faster than they otherwise would. While I have been aware of this in my home server as well, it is easy to forget to ensure that disks are not silently killing themselves by cycling the heads. Since I use [Prometheus](https://prometheus.io/) to capture information on the server's operation however, I can use that to monitor that my hard drives are doing well.
 
+<!-- more -->
+
 ## Collecting SMART metrics
 
 The [Prometheus Node Exporter](https://github.com/prometheus/node_exporter/) is the canonical tool for capturing machine metrics like utilization and hardware information with Prometheus, but it alone does not support probing SMART data from storage drives. It does support reading arbitrary metrics from text files written by other programs with its `textfile` collector however, which is fairly easy to integrate with arbitrary other tools.
