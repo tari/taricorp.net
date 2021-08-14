@@ -2,7 +2,7 @@
 title: Monitoring (and preventing) excessive hard drive head parking on Linux
 slug: hdd-parking-monitoring
 draft: true
-date: 2021-08-09T00:34:31.020Z
+date: 2021-08-14T05:15:10.662Z
 categories:
   - software
 tags:
