@@ -112,18 +112,24 @@ According to [at least one manual](https://www.seagate.com/www-content/product-c
 * `idle_c`: reduce spindle speed, heads unloaded
 * `standby_z`: stop spindle completely
 
-Seagate provide a "[Seachest](https://www.seagate.com/au/en/support/software/seachest/)" collection of tools for manipulating their drives, but rather more usefully to users of non-Windows operating systems like Linux they also offer an open-source [openSeaChest](https://github.com/Seagate/openSeaChest). The tool to use there is `openSeaChest_PowerControl` which allows each of the EPC timers to be configured.
+Seagate provide a "[Seachest](https://www.seagate.com/au/en/support/software/seachest/)" collection of tools for manipulating their drives, but rather more usefully to users of non-Windows operating systems like Linux they also offer an open-source [openSeaChest](https://github.com/Seagate/openSeaChest). The tool to use there is `openSeaChest_PowerControl` which allows each of the EPC timers to be configured, in an invocation like:
 
-`--idle_a ...` etc. View values with `--showEPCSettings`
+```
+openSeaChest_PowerControl -d /dev/sdc --idle_a 6000 --idle_b 1800000 --idle_c 2400000
+```
 
-My Seagate Archive SMR disk (which began life as an external hard drive and was retired from that role when it became too small to hold as much as I wanted to back up to it) doesn't support showing EPC settings, but does support setting timers after running `--EPCfeature enable`. I'll have to watch the park counts on that to ensure it actually worked.
+The timer values specified are in milliseconds, so this example will park the disk heads after 30 minutes of inactivity. The current settings for a disk can be queried with the `--showEPCSettings` flag.
 
-### Verifying settings
+My Seagate Archive SMR disk (which began life as an external hard drive and was retired from that role when it became too small to hold as much as I wanted to back up to it) apparently doesn't support reporting EPC settings (since asking for them says so), and initially didn't accept new values for the idle timers either. After using the `--EPCfeature enable` option however, it seems to have accepted custom idle timer values: I'll have to watch the park counts on that to ensure it actually worked.
 
-At a glance, this seems to have done the job nicely; here is the same graph as before but on a smaller timescale that makes individual head parks visible. They stop at the time I updated the settings for the Seagate drives, and the Western Digital one hasn't changed because it needs to be powered off to change that setting and I haven't do so yet.
+## Verifying settings
+
+At a glance, changing idle3 and EPC settings seems to have done the job nicely; here is the same graph of head park rates per disk as before, but on a smaller timescale that makes individual head parks visible. The parking rate basically drops to zero at the time I updated the settings for the Seagate drives, and the Western Digital one hasn't changed because it needs to be powered off to change that setting and I haven't done so yet.
 
 ![](prometheus-load-cycles-post-update-fs8.png)
 
-## Monitoring SSDs
+### Monitoring SSDs
 
-This same setup can be used to monitor wear on SSDs, which is nice. SSDs expose some different metrics though, particularly the `media_wearout_indicator`
+This same setup can be used to monitor wear on SSDs, which is rather convenient. While SSDs don't have any heads to park, most do report a `media_wearout_indicator` that represents the amount of data written to the device in relation to the amount that it's specified to accept before the Flash storage medium wears out.
+
+For the system I'm monitoring here, the SSD that it boots from has a wearout indicator sitting on 95 of 100 (only 5% of the rated life consumed), visibly unchanged for a long time so it's not very interesting as an example.
