@@ -85,7 +85,7 @@ performance, higher power consumption method from level A1h to FEh. Advanced pow
 
 If we wanted to allow the disk to still park its heads but at minimum frequency, setting the APM value to 7Fh (`hdparm -B 127`) seems to be the correct choice. To prevent parking the heads at all a value greater than 128 may do the job, but it's possible that some disks won't behave this way because the ATA specification refers only to spinning down the disk and does not specify anything about parking heads.
 
-Unfortunately, APM settings don't persist between power cycles so if we wanted to change disk settings with APM they would need to be reapplied on every boot. On a Linux system this could be done with a udev rule matching a chosen drive, for instance matching by the disk's serial number:
+Unfortunately, APM settings don't persist between power cycles so if we wanted to change disk settings with APM they would need to be reapplied on every boot. On a Linux system this could be done with a udev rule matching a chosen drive, for instance matching the chosen disk's serial number:
 
 ```
 ACTION=="add", SUBSYSTEM=="block", KERNEL=="sd[a-z]", \
@@ -93,13 +93,17 @@ ACTION=="add", SUBSYSTEM=="block", KERNEL=="sd[a-z]", \
     RUN+="/usr/bin/hdparm -B 127 -S 0 /dev/%k"
 ```
 
-Disk vendors typically provide their own vendor-specific ways to do persistent configuration of power management settings, so it's worth trying to use those instead since the desired configuration doesn't depend on the host system (but in some cases that might be desirable!).
+Disk vendors typically provide their own vendor-specific ways to do persistent configuration of power management settings, so it's worth trying to use those instead so the desired configuration doesn't depend on the host system applying it, instead being configured in the drive (but in some cases it might be desirable to have the host configure that!).
 
 ### Western Digital `idle3`
 
 For drives made by Western Digital, the inactivity timer for parking the heads is called the `idle3` timer. Of particular note, WD Green drives ship configured to park the heads after only 8 seconds of inactivity which could notionally wear out the disk in a matter of *months* if the heads are cycling more-or-less continuously!
 
 The [`idle3-tools`](http://idle3-tools.sourceforge.net/) package allows configuring the timer on Linux, though timer values are rather unintuitive- the tool sets a "raw" idle3 timer value, so a value like 232 (0xe8) actually means 3120 seconds according to `idle3ctl -g105`, and it's unclear which interpretation of a given value actually applies to a given drive- if important that would need to be determined by experiment.
+
+```
+idle3ctl -d /dev/sdb -s 254
+```
 
 The other slight annoyance when setting the idle3 timer on WD drives is that changes only take effect when the drive is powered on, usually meaning the host computer must be fully shut down and started back up for any changes to be seen- this makes experimentation to determine how raw timer values are interpreted a slower and more tedious process.
 
