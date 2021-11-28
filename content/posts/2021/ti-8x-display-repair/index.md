@@ -32,6 +32,9 @@ In most cases the culprit for these sorts of problems is the cable connecting th
 
 can check if it's a driver or display problem (or elsewhere) by taking a screenshot using a link cable. If screenshots look normal it's a problem with the actual LCD (which generally cannot be fixed) but if the same glitches appear in a screenshot then LCD driver connection seems bad.
 
+
+![A TI-82 with horizontal lines indicating a fault in row driver connections between the driver and the actual LCD, which would not be fixed by this procedure.](/static/images/hrgymqv-1-.jpeg)
+
 ## Performing repairs
 
 Open the calculator by first removing all five batteries, including the backup coin cell. The screw on the backup battery compartment goes all the way through the case, so it must be removed to open the calculator. Then unscrew the six Torx screws holding the back of the case to the front (**TODO: what size Torx screws?**)
