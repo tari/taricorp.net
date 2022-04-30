@@ -3,6 +3,14 @@ title: Managing Google Photos duplicates with python
 slug: google-photos-dedupe
 draft: true
 date: 2022-04-30T04:05:40.080Z
+categories:
+  - Software
+tags:
+  - google
+  - photos
+  - api
+  - gcloud
+  - lightroom
 ---
 I recently had a bit of a problem with the files that had ended up in Google Photos on my account: the Google Drive desktop synchronization app seemed to have noticed the many (reasonably-high-resolution) thumbnails that my local photo management application (Lightroom) creates, and had uploaded many near-duplicate images.
 
@@ -213,6 +221,13 @@ I created an album manually via the API, and created a file with one ID per line
 
 > Note that you can only add media items that have been uploaded by your application to albums that your application has created.
 
-..so it turns out it's impossible to do anything useful via the API alone. It might be possible to do this via browser automation like [a "delete all photos" tool](https://github.com/mrishab/google-photos-delete-tool/) I happened across, but that's a bigger hack than I'm interested in right now.
+..so it turns out it's impossible to do anything useful via the API alone. It might be possible to do this via browser automation like [a "delete all photos" tool](https://github.com/mrishab/google-photos-delete-tool/) I happened across, but that's a bigger hack than I'm interested in right now, so I'm forced to give up on the goal for now.
 
 ## Other uses of the data
+
+I had a few other ideas of interesting things to do with the database I collected in addition to the desired "remove unwanted thumbnails":
+
+ * Locate other duplicates by finding images with similar metadata (camera, capture time, ISO equivalent, shutter speed, ...). This would probably match raw files that have matching sidecar JPEGs, where I would likely prefer to remove the raws since the JPEGs tend to be better suited to browsing and I don't use Google Photos as a repository for high-quality originals.
+ * Find files that exist in Google Photos but not on my local storage. It's possible that some files would have been accidentally deleted that I could recover a version of (not the originals, probably) from the web. It's also possible there would be a lot of false positives of photos that I intentionally deleted and would want to remove from Google, though.
+
+In general, there are some interesting possibilities for ways in which photos data in this form could be swizzled into a helpful outcome, but it's unfortunate that the APIs provided for Google Photos mean there aren't many ways the data can be used to any meaningful end.
