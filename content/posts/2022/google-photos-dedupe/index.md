@@ -48,6 +48,7 @@ In the Google Cloud console, I created a project and enabled the [Photos Library
     ![Creating a client ID requires the application type be specified and a name provided](/2022/google-photos-dedupe/05-client-id.png)
 
    * Download the JSON for the created client details after the client is created. The program will need to provide this to Google when logging in.
+
      ![After creating a client ID, the ID and a client secret are shown, with a button available to download JSON](/2022/google-photos-dedupe/06-client-created.png)
 
 I saved the downloaded file as `client_secret.json` and then got to actually writing my program.
