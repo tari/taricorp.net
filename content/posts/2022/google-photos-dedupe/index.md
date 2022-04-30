@@ -208,6 +208,10 @@ for chunk in chunks():
     )).execute()
 ```
 
-I created an album manually via the Photos web UI (the album ID is clear from the URL), and created a file with one ID per line by exporting the results of the above SQL query to a CSV file with only one column (the ID of the item).
+I created an album manually via the API, and created a file with one ID per line by exporting the results of the above SQL query to a CSV file with only one column (the ID of the item). Unfortunately, this fails with an HTTP 400, complaining that `Request contains an invalid media item id.` After some experimentation (manually using the API to get a single ID and add it to an album), I realized the problem was an unfortunate but intentional API limitation:
+
+> Note that you can only add media items that have been uploaded by your application to albums that your application has created.
+
+..so it turns out it's impossible to do anything useful via the API alone. It might be possible to do this via browser automation like [a "delete all photos" tool](https://github.com/mrishab/google-photos-delete-tool/) I happened across, but that's a bigger hack than I'm interested in right now.
 
 ## Other uses of the data
