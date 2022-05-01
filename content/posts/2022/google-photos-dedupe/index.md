@@ -42,26 +42,26 @@ In the Google Cloud console, I created a project and enabled the [Photos Library
 
 * Enable the Photos Library API in the API library
   
-  ![The Photos Library API shown in the API library, with a blue "Enable" button](/2022/google-photos-dedupe/01-enable-api.png)
+  ![The Photos Library API shown in the API library, with a blue "Enable" button](/2022/google-photos-dedupe-attempt/01-enable-api.png)
 * Create an OAuth consent screen for the application. This gets shown to users when providing the application access to the data in their Google account. It's fine to make this an "External" application.
   * This requires you to fill in an app name and some email addresses, but what exactly those are is up to you; they don't really matter if this project is only going to be for personal use, as it was in my case.
-    ![Select "Internal" or "External" users to begin creating an OAuth consent screen.](/2022/google-photos-dedupe/02-oauth-consent.png)
+    ![Select "Internal" or "External" users to begin creating an OAuth consent screen.](/2022/google-photos-dedupe-attempt/02-oauth-consent.png)
    *  When asked to select scopes for the app, select the relevant ones for the Photos Library API. `photoslibrary` and `photoslibrary.sharing` are sufficient for this use case. Any scopes that aren't enabled here won't be available to the application (permission will be denied) when run.
-     ![](/2022/google-photos-dedupe/03-oauth-scopes.png)
+     ![](/2022/google-photos-dedupe-attempt/03-oauth-scopes.png)
    * The third step adds users to the allowlist for a testing app, which is the default configuration. Non-testing apps are available to the public but may require review by Google before they can be published, but since this is for personal use on my own computer it's fine to let it stay as a test app. I added my own email address to the list of test users and continued on.
 
 * Having configured the consent screen, we can now create a new OAuth client ID, in the API credentials page
 
   * Choose to create new credentials, and select "OAuth client ID".
-    ![Selecting "Create credentials" drops down a menu, where one option is to create an OAuth client ID](/2022/google-photos-dedupe/04-create-credentials.png)
+    ![Selecting "Create credentials" drops down a menu, where one option is to create an OAuth client ID](/2022/google-photos-dedupe-attempt/04-create-credentials.png)
 
   * Set the Application type to Desktop and fill in a name. This program runs locally and is not a web application, so the type must be Desktop in order for the local authentication flow to be permitted.
 
-    ![Creating a client ID requires the application type be specified and a name provided](/2022/google-photos-dedupe/05-client-id.png)
+    ![Creating a client ID requires the application type be specified and a name provided](/2022/google-photos-dedupe-attempt/05-client-id.png)
 
    * Download the JSON for the created client details after the client is created. The program will need to provide this to Google when logging in.
 
-     ![After creating a client ID, the ID and a client secret are shown, with a button available to download JSON](/2022/google-photos-dedupe/06-client-created.png)
+     ![After creating a client ID, the ID and a client secret are shown, with a button available to download JSON](/2022/google-photos-dedupe-attempt/06-client-created.png)
 
 I saved the downloaded file as `client_secret.json` and then got to actually writing my program.
 
