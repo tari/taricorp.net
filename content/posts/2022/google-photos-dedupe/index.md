@@ -40,7 +40,7 @@ With some ideas in mind, I wrote a little Python application to gather data. Usi
 
 In the Google Cloud console, I created a project and enabled the [Photos Library API](https://console.cloud.google.com/apis/api/photoslibrary.googleapis.com/) for it, then created an OAuth client ID that I could use in my application. Since the steps are easier to illustrate than describe, here are screenshots of the process after having created a project.
 
-* Enable the Photos Library API in the API library
+* Enable the Photos Library API in the API library.
   
   ![The Photos Library API shown in the API library, with a blue "Enable" button](/2022/google-photos-dedupe-attempt/01-enable-api.png)
 * Create an OAuth consent screen for the application. This gets shown to users when providing the application access to the data in their Google account. It's fine to make this an "External" application.
