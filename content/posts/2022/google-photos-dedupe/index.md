@@ -1,6 +1,6 @@
 ---
-title: Managing Google Photos duplicates with python
-slug: google-photos-dedupe
+title: Managing Google Photos duplicates with Python
+slug: google-photos-dedupe-attempt
 draft: true
 date: 2022-04-30T04:05:40.080Z
 categories:
@@ -11,6 +11,10 @@ tags:
   - api
   - gcloud
   - lightroom
+  - python
+  - sqlite
+  - sqlalchemy
+  - giving-up
 ---
 I recently had a bit of a problem with the files that had ended up in Google Photos on my account: the Google Drive desktop synchronization app seemed to have noticed the many (reasonably-high-resolution) thumbnails that my local photo management application (Lightroom) creates, and had uploaded many near-duplicate images.
 
