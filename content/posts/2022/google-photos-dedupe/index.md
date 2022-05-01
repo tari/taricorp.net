@@ -1,7 +1,7 @@
 ---
 title: Managing Google Photos duplicates with Python
 slug: google-photos-dedupe-attempt
-draft: true
+draft: false
 date: 2022-04-30T04:05:40.080Z
 categories:
   - Software
