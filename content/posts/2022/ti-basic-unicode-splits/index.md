@@ -52,7 +52,7 @@ With this in mind, we could label the use of a backslash to escape tokens as the
 
 As already established, not inserting a break is ambiguous and because tokenizers must take the longest prefix of a given input as a token:[^prefix] the "pi" ends up incorrectly transformed to the Greek letter pi. In the traditional break style, we insert a backslash to force "pi" to be interpreted as two Latin letters rather than being translated to the Greek pi token.
 
-[^prefix]: This requirement may not be obvious: if there are two tokens "Y" and "Yellow" for instance, given input "Yellow" it must choose the longer of the tokens matching the input (namely, "Yellow"). If it did not, it would be impossible to reliably recognize the token "Yellow" because "Y" might be treated as a token instead, leaving "ellow" to be tokenized separately.
+[^prefix]: This requirement may not be obvious: if there are two tokens "Y" and "Yellow" for instance, given input "Yellow" a tokenizer must choose the longer of the tokens matching the input (namely, "Yellow"). If it did not, it would be impossible to reliably recognize the token "Yellow" because "Y" might be treated as a token instead, leaving "ellow" to be tokenized separately.
 
 In the invisible mode, there is still a break present but it is **not visible in the written text**: I have inserted a ZWNJ character (HTML `&zwnj;`) which can be interpreted by a tokenizer in the same way as a backslash (which is to say, ignored other than forcing a token split).
 
