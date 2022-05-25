@@ -20,11 +20,11 @@ When programming TI-BASIC on a calculator, code is entered directly as tokens ei
 
 In more recent history, people have written tools allowing programmers to write TI-BASIC programs on general-purpose computers and translate them to program files that can be executed by calculators: the major examples of these tools are [Token](https://www.cemetech.net/downloads/files/515)[IDE](url=https://www.ticalc.org/archives/files/fileinfo/433/43315.html) and [SourceCoder](https://www.cemetech.net/sc/).
 
-TI-BASIC is tokenized.
+These programming tools support both *tokenizing* translating plain text (which is easy to write on most computers) into tokens and packaging those into program files that can be placed on calculators, as well as the reverse *detokenization* operation where a collection of tokens is converted back into text. Typically a program will be tokenized in order to run it, and detokenized if changes are to be made to it (provided a plain-text copy does not already exist). 
 
 ## The need for breaks
 
-Sometimes a marker needs to be inserted in the source code that a person writes on a PC in order to indicate where a string that might be interpreted as a single token should instead be interpreted as multiple tokens.
+Sometimes a marker needs to be inserted in the plain-text source code that a person writes in order to indicate where a string that might be interpreted as a single token should instead be interpreted as multiple tokens.
 
 Perhaps the most common example of needing to do this is when the string "pi" appears in a string and it must be written as **"p\\i"** to prevent the tokenizer from converting it to **"π"**. Although a calculator has a button for the π symbol, most computer keyboards do not: the tools allow a programmer to write "pi" instead as a convenience. This approach of offering easier-to-type aliases for tokens that contain unusual characters and inserting a backslash to indicate strings that should be broken into multiple tokens was first used by TokenIDE and later also supported by SourceCoder.
 
