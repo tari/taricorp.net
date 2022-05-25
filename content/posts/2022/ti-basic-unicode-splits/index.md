@@ -1,8 +1,16 @@
 ---
 title: Marking token boundaries in TI-BASIC with Unicode magic
 slug: ti-basic-unicode-splits
-draft: true
+draft: false
 date: 2022-05-25T03:01:18.380Z
+categories:
+  - software
+tags:
+  - ticalc
+  - software
+  - compilers
+  - tokenization
+  - unicode
 ---
 Users who are accustomed to writing TI-BASIC on computers in plain text like any other programming language are probably familiar with sometimes needing to explicitly mark where token boundaries occur. I've been doing some thinking about this lately, and have arrived at a proposal for a way to improve the situation for some uses.
 
@@ -10,11 +18,11 @@ Users who are accustomed to writing TI-BASIC on computers in plain text like any
 
 What enthusiasts often refer to as the TI-8x series of calculators is the TI-83+ and its variants, including the improved TI-84+ and color-screen CE (and happily abandoned CSE) versions. These are calculators sold by Texas Instruments and commonly used in middle- and high-school math instruction. The internal architecture of these calculators is based on a Zilog Z80 processor with 512 kB or so of Flash memory and 32 kB of RAM (with larger memories in the newer versions).
 
-Most of the TI graphing calculators support dialects of BASIC, which are usually referred to as TI-BASIC. The details differ between calculator families, but here I am concerned with 8x TI-BASIC as used on the TI-83+.
+Most of the TI graphing calculators support dialects of BASIC, which are usually referred to as TI-BASIC. The details differ between calculator families, but here I am concerned with the TI-BASIC dialect used on the 8x calculators.
 
 TI-BASIC is stored on calculators as a sequence of **tokens**, each of which is one or two bytes long. Each token has a string that it is translated to for display: the token consisting of the bytes `0xbb`,`0x6d` is displayed as `AsmComp`, for instance.
 
-When programming TI-BASIC on a calculator, code is entered directly as tokens either through keystrokes or by selecting them from a menu. While pressing the <kbd>1</kbd> key enters a `1` token, pressing the key sequence <kbd>VARS</kbd>,<kbd>7</kbd>,<kbd>1</kbd> enters the token `Str1`. Each syntatic element of the language is unambiguously specified to the calculator as a sequence of keystrokes, even if the representation of a set of tokens as plain text could be interpreted in multiple ways: although the string "sin(" could be displayed by pressing either the <kbd>sin(</kbd> key or the sequence <kbd>s</kbd>,<kbd>i</kbd>,<kbd>n</kbd>,<kbd>(</kbd>, the program as stored on the calculator captures which sequence of keys was pressed (in the form of tokens) and is unambiguous.
+When programming TI-BASIC on a calculator, code is entered directly as tokens either through select keystrokes or by selecting tokens from menus. While pressing the <kbd>1</kbd> key enters a `1` token, pressing the key sequence <kbd>VARS</kbd>,<kbd>7</kbd>,<kbd>1</kbd> enters the token `Str1`. Each syntatic element of the language is unambiguously specified to the calculator as a sequence of keystrokes, even if the representation of a set of tokens as plain text could be interpreted in multiple ways: although the string "sin(" could be displayed by pressing either the <kbd>sin(</kbd> key or the sequence <kbd>s</kbd>,<kbd>i</kbd>,<kbd>n</kbd>,<kbd>(</kbd>, the program as stored on the calculator captures which sequence of keys was pressed (in the form of tokens) and is unambiguous.
 
 ---
 
@@ -30,7 +38,7 @@ Perhaps the most common example of needing to do this is when the string "pi" ap
 
 ---
 
-It's surprisingly tricky to detect when a break like this needs to be inserted when converting tokens back into plain text, as [discussed previously on on Cemetech](https://www.cemetech.net/forum/viewtopic.php?p=296823): TI-BASIC (at least the 8x variant) was designed to only ever be written in tokens, so (as long as we use the same strings for each token that the calculator displays) some way to mark token boundaries is required where a suffix of the concatenation of two valid tokens is also valid as another token.
+It's surprisingly tricky to detect when a break like this needs to be inserted when converting tokens back into plain text, as [discussed previously on on Cemetech](https://www.cemetech.net/forum/viewtopic.php?p=296823): TI-BASIC (at least the 8x variant) was designed to only ever be written in tokens, so some way to mark token boundaries is required where a suffix of the concatenation of two or more valid tokens is also valid as another token.
 
 Since that formalism is a little confusing when written in words, an example: if we have tokens "`a`", "`ab`", "`bc`", and "`c`" then without any token break indicator it is unclear how to tokenize the plaintext string "`abc`": it could be [`a`, `bc`] or [`ab`, `c`]. Inserting a break (`\`) disambiguates "`a\bc`" as [`a`, `bc`] and "`ab\c`" as [`ab`, `c`]. If detokenizing [`ab`,`c`], the output suffix "`bc`" when encountering the `c` token is also a valid token so we know a break must be inserted to disambiguate.
 
@@ -82,14 +90,14 @@ Invisible breaks also present an interesting opportunity to mark more token boun
 
 If it can be assumed that every pair of tokens has break character between them, then a tokenizer can simply split its input text on break characters and emit tokens matching exactly the strings that are separated by breaks.
 
-Unfortunately this would represent a somewhat different mode of operation for tokenizers when compared with the traditional longest-prefix matching. It may be possible to support both modes concurrently however, if a tokenizer first attempted an exact match of the input up to the next break character and fell back to longest-prefix matching in case of no exact match.
+Unfortunately this would require a somewhat different mode of operation for tokenizers when compared with the traditional longest-prefix matching. It may be possible to support both modes concurrently however, if a tokenizer first attempted an exact match of the input up to the next break character and fell back to longest-prefix matching in case of no exact match in order to handle breaks between every token but also support minimal-break inputs.
 
 This break-every-token approach is possible with traditional breaks as well as invisible, which is easier to illustrate. Consider a program fragment written for a monochrome-display TI-83+: "`Red cat`". The string "Red" is a token in its own right on the CSE and CE 8x calculators (because they have color screens), so interpreting this as a program for color calculators would tokenize it differently. This becomes clear if we insert breaks around every token:
 
  * Monochrome: `R\e\d\ \c\a\t`
  * Color: `Red\ \c\a\t`
 
-A program written as the monochrome version with breaks around every token as illustrated here **cannot be mistaken** for the color one, and the color one cannot be mistaken for the monochrome! While doing so with visible break characters makes it much more difficult to read the code, invisible breaks would not affect readability.
+A program written as the monochrome version with breaks around every token as illustrated here **cannot be mistaken** for the color one, and the color one cannot be mistaken for the monochrome! While doing so with visible break characters makes it much more difficult to read the code, invisible breaks would not affect readability the same way visible ones do.
 
 ### Concluding
 
