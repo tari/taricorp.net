@@ -43,7 +43,7 @@ If one figuratively squints at the intent of ZWNJ, it seems similar to the needs
 
 With this in mind, we could label the use of a backslash to escape tokens as the traditional method and compare it to use of ZWNJ (call it "invisible" breaks) or doing nothing:
 
-<table>
+<table style="border: 1px solid black; width: 100%">
   <tr><th>Split mode</th><th>Plaintext</th><th>Tokenized</th></tr>
   <tr><td>None</td><td><code>Disp "I like to eat pie</code></td><td><code>Disp "I like to eat &pi;e</code</td></tr>
   <tr><td>Traditional</td><td><code>Disp "I like to eat p\ie</code></td><td><code>Disp "I like to eat pie</code></td></tr>
