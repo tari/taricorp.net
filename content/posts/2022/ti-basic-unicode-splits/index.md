@@ -4,15 +4,25 @@ slug: ti-basic-unicode-splits
 draft: true
 date: 2022-05-25T03:01:18.380Z
 ---
-Users who are accustomed to writing TI-BASIC on computers in plain text like any other programming language are probably familiar with sometimes needing to explicitly mark where token boundaries occur. 
+Users who are accustomed to writing TI-BASIC on computers in plain text like any other programming language are probably familiar with sometimes needing to explicitly mark where token boundaries occur. I've been doing some thinking about this lately, and have arrived at a proposal for a way to improve the situation for some uses.
+
+## Background
+
+TI-BASIC is tokenized.
+
+## The need for breaks
+
 Perhaps the most common example of needing to do this is when the string "pi" appears in a string and it must be written as "p\i" to prevent the tokenizer from converting it to "π". This approach was first used in [Token](https://www.cemetech.net/downloads/files/515)[IDE](url=https://www.ticalc.org/archives/files/fileinfo/433/43315.html) and is also supported by [SourceCoder](https://www.cemetech.net/sc/).
 
 It's surprisingly tricky to detect when a break like this needs to be inserted when converting tokens back into plain text, as [url=https://www.cemetech.net/forum/viewtopic.php?p=296823]discussed previously here on Cemetech[/url]: TI-BASIC (at least the 8x variant) was designed to only ever be written in tokens, so (as long as we use the same strings for each token that the calculator displays) some way to mark token boundaries is required where a suffix of the concatenation of two valid tokens is also valid as another token.
-Since that formalism is a little confusing when written in words, an example: if we have tokens "a", "ab", "bc", and "c" then without any token break indicator it is ambiguous how to tokenize the plaintext string "abc": it could be [a, bc] or [ab, c]. Inserting a break (\) disambiguates "a\bc" as [a, bc] and "ab\c" as [ab, c].
+
+Since that formalism is a little confusing when written in words, an example: if we have tokens "`a`", "`ab`", "`bc`", and "`c`" then without any token break indicator it is ambiguous how to tokenize the plaintext string "`abc`": it could be [`a`, `bc`] or [`ab`, `c`]. Inserting a break (`\`) disambiguates "`a\bc`" as [`a`, `bc`] and "`ab\c`" as [`ab`, `c`]. If detokenizing [`ab`,`c`], the output suffix "`bc`" when encountering the `c` token is also a valid token so we know a break must be inserted to disambiguate.
 
 ---
 
 That's all well and good, but backslashes are kind of ugly and break the flow when you're reading code (even if they are necessary due to the language design). It occurs to me that Unicode has thousands of interesting characters, at least some of which could be used as explicit token breaks like we typically use backslash for while making code somewhat nicer to read.
+
+## Unicode alternatives
 
 [Unicode TR14](https://www.unicode.org/reports/tr14/) describes the blessed Unicode line breaking algorithm that guides when it is permitted to split text across multiple lines inside a block of text. While not strictly useful for the desired application of splitting tokens with no or little effect on how the code looks to humans, it does provide some pointers to interesting characters, including:
  * Glue characters like Zero Width Joiner (ZWJ), U+200D: an invisible character that prevents breaking the text on either side of it (of particular use in emoji sequences as described by [TR51](https://www.unicode.org/reports/tr51/)!). The opposite of what we want.
@@ -23,11 +33,19 @@ That's all well and good, but backslashes are kind of ugly and break the flow wh
 
 Right next to ZWJ in the code space we find an interesting character: U+200D `ZERO WIDTH NON-JOINER` (ZWNJ). Unicode Section 23.2 says this (and ZWJ for the opposite) is designed to mark where connections between characters are forbidden, as in cursive scripts or if a [ligature](https://en.wikipedia.org/wiki/Ligature_(writing)) might be used. Inserting a ZWNJ between two characters that might otherwise be joined forces them to be disconnected.
 
+### ZWNJ
+
 If one figuratively squints at the intent of ZWNJ, it seems similar to the needs outlined for TI-BASIC: we want to prevent characters from running together in some situations. Where normally a tokenizer will eagerly join characters into tokens, a ZWNJ could be inserted as a break character that is otherwise invisible to human readers.
+
+With this in mind, we could label the use of a backslash to escape tokens as the traditional method and compare it to use of ZWNJ (call it "invisible" breaks) or doing nothing:
 
 <table>
   <tr><th>Split mode</th><th>Plaintext</th><th>Tokenized</th></tr>
-  <tr><td>None</td><td><code>Disp "I like to eat pie</code></td><td><code>Disp "I like to eat pie</code</td></tr>
+  <tr><td>None</td><td><code>Disp "I like to eat pie</code></td><td><code>Disp "I like to eat &pi;e</code</td></tr>
   <tr><td>Traditional</td><td><code>Disp "I like to eat p\ie</code></td><td><code>Disp "I like to eat pie</code></td></tr>
   <tr><td>Invisible</td><td><code>Disp "I like to eat p&zwnj;ie</code></td><td><code>Disp "I like to eat pie</code</td></tr>
 </table>
+
+As already established, not inserting a break is ambiguous and because tokenizers must take the longest prefix of a given input as a token,[^prefix] the "pi" ends up incorrectly transformed to the Greek letter pi.
+
+[^prefix]: This requirement may not be obvious: if there are two tokens "Y" and "Yellow" for instance, given input "Yellow" it must choose the longer of the tokens matching the input (namely, "Yellow"). If it did not, it would be impossible to reliably recognize the token "Yellow" because "Y" might be treated as a token instead, leaving "ellow" to be tokenized separately.
