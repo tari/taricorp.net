@@ -8,15 +8,25 @@ Users who are accustomed to writing TI-BASIC on computers in plain text like any
 
 ## Background
 
-8x calculators support a dialect of BASIC that we refer to as TI-BASIC (which is distinct from the dialects supported on other calculator families but similar).
+What enthusiasts often refer to as the TI-8x series of calculators is the TI-83+ and its variants, including the improved TI-84+ and color-screen CE (and happily forgotten CSE) versions. These are calculators sold by Texas Instruments and commonly used in middle- and high-school math instruction. The internal architecture of these calculators is based on a Zilog Z80 processor with 512 kB or so of Flash memory and 32 kB of RAM (with larger memories in the newer versions).
+
+Most of the TI graphing calculators support dialects of BASIC, which are usually referred to as TI-BASIC. The details differ between calculator families, but here I am concerned with 8x TI-BASIC as used on the TI-83+.
+
+TI-BASIC is stored on calculators as a sequence of **tokens**, each of which is one or two bytes long. Each token has a string that it is translated to for display: the token consisting of the bytes `0xbb`,`0x6d` is displayed as `AsmComp`, for instance.
+
+When programming TI-BASIC on a calculator, code is entered directly as tokens either through keystrokes or by selecting them from a menu. While pressing the <kbd>1</kbd> key enters a `1` token, pressing the key sequence <kbd>VARS</kbd>,<kbd>7</kbd>,<kbd>1</kbd> enters the token `Str1`. Each syntatic element of the language is unambiguously specified to the calculator as a sequence of keystrokes, even if the representation of a set of tokens as plain text could be interpreted in multiple ways: although the string "sin(" could be displayed by pressing either the <kbd>sin(</kbd> key or the sequence <kbd>s</kbd>,<kbd>i</kbd>,<kbd>n</kbd>,<kbd>(</kbd>, the program as stored on the calculator captures which sequence of keys was pressed (in the form of tokens) and is unambiguous.
+
+---
+
+In more recent history, people have written tools allowing programmers to write TI-BASIC programs on general-purpose computers and translate them to program files that can be executed by calculators: the major examples of these tools are [Token](https://www.cemetech.net/downloads/files/515)[IDE](url=https://www.ticalc.org/archives/files/fileinfo/433/43315.html) and [SourceCoder](https://www.cemetech.net/sc/).
 
 TI-BASIC is tokenized.
 
 ## The need for breaks
 
-As alluded to in the beginning, because the canonical representation of TI-BASIC is as a stream of tokens, sometimes an marker needs to be inserted in the textual representation of that stream of tokens that indicates where a string that might be interpreted as a single token should instead be interpreted as multiple tokens.
+Sometimes a marker needs to be inserted in the source code that a person writes on a PC in order to indicate where a string that might be interpreted as a single token should instead be interpreted as multiple tokens.
 
-Perhaps the most common example of needing to do this is when the string "pi" appears in a string and it must be written as "p**\\**i" to prevent the tokenizer from converting it to "π". This approach of inserting a backslash was first used in [Token](https://www.cemetech.net/downloads/files/515)[IDE](url=https://www.ticalc.org/archives/files/fileinfo/433/43315.html) and is also supported by [SourceCoder](https://www.cemetech.net/sc/).
+Perhaps the most common example of needing to do this is when the string "pi" appears in a string and it must be written as **"p\\i"** to prevent the tokenizer from converting it to **"π"**. Although a calculator has a button for the π symbol, most computer keyboards do not: the tools allow a programmer to write "pi" instead as a convenience. This approach of offering easier-to-type aliases for tokens that contain unusual characters and inserting a backslash to indicate strings that should be broken into multiple tokens was first used by TokenIDE and later also supported by SourceCoder.
 
 It's surprisingly tricky to detect when a break like this needs to be inserted when converting tokens back into plain text, as [discussed previously on on Cemetech](https://www.cemetech.net/forum/viewtopic.php?p=296823): TI-BASIC (at least the 8x variant) was designed to only ever be written in tokens, so (as long as we use the same strings for each token that the calculator displays) some way to mark token boundaries is required where a suffix of the concatenation of two valid tokens is also valid as another token.
 
