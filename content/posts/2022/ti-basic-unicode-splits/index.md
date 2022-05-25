@@ -30,7 +30,7 @@ Perhaps the most common example of needing to do this is when the string "pi" ap
 
 It's surprisingly tricky to detect when a break like this needs to be inserted when converting tokens back into plain text, as [discussed previously on on Cemetech](https://www.cemetech.net/forum/viewtopic.php?p=296823): TI-BASIC (at least the 8x variant) was designed to only ever be written in tokens, so (as long as we use the same strings for each token that the calculator displays) some way to mark token boundaries is required where a suffix of the concatenation of two valid tokens is also valid as another token.
 
-Since that formalism is a little confusing when written in words, an example: if we have tokens "`a`", "`ab`", "`bc`", and "`c`" then without any token break indicator it is ambiguous how to tokenize the plaintext string "`abc`": it could be [`a`, `bc`] or [`ab`, `c`]. Inserting a break (`\`) disambiguates "`a\bc`" as [`a`, `bc`] and "`ab\c`" as [`ab`, `c`]. If detokenizing [`ab`,`c`], the output suffix "`bc`" when encountering the `c` token is also a valid token so we know a break must be inserted to disambiguate.
+Since that formalism is a little confusing when written in words, an example: if we have tokens "`a`", "`ab`", "`bc`", and "`c`" then without any token break indicator it is unclear how to tokenize the plaintext string "`abc`": it could be [`a`, `bc`] or [`ab`, `c`]. Inserting a break (`\`) disambiguates "`a\bc`" as [`a`, `bc`] and "`ab\c`" as [`ab`, `c`]. If detokenizing [`ab`,`c`], the output suffix "`bc`" when encountering the `c` token is also a valid token so we know a break must be inserted to disambiguate.
 
 ---
 
