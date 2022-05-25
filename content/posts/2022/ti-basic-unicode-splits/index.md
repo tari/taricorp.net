@@ -50,7 +50,7 @@ With this in mind, we could label the use of a backslash to escape tokens as the
   <tr><td>Invisible</td><td><code>Disp "I like to eat p&zwnj;ie</code></td><td><code>Disp "I like to eat pie</code</td></tr>
 </table>
 
-As already established, not inserting a break is ambiguous and because tokenizers must take the longest prefix of a given input as a token:[^prefix] the "pi" ends up incorrectly transformed to the Greek letter pi. In the traditional break style, we insert a backslash to force "pi" to be interpreted as two Latin letters rather than being translated to the Greek pi token.
+As already established, not inserting a break is ambiguous and because tokenizers must take the longest prefix of a given input as a token,[^prefix] the "pi" ends up incorrectly transformed to the Greek letter pi. In the traditional break style, we insert a backslash to force "pi" to be interpreted as two Latin letters rather than being translated to the Greek pi token.
 
 [^prefix]: This requirement may not be obvious: if there are two tokens "Y" and "Yellow" for instance, given input "Yellow" a tokenizer must choose the longer of the tokens matching the input (namely, "Yellow"). If it did not, it would be impossible to reliably recognize the token "Yellow" because "Y" might be treated as a token instead, leaving "ellow" to be tokenized separately.
 
