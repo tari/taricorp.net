@@ -69,5 +69,5 @@ backend:
   name: gitlab
   repo: taricorp/taricorp.net
   branch: master
-  auth_type: implicit
-  app_id: f9450f5bbb8fae7444b02bf9f29166b0a3cb9eb96c72ce90e4ce59bc274e70be
+  auth_type: pkce
+  app_id: 04b2000c5aa2db7aab7220725e264c643cd6e3b7ecd28fd4a7493c9bf02e634f
