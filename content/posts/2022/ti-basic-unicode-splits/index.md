@@ -6,9 +6,9 @@ date: 2022-05-25T03:01:18.380Z
 ---
 Users who are accustomed to writing TI-BASIC on computers in plain text like any other programming language are probably familiar with sometimes needing to explicitly mark where token boundaries occur. I've been doing some thinking about this lately, and have arrived at a proposal for a way to improve the situation for some uses.
 
-## Background
+## TI-BASIC Background
 
-What enthusiasts often refer to as the TI-8x series of calculators is the TI-83+ and its variants, including the improved TI-84+ and color-screen CE (and happily forgotten CSE) versions. These are calculators sold by Texas Instruments and commonly used in middle- and high-school math instruction. The internal architecture of these calculators is based on a Zilog Z80 processor with 512 kB or so of Flash memory and 32 kB of RAM (with larger memories in the newer versions).
+What enthusiasts often refer to as the TI-8x series of calculators is the TI-83+ and its variants, including the improved TI-84+ and color-screen CE (and happily abandoned CSE) versions. These are calculators sold by Texas Instruments and commonly used in middle- and high-school math instruction. The internal architecture of these calculators is based on a Zilog Z80 processor with 512 kB or so of Flash memory and 32 kB of RAM (with larger memories in the newer versions).
 
 Most of the TI graphing calculators support dialects of BASIC, which are usually referred to as TI-BASIC. The details differ between calculator families, but here I am concerned with 8x TI-BASIC as used on the TI-83+.
 
