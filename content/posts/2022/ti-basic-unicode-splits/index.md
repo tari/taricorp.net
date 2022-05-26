@@ -1,0 +1,108 @@
+---
+title: Marking token boundaries in TI-BASIC with Unicode magic
+slug: ti-basic-unicode-splits
+draft: false
+date: 2022-05-26T03:57:39.084Z
+categories:
+  - software
+tags:
+  - ticalc
+  - software
+  - compilers
+  - tokenization
+  - unicode
+---
+Users who are accustomed to writing TI-BASIC on computers in plain text like any other programming language are probably familiar with sometimes needing to explicitly mark where token boundaries occur. I've been doing some thinking about this lately, and have arrived at a proposal for a way to improve the situation for some uses.
+
+<!-- more -->
+
+## TI-BASIC Background
+
+What enthusiasts often refer to as the TI-8x series of calculators is the TI-83+ and its variants, including the improved TI-84+ and color-screen CE (and happily abandoned CSE) versions. These are calculators sold by Texas Instruments and commonly used in middle- and high-school math instruction. The internal architecture of these calculators is based on a Zilog Z80 processor with 512 kB or so of Flash memory and 32 kB of RAM (with larger memories in the newer versions).
+
+Most of the TI graphing calculators support dialects of BASIC, which are usually referred to as TI-BASIC. The details differ between calculator families, but here I am concerned with the TI-BASIC dialect used on the 8x calculators.
+
+TI-BASIC is stored on calculators as a sequence of **tokens**, each of which is one or two bytes long. Each token has a string that it is translated to for display: the token consisting of the bytes `0xbb`,`0x6d` is displayed as `AsmComp`, for instance.
+
+When programming TI-BASIC on a calculator, code is entered directly as tokens either through select keystrokes or by selecting tokens from menus. While pressing the <kbd>1</kbd> key enters a `1` token, pressing the key sequence <kbd>VARS</kbd>,<kbd>7</kbd>,<kbd>1</kbd> enters the token `Str1`. Each syntatic element of the language is unambiguously specified to the calculator as a sequence of keystrokes, even if the representation of a set of tokens as plain text could be interpreted in multiple ways: although the string "sin(" could be displayed by pressing either the <kbd>sin(</kbd> key or the sequence <kbd>s</kbd>,<kbd>i</kbd>,<kbd>n</kbd>,<kbd>(</kbd>, the program as stored on the calculator is unambiguous because it captures which sequence of keys was pressed (in the form of tokens).
+
+---
+
+In more recent history, people have written tools allowing programmers to write TI-BASIC programs on general-purpose computers and translate them to program files that can be executed by calculators: the major examples of these tools are [Token](https://www.cemetech.net/downloads/files/515)[IDE](url=https://www.ticalc.org/archives/files/fileinfo/433/43315.html) and [SourceCoder](https://www.cemetech.net/sc/).[^history]
+
+[^history]: The TI-83 uses essentially the same dialect of BASIC as the 8x series and was first sold in 1996. Some versions of TI's GraphLink software included a program editor that I've never used, and [SourceCoder first appeared in 2005](https://www.ticalc.org/archives/news/articles/13/132/132993.html). [TokenIDE appeared around 2011](https://www.ticalc.org/archives/news/articles/14/148/148184.html) and its use of XML files to describe tokens was adopted by later versions of SourceCoder. I imagine TokenIDE's [open source nature](https://bitbucket.org/merthsoft/tokenide/) contributed to its success in influencing later work on SourceCoder.
+
+These programming tools support both *tokenizing*: translating plain text (which is easy to write on most computers) into tokens and packaging those into program files that can be placed on calculators, as well as the reverse *detokenization* operation where a collection of tokens is converted back into text. Typically a program will be tokenized in order to run it, and detokenized if changes are to be made to it (provided a plain-text copy does not already exist). The programs or portions of programs that perform tokenization and detokenization are usually called the tokenizer and detokenizer.
+
+## The need for breaks
+
+Sometimes a marker needs to be inserted in the plain-text source code that a person writes in order to indicate where a string that might be interpreted as a single token should instead be interpreted as multiple tokens. As discussed above, there is more than one way to write tokens that display as "sin(" for example: if a programmer is writing text on a computer rather than tokens on a calculator, how can a tool determine which sequence of tokens is desired?
+
+Perhaps the most common example of needing to do this is when the string "pi" appears in a program and it must be written as **"p\\i"** to prevent the tokenizer from converting it to **"π"**. Although a calculator has a button for the π symbol, most computer keyboards do not: the tools allow a programmer to write "pi" instead as a convenience. This approach of offering easier-to-type aliases for tokens that contain unusual characters and inserting a backslash to indicate strings that should be broken into multiple tokens was first used by TokenIDE and later also supported by SourceCoder.
+
+---
+
+It's surprisingly tricky to detect when a break like this needs to be inserted when converting tokens back into plain text, as [discussed previously on on Cemetech](https://www.cemetech.net/forum/viewtopic.php?p=296823): TI-BASIC (at least the 8x variant) was designed to only ever be written in tokens, so some way to mark token boundaries is required where a suffix of the concatenation of two or more valid tokens is also valid as another token.
+
+Since that formalism is a little confusing when written in words, an example: if we have tokens "`a`", "`ab`", "`bc`", and "`c`" then without any token break indicator it is unclear how to tokenize the plaintext string "`abc`": it could be [`a`, `bc`] or [`ab`, `c`]. Inserting a break (`\`) disambiguates "`a\bc`" as [`a`, `bc`] and "`ab\c`" as [`ab`, `c`]. If detokenizing [`ab`,`c`], the output suffix "`bc`" when encountering the `c` token is also a valid token so we know a break must be inserted to disambiguate.
+
+---
+
+That's all well and good, but backslashes are kind of ugly and break the flow when you're reading code (even if they are necessary due to the language design). It occurs to me that Unicode has thousands of interesting characters, at least some of which could be used as explicit token breaks like we typically use backslash for while making code somewhat easier for humans to read.
+
+## Exploring Unicode alternatives
+
+[Unicode TR14](https://www.unicode.org/reports/tr14/) describes the blessed Unicode line breaking algorithm that guides when it is permitted to split text across multiple lines inside a block of text. While not strictly useful for the desired application of splitting tokens with no or little effect on how the code looks to humans, it does provide some pointers to interesting characters, including:
+ * Glue characters like Zero Width Joiner (ZWJ), U+200D: an invisible character that prevents breaking the text on either side of it (of particular use in emoji sequences as described by [TR51](https://www.unicode.org/reports/tr51/)!). The opposite of what we want.
+ * Next Line (NEL), U+0085: forces the following text to appear on a new line. This behaves the same as most programmers would expect a Carriage Return or Line Feed character (or the combination of the two) to behave,[^typewriters] and it turns out that section 5.8 of the Unicode standard spends many paragraphs on suggesting how applications treat each of the possible newline characters. The variety of options exist largely due to historical differences in how computer systems record line breaks, where `NEL` in particular is probably unfamiliar to most because it was used by [EBCDIC](https://en.wikipedia.org/wiki/EBCDIC) computers which were mostly IBM machines and are very uncommon these days. Interesting, but not useful for this application.
+ * Assorted punctuation, such as '!', '}' and '['. These forbid line breaks before or after them depending on the orientation, such as ')' forbidding a break before it because a close parentheses logically binds to the text that precedes it. Getting closer, but line breaks aren't really relevant to wanting to mark the boundaries between tokens.
+
+[^typewriters]: Typewriter users might also recognize these terms and intuit their meaning, since they were included in the ASCII character set in 1967 due to their importance to teletypes, where there is a physical distinction between simply advancing the feed by one line and moving the carriage back to the start of the line.
+
+Adjacent to ZWJ in the code space we find an interesting character: U+200D `ZERO WIDTH NON-JOINER` (ZWNJ). Unicode Section 23.2 says this (and ZWJ for the opposite) is designed to mark where connections between characters are forbidden, as in cursive scripts or if a [ligature](https://en.wikipedia.org/wiki/Ligature_(writing)) might be used. Inserting a ZWNJ between two characters that might otherwise be joined forces them to be disconnected.
+
+### ZWNJ
+
+If one figuratively squints at the intent of ZWNJ, it seems similar to the needs outlined for TI-BASIC: we want to prevent characters from running together in some situations. Where normally a tokenizer will eagerly join characters into tokens, a ZWNJ could be inserted as a break character that is otherwise invisible to human readers.
+
+With this in mind, we could label the use of a backslash to escape tokens as the traditional method and compare it to use of ZWNJ (call it "invisible" breaks) or doing nothing:
+
+<table style="border: 1px solid black; width: 100%">
+  <tr><th>Split mode</th><th>Plaintext</th><th>Tokenized</th></tr>
+  <tr><td>None</td><td><code>Disp "I like to eat pie</code></td><td><code>Disp "I like to eat &pi;e</code</td></tr>
+  <tr><td>Traditional</td><td><code>Disp "I like to eat p\ie</code></td><td><code>Disp "I like to eat pie</code></td></tr>
+  <tr><td>Invisible</td><td><code>Disp "I like to eat p&zwnj;ie</code></td><td><code>Disp "I like to eat pie</code</td></tr>
+</table>
+
+As already established, not inserting a break is ambiguous and because tokenizers must take the longest prefix of a given input as a token,[^prefix] the "pi" ends up incorrectly transformed to the Greek letter pi. In the traditional break style, we insert a backslash to force "pi" to be interpreted as two Latin letters rather than being translated to the Greek pi token.
+
+[^prefix]: This requirement may not be obvious: if there are two tokens "Y" and "Yellow" for instance, given input "Yellow" a tokenizer must choose the longer of the tokens matching the input (namely, "Yellow"). If it did not, it would be impossible to reliably recognize the token "Yellow" because "Y" might be treated as a token instead, leaving "ellow" to be tokenized separately.
+
+In the invisible mode, there is still a break present but it is **not visible in the written text**: I have inserted a ZWNJ character (HTML `&zwnj;`) which can be interpreted by a tokenizer in the same way as a backslash (which is to say, ignored other than forcing a token split).
+
+## Discussion
+
+Although I'm pleased with the idea to insert ZWNJs into human-readable BASIC programs, doing so in general seems limited by readers' needs to only some contexts. It does also offer some interesting possibilities, though.
+
+If a person might visually read out the plaintext source code and convert it to tokens (such as by typing it into a physical calculator), the loss of visual breaks means that the human must attempt to resolve any ambiguities that appear. While an experienced TI-BASIC programmer can probably discern intent from the program's context in order to disambiguate, **depending on a reader's skill seems like a suboptimal solution**. As a counterpoint however, a novice programmer may not even be familiar with the backslash-as-break "traditional" convention either: in that case invisible breaks could be superior.
+
+If a user is expected to be able to copy and paste Unicode text to convert it into tokens (such as in source code published to the web, like this article), invisible splits are convenient and easy to read as long as tokenizers can be assumed to understand them. If a user might do visual transcription (such as manually typing code from a book into a calculator), traditional (visible) splits may be preferred.
+
+### Increasing break frequency
+
+Invisible breaks also present an interesting opportunity to mark more token boundaries than only those required to disambiguate textual source code: what if a ZWNJ were inserted on **every token boundary**? Doing so would make a given program's source code forward-compatible with alternate token sets that have more tokens! Because breaks must be inserted where ambiguity is known, adding more tokens can introduce new ambiguities that might not be handled by an older detokenizer (which has a smaller set of known tokens).
+
+If it can be assumed that every pair of tokens has break character between them, then a tokenizer can simply split its input text on break characters and emit tokens matching exactly the strings that are separated by breaks.
+
+Unfortunately this would require a somewhat different mode of operation for tokenizers when compared with the traditional longest-prefix matching. It may be possible to support both modes concurrently however, if a tokenizer first attempted an exact match of the input up to the next break character and fell back to longest-prefix matching in case of no exact match in order to handle breaks between every token but also support minimal-break inputs.
+
+This break-every-token approach is possible with traditional breaks as well as invisible, which is easier to illustrate. Consider a program fragment written for a monochrome-display TI-83+: "`Red cat`". The string "Red" is a token in its own right on the CSE and CE 8x calculators (because they have color screens), so interpreting this as a program for color calculators would tokenize it differently. This becomes clear if we insert breaks around every token:
+
+ * Monochrome: `R\e\d\ \c\a\t`
+ * Color: `Red\ \c\a\t`
+
+A program written as the monochrome version with breaks around every token as illustrated here **cannot be mistaken** for the color one, and the color one cannot be mistaken for the monochrome! While doing so with visible break characters makes it much more difficult to read the code, invisible breaks would not affect readability the same way visible ones do.
+
+### Concluding
+
+I think it would be pretty cool if existing tools added support for these proposed invisible break characters. They're not appropriate for all use cases (so perhaps shouldn't be the default), but can be useful and would be even more useful with the proposed change to the usual tokenization algorithm.
