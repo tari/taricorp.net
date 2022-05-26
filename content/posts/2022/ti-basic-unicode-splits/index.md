@@ -82,7 +82,7 @@ In the invisible mode, there is still a break present but it is **not visible in
 
 ## Discussion
 
-Although I'm pleased with the idea to insert ZWNJs into human-readable BASIC programs, doing so in general seems limited by readers' needs to only some contexts although it also offers some interestig possibilities.
+Although I'm pleased with the idea to insert ZWNJs into human-readable BASIC programs, doing so in general seems limited by readers' needs to only some contexts. It does also offer some interesting possibilities, though.
 
 If a person might visually read out the plaintext source code and convert it to tokens (such as by typing it into a physical calculator), the loss of visual breaks means that the human must attempt to resolve any ambiguities that appear. While an experienced TI-BASIC programmer can probably discern intent from the program's context in order to disambiguate, **depending on a reader's skill seems like a suboptimal solution**. As a counterpoint however, a novice programmer may not even be familiar with the backslash-as-break "traditional" convention either: in that case invisible breaks could be superior.
 
