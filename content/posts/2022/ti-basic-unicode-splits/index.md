@@ -59,7 +59,7 @@ That's all well and good, but backslashes are kind of ugly and break the flow wh
 
 [^typewriters]: Typewriter users might also recognize these terms and intuit their meaning, since they were included in the ASCII character set in 1967 due to their importance to teletypes, where there is a physical distinction between simply advancing the feed by one line and moving the carriage back to the start of the line.
 
-Right next to ZWJ in the code space we find an interesting character: U+200D `ZERO WIDTH NON-JOINER` (ZWNJ). Unicode Section 23.2 says this (and ZWJ for the opposite) is designed to mark where connections between characters are forbidden, as in cursive scripts or if a [ligature](https://en.wikipedia.org/wiki/Ligature_(writing)) might be used. Inserting a ZWNJ between two characters that might otherwise be joined forces them to be disconnected.
+Adjacent to ZWJ in the code space we find an interesting character: U+200D `ZERO WIDTH NON-JOINER` (ZWNJ). Unicode Section 23.2 says this (and ZWJ for the opposite) is designed to mark where connections between characters are forbidden, as in cursive scripts or if a [ligature](https://en.wikipedia.org/wiki/Ligature_(writing)) might be used. Inserting a ZWNJ between two characters that might otherwise be joined forces them to be disconnected.
 
 ### ZWNJ
 
