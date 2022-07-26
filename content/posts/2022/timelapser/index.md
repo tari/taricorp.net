@@ -28,15 +28,15 @@ This output indicates that the camera supports output as either raw video or Mot
 
 I only have a 32GB SD card handy for the machine, and I don't trust it not to corrupt data without warning so it seemed important to ensure that the Pi's local storage would not fill up with video and prevent further recording.
 
-I chose to address this by having the system upload video to Google Cloud Storage (but many other systems could be integrated similarly).
+I chose to address this by having the system upload video to Google Cloud Storage (GCS) (but many other systems could be integrated similarly).
 
 I didn't want to completely clean up video periodically in case of an upload failure, and it's useful to get more frequent feedback on how video capture is going in the form of segments that can be viewed immediately so I also chose to have the system incrementally upload  video as it is captured rather than uploading larger chunks at long intervals (say, every day). Incremental upload also helps reduce the bandwidth needs of the system, since the total data transfer is spread over a longer interval.
 
 Most descriptions of time lapse video capture that I've seen (such as https://www.tomshardware.com/how-to/raspberry-pi-time-lapse-video) take a still frame at intervals and later combine those frames into a video. Although this works, it's fairly costly in terms of storage because each frame tends to be mostly similar to the ones before it: this is exactly the sort of characteristic that video codecs are designed to take advantage of.
 
-By capturing video at a low frame rate rather than individual images at the same rate we can save storage space, improve picture quality, or possibly both. Incrementally uploading video files is somewhat more challenging however, since still images have a convenient 1:1 relation to the captured frames whereas video files become larger over time as frames are added.
+By capturing video at a low frame rate rather than individual images at the same rate we can save storage space, improve picture quality, or possibly both. Incrementally uploading video files is somewhat more challenging however, since still images have a convenient 1:1 relation to the captured frames (so it's easy to assume that a file's existence implies a complete frame) whereas video files become larger over time as frames are added.
 
-### Codec choice
+### Video capture
 
 Because I was using a Raspberry Pi 2 ... video encode performance was important: I didn't want to spend more storage on video than was necessary, but the relatively slow processor in the Pi implies that a sophisticated video codec may not be usable.
 
@@ -49,12 +49,74 @@ ffmpeg -i v4l2 -video_size 2304x1536 -i /dev/video0 \
     -vf fps=0.1 -t 60
 ```
 
-In this instance I've captured video at one frame per 10 seconds (`vf fps=0.1`) and chosen to capture one minute of video (`t 60`).
+In this instance I've captured video at one frame per 10 seconds (`vf fps=0.1`) and chosen to capture one minute of video (`-t 60`). In the full script these are configurable, but this illustrates the concept nicely.
 
 ### Incremental upload
 
-To incrementally upload video, we need to choose a container that remains valid when more data is appended to it.
+To incrementally upload video, we need to choose a container that remains valid when more data is appended to it, then design a method to efficiently append new data to what's already present in remote storage.
+
+#### Container choice
 
 ISO MPEG-4 containers (`.mp4` files) aren't as well-suited because by default some metadata gets placed at the end of the file. ffmpeg can put that at the beginning of a file to make a "streamable" by using the `-movflags faststart` option, but that doesn't really solve the live capture problem because the metadata stored in the `MOOV` atom that the `faststart` option moves around needs to be derived from the entire encoded file (and fmpeg implements `faststart` simply by outputting a file, then moving the metadata to the front while copying the rest of the file: not appropriate for a pseudo-live stream.
 
-The Matroska container (`.mkv`) on the other hand turns out to work well for this application: I found that ffmpeg does update some headers at the beginning of a file when it stops encoding, but the fields that get populated are not required to decode the video. They appear to only contain things like the total video length, which decoders do not require. In some experiments, I found that other programs were happy to play back a Matroska video that I had copied while ffmpeg was encoding it, even when capturing live video without a defined duration.
+The Matroska container (`.mkv`) on the other hand turns out to work well for this application: I found that ffmpeg does update some headers at the beginning of a file when it stops encoding, but the fields that get populated are not required to decode the video. They appear to only contain things like the total video length, which decoders do not require. In some experiments, I found that other programs were happy to play back a Matroska video that I had copied while ffmpeg was encoding it, even when capturing live video without a defined duration; they simply stopped playback on reaching the end of the data.
+
+#### gcs-incremental
+
+Recalling that I chose to use Google Cloud Storage to store captured video, [`gsutil`](https://cloud.google.com/storage/docs/gsutil) is a convenient way to interface with storage from shell scripts. To implement incremental upload of files, the general algorithm for copying a 'source' file on the local system to a 'destination' file on remote storage can be expressed as:
+
+1. Check whether destination file exists
+   * If no, upload entire source file and exit
+2. Get size of destination file
+   * If same size as source file, do nothing and exit
+3. Append bytes from source file starting at offset <remote size> to remote file
+
+Somewhat problematically, in most object storage systems like Google Cloud Storage objects (files in our abstraction) are immutable: it is not possible to modify an object in place. Making changes to an existing object will then usually involve making a copy of the object with the changes applied, and doing so is most obviously implemented by downloading the original and making changes, then uploading the changed version (possibly replacing the original object).
+
+It should be obvious that appending to a file stored on GCS by downloading it and re-uploading doesn't achieve the goal of incremental upload, since in that case we could simply upload the entire local file. Fortunately, it's possible to ["compose" an object from multiple pieces](https://cloud.google.com/storage/docs/composite-objects): given two objects `gsutil compose` can be used to concatenate them into a single object without making a copy of either. With that primitive, appending to a file for incremental upload is simply a matter of uploading the new data as a new object, then performing a `compose` operation to add it to the original object.
+
+---
+
+The following shell script implements this incremental upload; I call it `gcs-incremental`. When passed the path to a local file and a location on Cloud Storage, it implements the algorithm described above.
+
+```sh
+#!/bin/bash -e
+
+SOURCE_FILE="$1"
+GS_PATH="$2"
+DEST_FILE="${GS_PATH}/$(basename "${SOURCE_FILE}")"
+
+info() {
+  echo "$@" >&2
+}
+
+if ! gsutil -q stat "${DEST_FILE}"; then
+  info "${DEST_FILE} does not exist; uploading entire file"
+  gsutil cp "${SOURCE_FILE}" "${DEST_FILE}"
+else
+  SOURCE_SIZE=$(stat --format=%s "$SOURCE_FILE")
+  DEST_SIZE=$(gsutil stat "${DEST_FILE}" | awk '$1 == "Content-Length:" { print $2 }' || echo 0)
+  TO_UPLOAD_SIZE=$(("${SOURCE_SIZE}" - "${DEST_SIZE}"))
+  PART_FILE="${DEST_FILE}.part.${SOURCE_SIZE}"
+
+  if [ "${TO_UPLOAD_SIZE}" = 0 ]; then
+    info "Nothing to upload; stopping"
+    exit 0
+  fi
+  info "Uploading ${TO_UPLOAD_SIZE} bytes.."
+
+  dd if="${SOURCE_FILE}" skip="${DEST_SIZE}" count="${TO_UPLOAD_SIZE}" iflag=skip_bytes,count_bytes \
+    | gsutil -q cp - "${PART_FILE}"
+  gsutil compose "${DEST_FILE}" "${PART_FILE}" "${DEST_FILE}"
+  gsutil rm "${PART_FILE}"
+  fallocate --punch-hole --offset 0 --length "${SOURCE_SIZE}" "${SOURCE_FILE}"
+fi
+```
+
+There are several aspects of this implementation worth noting:
+ * Getting the size of a file on GCS is slightly tricky because `gsutil stat` prints file properties like HTTP headers. It's not too hard to extract a number with `awk`.
+ * `gsutil` doesn't provide a way to select only part of a file to upload, so we use `dd` to read part of the file and pipe the data to `gsutil`. Use of a pipe prevents [parallelization of the upload](https://cloud.google.com/storage/docs/parallel-composite-uploads) so performance is limited somewhat.
+ * In order to compose the old and new file parts, we need to write a temporary file. This script assumes that a suffix of `.part` and an integer is sufficiently unique to avoid potential conflicts, but it would probably misbehave if multiple uploaders were trying to update the same file.
+ * After a chunk of a file is uploaded, that data is **erased from the local disk** by using `fallocate` to punch a hole in the file, replacing all of the data that's been uploaded with zeroes and freeing any space on disk that it used.
+
+The hole-punching in the source file is what allows the overall time-lapse capture system to assume that the amount of storage available is not a concern. Files that have been uploaded will remain on disk but consume essentially no space but retain their original size, making it easy to tell whether a file has been uploaded in its entirety even after the fact. Failed uploads may cause increased disk usage (because holes will not be punched), but no loss of data so they can be retried later.
