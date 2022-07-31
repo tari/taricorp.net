@@ -30,7 +30,7 @@ $ ffmpeg -f v4l2 -list_formats all -i /dev/video0
 [video4linux2,v4l2 @ 0x1083cd0] Compressed:       mjpeg :          Motion-JPEG : 640x480 160x90 160x120 176x144 320x180 320x240 352x288 432x240 640x360 800x448 800x600 864x480 960x720 1024x576 1280x720 1600x896 1920x1080
 ```
 
-This output indicates that the camera supports output as either raw video or Motion JPEG in a variety of resolutions up to 1920x1080 pixels. Raw video can also be output at higher resolutions up to 2304x1536, but at a lower framerate (around 12 fps, it turns out). Since I didn't care about any framerate higher than about 1 fps, it was a logical choice to run a a higher resolution.
+This output indicates that the camera supports output as either raw video or Motion JPEG in a variety of resolutions up to 1920x1080 pixels. Raw video can also be output at higher resolutions up to 2304x1536, but at a lower framerate (around 12 fps, it turns out). Since I didn't care about any framerate higher than about 1 fps, it was a logical choice to run at that higher resolution.
 
 ---
 
