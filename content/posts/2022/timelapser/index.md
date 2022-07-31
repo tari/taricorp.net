@@ -6,15 +6,23 @@ date: 2022-07-25T00:41:48.799Z
 ---
 Earlier this year, I had a desire to capture time-lapse video of some construction that would take an unknown amount of time and occurred mostly during short periods of activity separated by intervals of inactivity with varying time. Because the overall recording time was unknown, this represented an interesting set of challenges that I wrote some software to address, using a Raspberry Pi and a USB webcam.
 
-## Needs and existing options
+## Existing options
 
-## Chosen configuration
+There is no shortage of articles around the web describing how to capture time lapse videos with a Raspberry Pi, such as [Caroline Dunn's article in Tom's Hardware](https://www.tomshardware.com/how-to/raspberry-pi-time-lapse-video). I find that most of these involve some kind of script to take still images at intervals, and another component (usually using ffmpeg) to combine those images into a video.
 
+Although this approach works fine, it suffers from several obvious shortcomings:
+ * Frames stored as individual image files tend to require much more space to store them than an equivalent video file, since each frame will usually be very similar to the preceding ones: video codecs are designed to take advantage of this redundancy.
+ * Captured images and generated videos must be manually retrieved (or deleted) on capture completion. For long captures or when generating multiple sequences, this may require regular human intervention to ensure the system is still running and storage is still available.
 
+Since the events I wished to capture would take an unknown amount of time (possibly months), it was important to me that the system should be reliable and not require regular (manual) maintenance as well as not use more storage space than necessary. To that end, I chose to write my own set of scripts that is described by the rest of this article.
 
-### Capture properties
+### Available hardware
 
-The camera I had available for this is a Logitech C925e that advertises support for 1080p video at 30 frames per second, which is a much higher framerate than I need for this application but a respectable resolution. Investigating the camera's actual capabilities shows it's actually capable of higher resolution than that:
+The hardware I had available amounted to a Raspberry Pi 2 (and a USB WiFi adapter) with 32GB microSD card as boot volume, a Logitech C925e USB webcam, and extension cords and power supply suitable to place the system wherever I needed. The Pi 2 is a rather dated and slow machine by now, but ought to be sufficient for this application.
+
+## Video capture
+
+The Logitech C925e advertises support for 1080p video at 30 frames per second, which is a much higher framerate than I need for time-lapse video capture (around one frame per second seems fine) but a respectable resolution. Investigating the camera's actual capabilities shows it's actually capable of higher resolution than that:
 
 ```
 $ ffmpeg -f v4l2 -list_formats all -i /dev/video0
@@ -22,9 +30,26 @@ $ ffmpeg -f v4l2 -list_formats all -i /dev/video0
 [video4linux2,v4l2 @ 0x1083cd0] Compressed:       mjpeg :          Motion-JPEG : 640x480 160x90 160x120 176x144 320x180 320x240 352x288 432x240 640x360 800x448 800x600 864x480 960x720 1024x576 1280x720 1600x896 1920x1080
 ```
 
-This output indicates that the camera supports output as either raw video or Motion JPEG in a variety of resolutions up to 1920x1080 pixels. Raw video can also be output at higher resolutions up to 2304x1536, but at a lower framerate (around 12 fps). Since I didn't care about any framerate higher than about 1 fps, it was a logical choice to run a a higher resolution.
+This output indicates that the camera supports output as either raw video or Motion JPEG in a variety of resolutions up to 1920x1080 pixels. Raw video can also be output at higher resolutions up to 2304x1536, but at a lower framerate (around 12 fps, it turns out). Since I didn't care about any framerate higher than about 1 fps, it was a logical choice to run a a higher resolution.
 
-### Storage considerations
+---
+
+Because I was using a Raspberry Pi 2 ... video encode performance was important: I didn't want to spend more storage on video than was necessary, but the relatively slow processor in the Pi implies that a sophisticated video codec may not be usable.
+
+Some versions of the Raspberry Pi support hardware-accelerated H.264 encoding, but I didn't try to make that work.
+
+The basic use of ffmpeg for this application uses a V4L2 device as input (the webcam) and outputs at a very low framerate to `timelapse.mp4`:
+
+```
+ffmpeg -i v4l2 -video_size 2304x1536 -i /dev/video0 \
+    -vf fps=0.1 -t 60 timelapse.mp4
+```
+
+In this instance I've captured video at one frame per 10 seconds (`vf fps=0.1`) and chosen to capture one minute of video (`-t 60`). In the final script these are configurable, but this illustrates the concept nicely.
+
+With a way to use ffmpeg to capture video directly (no intermediate video files!), we can move to thinking about where video will be stored.
+
+## Storage considerations
 
 I only have a 32GB SD card handy for the machine, and I don't trust it not to corrupt data without warning so it seemed important to ensure that the Pi's local storage would not fill up with video and prevent further recording.
 
@@ -32,24 +57,10 @@ I chose to address this by having the system upload video to Google Cloud Storag
 
 I didn't want to completely clean up video periodically in case of an upload failure, and it's useful to get more frequent feedback on how video capture is going in the form of segments that can be viewed immediately so I also chose to have the system incrementally upload  video as it is captured rather than uploading larger chunks at long intervals (say, every day). Incremental upload also helps reduce the bandwidth needs of the system, since the total data transfer is spread over a longer interval.
 
-Most descriptions of time lapse video capture that I've seen (such as https://www.tomshardware.com/how-to/raspberry-pi-time-lapse-video) take a still frame at intervals and later combine those frames into a video. Although this works, it's fairly costly in terms of storage because each frame tends to be mostly similar to the ones before it: this is exactly the sort of characteristic that video codecs are designed to take advantage of.
+point to earlier section about other systems that take pictures and stitch them together
 
 By capturing video at a low frame rate rather than individual images at the same rate we can save storage space, improve picture quality, or possibly both. Incrementally uploading video files is somewhat more challenging however, since still images have a convenient 1:1 relation to the captured frames (so it's easy to assume that a file's existence implies a complete frame) whereas video files become larger over time as frames are added.
 
-### Video capture
-
-Because I was using a Raspberry Pi 2 ... video encode performance was important: I didn't want to spend more storage on video than was necessary, but the relatively slow processor in the Pi implies that a sophisticated video codec may not be usable.
-
-Some versions of the Raspberry Pi support hardware-accelerated H.264 encoding, but I didn't try to make that work.
-
-The basic use of ffmpeg for this application uses a V4L2 device as input and outputs at a very low framerate:
-
-```
-ffmpeg -i v4l2 -video_size 2304x1536 -i /dev/video0 \
-    -vf fps=0.1 -t 60
-```
-
-In this instance I've captured video at one frame per 10 seconds (`vf fps=0.1`) and chosen to capture one minute of video (`-t 60`). In the full script these are configurable, but this illustrates the concept nicely.
 
 ### Incremental upload
 
