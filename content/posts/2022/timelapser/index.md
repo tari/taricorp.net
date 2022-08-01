@@ -86,17 +86,19 @@ The [Matroska](https://www.matroska.org/index.html) container (`.mkv`, and also 
 
 #### gcs-incremental
 
-Recalling that I chose to use Google Cloud Storage to store captured video, [`gsutil`](https://cloud.google.com/storage/docs/gsutil) is a convenient way to interface with storage from shell scripts. To implement incremental upload of files, the general algorithm for copying a 'source' file on the local system to a 'destination' file on remote storage can be expressed as:
+Recalling that I chose to use Google Cloud Storage to store captured video, [`gsutil`](https://cloud.google.com/storage/docs/gsutil) is a convenient way to interface with storage from shell scripts. Since `ffmpeg` is also easily driven from a shell script, the default choice for implementing the entire system was also shell, rather than some other (perhaps less quirky) programming language.
 
-1. Check whether destination file exists
-   * If no, upload entire source file and exit
-2. Get size of destination file
-   * If same size as source file, do nothing and exit
-3. Append bytes from source file starting at offset <remote size> to remote file
+To implement incremental upload of files, the general algorithm for copying a 'source' file on the local system to a 'destination' file on remote storage can be expressed as (assuming as we established in the previous section that files are only appended to):
 
-Somewhat problematically, in most object storage systems like Google Cloud Storage objects (files in our abstraction) are immutable: it is not possible to modify an object in place. Making changes to an existing object will then usually involve making a copy of the object with the changes applied, and doing so is most obviously implemented by downloading the original and making changes, then uploading the changed version (possibly replacing the original object).
+1. Check whether `destination file` exists
+   * If no, copy entire `source file` to `destination file` and exit
+2. Get size of `destination file`
+   * If same size as `source file`, do nothing and exit
+3. Append bytes from `source file` starting at offset `remote size` to `destination file`
 
-It should be obvious that appending to a file stored on GCS by downloading it and re-uploading doesn't achieve the goal of incremental upload, since in that case we could simply upload the entire local file. Fortunately, it's possible to ["compose" an object from multiple pieces](https://cloud.google.com/storage/docs/composite-objects): given two objects `gsutil compose` can be used to concatenate them into a single object without making a copy of either. With that primitive, appending to a file for incremental upload is simply a matter of uploading the new data as a new object, then performing a `compose` operation to add it to the original object.
+Somewhat problematically, in most object storage systems like Google Cloud Storage, "objects" (files in our abstraction) are immutable: it is not possible to modify an object in place. Making changes to an existing object will then usually involve making a copy of the object with the changes applied, and doing so is most obviously implemented by downloading the original and making changes, then uploading the changed version (possibly replacing the original object).
+
+It should be obvious that appending to a file stored on GCS by downloading it and re-uploading doesn't achieve the goal of incremental upload, since in that case we could simply upload the entire local file. Fortunately, it's possible to ["compose" an object from multiple pieces](https://cloud.google.com/storage/docs/composite-objects): given two objects, `gsutil compose` can be used to concatenate them into a single object without making a copy of either. With that operation, appending to a file for incremental upload is simply a matter of uploading the new data as a new object, then performing a `compose` operation to add it to the original object.
 
 ---
 
@@ -142,4 +144,8 @@ There are several aspects of this implementation worth noting:
  * In order to compose the old and new file parts, we need to write a temporary file. This script assumes that a suffix of `.part` and an integer is sufficiently unique to avoid potential conflicts, but it would probably misbehave if multiple uploaders were trying to update the same file.
  * After a chunk of a file is uploaded, that data is **erased from the local disk** by using `fallocate` to punch a hole in the file, replacing all of the data that's been uploaded with zeroes and freeing any space on disk that it used.
 
-The hole-punching in the source file is what allows the overall time-lapse capture system to assume that the amount of storage available is not a concern. Files that have been uploaded will remain on disk but consume essentially no space but retain their original size, making it easy to tell whether a file has been uploaded in its entirety even after the fact. Failed uploads may cause increased disk usage (because holes will not be punched), but no loss of data so they can be retried later.
+The hole-punching in the source file is what allows the overall time-lapse capture system to assume that the amount of storage available is not a concern. Files that have been uploaded will remain on disk but consume essentially no space while retaining their original size, making it easy to tell whether a file has been uploaded in its entirety even after the fact. Failed uploads may cause increased disk usage (because holes will not be punched), but no loss of data so they can be retried later.
+
+Having implemented mechanisms to capture video (easily done with `ffmpeg`) and to incrementally upload those videos to GCS (`gcs-incremental`), what remains is to combine them into something that will capture video and incrementally upload it.
+
+## `timelapser`
