@@ -34,10 +34,6 @@ This output indicates that the camera supports output as either raw video or Mot
 
 ---
 
-Because I was using a Raspberry Pi 2 ... video encode performance was important: I didn't want to spend more storage on video than was necessary, but the relatively slow processor in the Pi implies that a sophisticated video codec may not be usable.
-
-Some versions of the Raspberry Pi support hardware-accelerated H.264 encoding, but I didn't try to make that work.
-
 The basic use of ffmpeg for this application uses a V4L2 device as input (the webcam) and outputs at a very low framerate to `timelapse.mp4`:
 
 ```
@@ -46,6 +42,27 @@ ffmpeg -i v4l2 -video_size 2304x1536 -i /dev/video0 \
 ```
 
 In this instance I've captured video at one frame per 10 seconds (`vf fps=0.1`) and chosen to capture one minute of video (`-t 60`). In the final script these are configurable, but this illustrates the concept nicely.
+
+Although the required framerate for video encoding is low in this application, video encode performance remains a concern because the Raspberry Pi 2 is not a very powerful computer. I wanted to use a video codec that achieves good compression, and it needed to do so with enough speed that frames can be encoded at least as frequently as they are captured.
+
+Some versions of the Raspberry Pi support hardware-accelerated H.264 encoding (in a quick search, it's unclear if that includes the Pi 2), but I didn't try to make that work: there doesn't seem to be support for the relevant hardware in ffmpeg so I would have needed to use some other software to do the encoding, and it's unclear what the hardware encoder's limitations are (such as maximum resolution). I instead did some manual experimentation by doing a live video capture with assorted codecs:
+
+ * [H.264](https://www.videolan.org/developers/x264.html) (`x264`)
+ * [VP8](https://datatracker.ietf.org/doc/html/rfc6386) (`libvpx`)
+ * [H.265](https://www.videolan.org/developers/x265.html) (`x265`)
+ * [VP9](https://www.webmproject.org/vp9/) (`libvpx-vp9`)
+
+VP9 and H.265 are attractive choices because they are very good at efficiently compressing video, but I found performance to be too bad to be usable for this application (achieving less than 1 frame per second at the target resolution). Both x264 and VP8 perform acceptably and achieve similar compression, so I opted to use VP8 since it's not legally encumbered by any patent licensing requirements (unlike H.264).
+
+I somewhat arbitrarily chose a target bitrate of 20 megabits and CRF of 4 to achieve a high-quality encode, and ended up with this `ffmpeg` invocation:
+
+```
+ffmpeg -i v4l2 -video_size 2304x1536 -i /dev/video0 \
+    -an -c:v libvpx -b:v 20M -crf 4 \
+    -vf fps=0.1 -t 60 timelapse.mp4
+```
+
+---
 
 With a way to use ffmpeg to capture video directly (no intermediate video files!), we can move to thinking about where video will be stored.
 
