@@ -149,3 +149,41 @@ The hole-punching in the source file is what allows the overall time-lapse captu
 Having implemented mechanisms to capture video (easily done with `ffmpeg`) and to incrementally upload those videos to GCS (`gcs-incremental`), what remains is to combine them into something that will capture video and incrementally upload it.
 
 ## `timelapser`
+
+Putting everything together into one script, the intended function can be summarized as follows:
+
+ * Capture video with ffmpeg for a chosen duration
+   * In a loop, run `ffmpeg` and emit to a file with a chosen name with capture duration set to `total duration` - `elapsed duration`
+   * After the specified time is elapsed, ensure videos are uploaded and exit
+ * Periodically do an incremental upload of captured video files, stopping once video capture ends
+
+The video capture itself is fairly easy to write. Assuming a few variables specifying things like how long to capture for, what video device to use as input, and what framerate to output, I ended up with these shell functions:
+
+```sh
+now() {
+  date +%s
+}
+
+run_capture() {
+  local framerate=$(echo "scale=4;1/${SECONDS_PER_FRAME}" | bc)
+  local i=0
+  local current_time=$(now)
+  local end_time=$((${current_time} + (${RUNTIME_MINUTES} * 60)))
+
+  # Run ffmpeg in a loop in case of premature exit/failure, targeting
+  # one segment that goes until the end time.
+  echo "Starting capture for ${RUNTIME_MINUTES} minutes, until timestamp ${end_time}"
+  while [ ${current_time} -lt ${end_time} ]
+  do
+    ffmpeg -n -loglevel error \
+      -f v4l2 -video_size "${VIDEO_RESOLUTION}" -i "${VIDEO_DEVICE}" \
+      -t $((${end_time} - ${current_time})) \
+      -vf fps="${framerate}" -an -c:v libvpx -b:v 20M -crf 4 "${i}.mkv"
+    # Increment file serial number to avoid overwriting old data
+    let i=i+1
+    current_time=$(now)
+  done
+}
+```
+
+`now` provides the current UNIX time, which is convenient for computing the total amount of time capture has been running. `run_capture` assumes its working directory is appropriate for storing video and captures a sequence of files `0.mkv`, `1.mkv` and so forth. Capturing a sequence of files ensures that if some transient error occurs (perhaps if the camera is accidentally unplugged) capture will resume without overwriting any older data.
