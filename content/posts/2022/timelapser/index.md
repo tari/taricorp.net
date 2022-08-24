@@ -52,7 +52,7 @@ Some versions of the Raspberry Pi support hardware-accelerated H.264 encoding (i
  * [H.265](https://www.videolan.org/developers/x265.html) (`x265`)
  * [VP9](https://www.webmproject.org/vp9/) (`libvpx-vp9`)
 
-VP9 and H.265 are attractive choices because they are very good at efficiently compressing video, but I found performance to be too bad to be usable for this application (achieving less than 1 frame per second at the target resolution). Both x264 and VP8 perform acceptably and achieve similar compression, so I opted to use VP8 since it's not legally encumbered by any patent licensing requirements (unlike H.264).
+VP9 and H.265 are attractive choices because they are very good at efficiently compressing video, but I found performance to be too bad to be usable for this application (achieving less than 0.1 frames per second at the target resolution). Both x264 and VP8 perform acceptably and achieve similar compression, so I opted to use VP8 since it's not legally encumbered by any patent licensing requirements (unlike H.264).
 
 I somewhat arbitrarily chose a maximum bitrate of 20 megabits per second and [CRF](https://trac.ffmpeg.org/wiki/Encode/VP8) of 4 to achieve a high-quality encode, and ended up with this `ffmpeg` invocation:
 
@@ -64,13 +64,13 @@ ffmpeg -i v4l2 -video_size 2304x1536 -i /dev/video0 \
 
 ---
 
-With a way to use ffmpeg to capture video directly (no intermediate video files!), we can move to thinking about where video will be stored.
+With a way to use ffmpeg to capture time-lapse video directly (no intermediate image files!), we can move to thinking about where video will be stored.
 
 ## Storage considerations
 
-As mentioned earlier, I only have a 32GB SD card at hand for this Raspberry Pi, and I don't trust it not to corrupt data without warning (both the Pi itself and the card; I don't really trust either with my data) so it seemed important to ensure that the Pi's local storage would not fill up with video and prevent further recording, as well as to copy data off the Pi shortly after its creation. I chose to address this by having the system upload video to Google Cloud Storage (GCS). There's nothing particularly special about GCS over one of the many other online object storage systems available; it was just convenient for me to use.
+As mentioned earlier, I only have a 32GB SD card at hand for this Raspberry Pi, and I don't trust it not to corrupt data without warning (both the Pi itself and the card; I don't really trust either with my data) so it seemed important to ensure that the Pi's local storage would not fill up with video and prevent further recording, as well as to copy data off the Pi shortly after its creation. I chose to address this by having the system upload video to Google Cloud Storage (GCS). There's nothing particularly special about GCS over one of the many other object storage systems available from many different service providers; it was just convenient for me to use GCS.
 
-I didn't want to completely clean up video periodically in case of an upload failure, and it's useful to get more frequent feedback on how video capture is going in the form of segments that can be viewed immediately so I also wanted to have the system incrementally upload video as it is captured rather than uploading larger chunks at long intervals (say, every day). Incremental upload also helps reduce the bandwidth needs of the system, since the total data transfer is spread over a longer interval.
+I didn't want to completely clean up video periodically (by deleting old files) in case of an upload failure, and it's useful to get more frequent feedback on how video capture is going in the form of segments that can be viewed immediately so I also wanted to have the system incrementally upload video as it is captured rather than uploading larger chunks at long intervals (say, every day). Incremental upload also helps reduce the bandwidth needs of the system, since the total data transfer is spread over a longer interval.
 
 As discussed [above](#video-capture), by capturing video at a low frame rate rather than individual images at the same rate we can save storage space, improve picture quality, or possibly both. Incrementally uploading video files is somewhat more challenging than handling a similar collection of still images however, since still images have a convenient 1:1 relation to the captured frames (so it's easy to assume that a file's existence implies a complete frame) whereas video files become larger over time as frames are added.
 
@@ -80,15 +80,15 @@ To incrementally upload video, we need to choose a container that remains valid 
 
 #### Container choice
 
-ISO MPEG-4 containers (`.mp4` files) are a common choice for video files and are supported by most software. However this container is not very well-suited to this application because by default some metadata (the `MOOV` atom) gets placed at the end of the file. ffmpeg can put that at the beginning of a file to make a file "streamable" by using the `-movflags faststart` option, but that doesn't really solve the live capture problem because the metadata stored in the `MOOV` atom that the `faststart` option moves around needs to be derived from the entire encoded file: ffmpeg implements `faststart` simply by outputting a file, then moving the `MOOV` block to the front beginning while copying the rest of the file. Since this requires the entire input be available first, it is not appropriate for a pseudo-live stream.
+ISO MPEG-4 containers (`.mp4` files) are a common choice for video files and are supported by most software. However this container is not very well-suited to this application because by default some metadata (the `MOOV` atom) gets placed at the end of the file. ffmpeg can put that at the beginning of a file to make a file "streamable" by using the `-movflags faststart` option, but that doesn't really solve the live capture problem because the metadata stored in the `MOOV` atom that the `faststart` option moves around needs to be derived from the entire encoded file: ffmpeg implements `faststart` simply by outputting a file, then moving the `MOOV` block to the beginning and copying the rest of the file to follow it. Since this requires the entire input be available first, it is not appropriate for a pseudo-live stream.
 
 The [Matroska](https://www.matroska.org/index.html) container (`.mkv`, and also conventionally used for `webm`) on the other hand turns out to work well for this application: I found that ffmpeg does update some headers at the beginning of a Matroska file when it stops encoding (similar to what it does for mp4 fast start), but the fields that get populated are not required to decode the video: they appear to only contain things like the total video length, which decoders do not require. In some experiments, I found that other programs were happy to play back a Matroska video that I had copied while ffmpeg was encoding it, even when capturing live video without a defined duration; they simply stopped playback on reaching the end of the data. In some situations players failed to report the overall video length or showed a wrong duration when asked to decode such a truncated file, but they were still able to play back everything that was present.
 
 #### gcs-incremental
 
-Recalling that I chose to use Google Cloud Storage to store captured video, [`gsutil`](https://cloud.google.com/storage/docs/gsutil) is a convenient way to interface with storage from shell scripts. Since `ffmpeg` is also easily driven from a shell script, the default choice for implementing the entire system was also shell, rather than some other (perhaps less quirky) programming language.
+Recalling that I chose to use Google Cloud Storage to store captured video, [`gsutil`](https://cloud.google.com/storage/docs/gsutil) is a convenient way to interface with the object storage system from shell scripts. Since `ffmpeg` is also easily driven from a shell script, the default choice for implementing the entire system was also shell, rather than some other (perhaps less quirky) programming language.
 
-To implement incremental upload of files, the general algorithm for copying a 'source' file on the local system to a 'destination' file on remote storage can be expressed as (assuming as we established in the previous section that files are only appended to):
+To implement incremental upload of files, the general algorithm for copying a 'source' file on the local system to a 'destination' file on remote storage can be expressed as follows (assuming, as we established in the previous section, that files are only appended to):
 
 1. Check whether `destination file` exists
    * If no, copy entire `source file` to `destination file` and exit
@@ -139,7 +139,7 @@ fi
 ```
 
 There are several aspects of this implementation worth noting:
- * Getting the size of a file on GCS is slightly tricky because `gsutil stat` prints file properties like HTTP headers. It's not too hard to extract a number with `awk`.
+ * Getting the size of a file on GCS is slightly tricky because `gsutil stat` prints file properties in a format similar to HTTP headers. It's not too hard to extract a number with `awk`.
  * `gsutil` doesn't provide a way to select only part of a file to upload, so we use `dd` to read part of the file and pipe the data to `gsutil`. Use of a pipe prevents [parallelization of the upload](https://cloud.google.com/storage/docs/parallel-composite-uploads) so performance is limited somewhat.
  * In order to compose the old and new file parts, we need to write a temporary file. This script assumes that a suffix of `.part` and an integer is sufficiently unique to avoid potential conflicts, but it would probably misbehave if multiple uploaders were trying to update the same file.
  * After a chunk of a file is uploaded, that data is **erased from the local disk** by using `fallocate` to punch a hole in the file, replacing all of the data that's been uploaded with zeroes and freeing any space on disk that it used.
