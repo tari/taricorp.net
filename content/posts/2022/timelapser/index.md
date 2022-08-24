@@ -157,6 +157,8 @@ Putting everything together into one script, the intended function can be summar
    * After the specified time is elapsed, ensure videos are uploaded and exit
  * Periodically do an incremental upload of captured video files, stopping once video capture ends
 
+### Capture task
+
 The video capture itself is fairly easy to write. Assuming a few variables specifying things like how long to capture for, what video device to use as input, and what framerate to output, I ended up with these shell functions:
 
 ```sh
@@ -194,7 +196,7 @@ run_capture & capture_pid=$!
 
 Because the script needs to also run periodic uploads, `run_capture` is started in the background and its PID is saved so its status can be polled later, in particular for checking whether it has completed and exited.
 
----
+### Upload task
 
 Periodically doing an incremental upload is slightly more interesting, because I wanted to upload video parts at a regular cadence without any particular dependence on how long the upload takes. A naive version might implement a simple algorithm:
 
@@ -203,6 +205,8 @@ Periodically doing an incremental upload is slightly more interesting, because I
 3. If capture is still running, goto 1
 
 If it takes any meaningful amount of time to perform the upload however, the uploads will be separated by the chosen interval and occur less frequently than intended. This is probably actually fine, but I chose to get clever with it to achieve a regular cadence.
+
+### Queueing
 
 If uploads should occur at intervals without regard for how long they take to complete, this implies there must be two concurrent processes: one that waits for intervals to expire (the "timer" task) and another that actually does the upload (the "uploader" task). This becomes difficult when we recall that `gcs-incremental` cannot be expected to work correctly if invoked in parallel, since this implies there must be some mechanism to synchronize uploads both between incremental uploads and the final upload that runs once capture completes.
 
@@ -242,3 +246,70 @@ We create a named pipe `msgpipe` and direct data from that pipe to the input of 
 [^pipe-filenames]: I notice while writing this that the uploader task could be made more efficient by receiving the name of a file to upload rather than a string that is otherwise ignored, which would allow it to inspect only the relevant file rather than all those that exist.
 
 The `pipe_holder` is an unusual component that is required only as a result of POSIX named pipe semantics: the read end of a pipe is closed once all writers disconnect, which in this application would be after the first segment upload is triggered because `trigger_upload` opens the pipe, writes to it and closes it again. The presence of the `pipe_holder` prevents the uploader task from exiting until the `pipe_holder` itself exits.
+
+---
+
+Because it may be possible for concurrent writes to the pipe to be accidentally interleaved, I forced invocations of `trigger_upload` to be serialized through use of signals:
+
+```sh
+interruptible_sleep() {
+  # Sleep in the background to make the sleep interruptible; waiting on a
+  # foreground process isn't interruptible, but the wait builtin is.
+  sleep $@ &
+  wait $!
+}
+
+trap trigger_upload USR1
+{
+  while :; do
+    interruptible_sleep ${SEGMENTS_INTERVAL}
+    kill -USR1 $$ >/dev/null
+  done
+} & waker_pid=$!
+```
+
+The loop represented by `waker_pid` simply waits at intervals and sends `SIGUSR1` to the main script. We `trap` that signal and in response execute `trigger_upload` that writes to the pipe. Reception of this signal can interrupt a `wait` as embodied in the `interruptible_sleep` function and asynchronously trigger an upload, but it is guaranteed by the system (through the general semantics of signals) that only one handler will execute at a time.
+
+### Capture completion
+
+The final piece is to wait for capture to complete and trigger one final upload. Since the PID of the capture task was stored, this is as simple as `wait`ing on it in a loop:
+
+```sh
+# Wait for capture to finish
+while true; do
+  wait ${capture_pid}
+  wait_status=$?
+  if [ $wait_status -lt 128 ]; then
+    echo "capture task exited with status $wait_status"
+    break
+  fi
+done
+```
+
+The dance with `wait_status` here is required because `wait` can be interrupted by a signal, and in fact we expect it to be periodically interrupted by a `SIGUSR1` when we want to trigger an upload. In this situation the return code of `wait` is documented to be 128 or greater, so only when the return code is less than 128 is the capture task known to have exited.
+
+Once the capture task exits, all that remains is to clean up and ensure all data has been uploaded:
+
+```sh
+# Terminate the waker
+kill $waker_pid
+
+# Run a final segment upload
+trigger_upload
+
+# Terminate the pipe holder to close the write end of msgpipe; wait for the
+# uploader to complete then exit.
+kill $pipe_holder_pid
+wait $pipe_holder_pid
+echo "Waiting up to 1 hour for uploader to finish processing.."
+(sleep 1h; kill -HUP $$) & wait $uploader_pid
+echo "Done!"
+```
+
+We first terminate the waker task to prevent any more uploads from being triggered, and trigger a final upload. Since the capture task has exited by this point, this upload is guaranteed to see all the data that will ever exist.
+
+After triggering the upload we kill the `pipe_holder`, closing the `msgpipe` which will make the uploader exit once it processes everything remaining in the pipe. To avoid waiting forever if there's a problem while uploading, I chose to wait only up to an hour for it to complete before exiting.
+
+## Automation
+
+it's a systemd service + timer, wrapped in a debian package
