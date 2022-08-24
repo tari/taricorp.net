@@ -184,6 +184,61 @@ run_capture() {
     current_time=$(now)
   done
 }
+
+echo "Running for $RUNTIME_MINUTES minutes"
+
+run_capture & capture_pid=$!
 ```
 
 `now` provides the current UNIX time, which is convenient for computing the total amount of time capture has been running. `run_capture` assumes its working directory is appropriate for storing video and captures a sequence of files `0.mkv`, `1.mkv` and so forth. Capturing a sequence of files ensures that if some transient error occurs (perhaps if the camera is accidentally unplugged) capture will resume without overwriting any older data.
+
+Because the script needs to also run periodic uploads, `run_capture` is started in the background and its PID is saved so its status can be polled later, in particular for checking whether it has completed and exited.
+
+---
+
+Periodically doing an incremental upload is slightly more interesting, because I wanted to upload video parts at a regular cadence without any particular dependence on how long the upload takes. A naive version might implement a simple algorithm:
+
+1. Wait for `interval`
+2. Do incremental upload
+3. If capture is still running, goto 1
+
+If it takes any meaningful amount of time to perform the upload however, the uploads will be separated by the chosen interval and occur less frequently than intended. This is probably actually fine, but I chose to get clever with it to achieve a regular cadence.
+
+If uploads should occur at intervals without regard for how long they take to complete, this implies there must be two concurrent processes: one that waits for intervals to expire (the "timer" task) and another that actually does the upload (the "uploader" task). This becomes difficult when we recall that `gcs-incremental` cannot be expected to work correctly if invoked in parallel, since this implies there must be some mechanism to synchronize uploads both between incremental uploads and the final upload that runs once capture completes.
+
+A reasonably simple approach to this problem in more capable (than shell scripting) programming languages is to use a multi-producer queue: the uploader task can pull upload jobs out of a queue and execute them serially, while the timer and capture tasks place new jobs into the queue as appropriate (at intervals and once capture completes, respectively).
+
+In a shell script, I realized it's possible to implement a queue with a pipe: if the receiver reads lines from a pipe in a loop until closed, other tasks can write lines to the pipe which will be processed in sequence. I ended up with this code for the receiver:
+
+```sh
+segment_uploader() {
+  while read n; do
+    echo Segment trigger "$n"
+    for f in *.mkv; do
+      info "Do incremental upload of file $f"
+      gcs-incremental "$f" "${GS_PATH}"
+    done
+    info "Segment upload completed (for now)"
+  done
+}
+
+# Run another task to scan and upload segments, which we signal by sending
+# a message through a named pipe.
+msgpipe=$(mktemp -u)
+mkfifo -m 600 "${msgpipe}"
+# Run a task that does nothing but holds the pipe open; killing this
+# pipe holder will terminate the uploader when it reaches EOF (having processed
+# anything that was already put into the FIFO).
+sleep infinity >"${msgpipe}" & pipe_holder_pid=$!
+segment_uploader <"${msgpipe}" & uploader_pid=$!
+
+trigger_upload() {
+  now > "${msgpipe}"
+}
+```
+
+We create a named pipe `msgpipe` and direct data from that pipe to the input of `segment_uploader`. The `while read n` loop will read lines from the input and stop once the input is closed, running `gcs-incremental` over all of the video files in its working directory.[^pipe-filenames] Invoking the `trigger_upload` function will queue uploads of all current files.
+
+[^pipe-filenames]: I notice while writing this that the uploader task could be made more efficient by receiving the name of a file to upload rather than a string that is otherwise ignored, which would allow it to inspect only the relevant file rather than all those that exist.
+
+The `pipe_holder` is an unusual component that is required only as a result of POSIX named pipe semantics: the read end of a pipe is closed once all writers disconnect, which in this application would be after the first segment upload is triggered because `trigger_upload` opens the pipe, writes to it and closes it again. The presence of the `pipe_holder` prevents the uploader task from exiting until the `pipe_holder` itself exits.
