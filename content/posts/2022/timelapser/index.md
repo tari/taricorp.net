@@ -310,6 +310,56 @@ We first terminate the waker task to prevent any more uploads from being trigger
 
 After triggering the upload we kill the `pipe_holder`, closing the `msgpipe` which will make the uploader exit once it processes everything remaining in the pipe. To avoid waiting forever if there's a problem while uploading, I chose to wait only up to an hour for it to complete before exiting.
 
+### Configuration
+
+As discussed earlier, there are a few variables set at the top of the script guiding script operation. These mostly configure how video should be captured, but also specify the location in GCS for data storage:
+
+```sh
+# The following variables may be overridden at runtime
+RUNTIME_MINUTES=1
+SECONDS_PER_FRAME=5
+VIDEO_DEVICE=/dev/video0
+# Supported resolutions can be found interactively:
+# ffmpeg -f v4l2 -list_formats all -i ${VIDEO_DEVICE}
+VIDEO_RESOLUTION="1280x720"
+SEGMENTS_INTERVAL=1m
+
+GS_PATH="gs://test-videos-01/$(date --rfc-3339=date)"
+```
+
+Because it's useful to be able to change these without modifying the script, I opted to make it take paths on the command line which indicate files that `timelapser` will execute during startup.
+
+```sh
+info() {
+  echo "$@" >&2
+}
+
+while [ "$#" -gt 0 ]
+do
+  info "Loading configuration from $1"
+  source "$1"
+  shift
+done
+```
+
+`source`ing configuration files permits arbitrary configuration to be easily written and doesn't require any special parsing, which is convenient. The configuration I ended up using for actual video capture looks like this:
+
+```sh
+RUNTIME_MINUTES=$((60 * 9))
+VIDEO_DEVICE=/dev/video0
+VIDEO_RESOLUTION=2304x1536
+SECONDS_PER_FRAME=10
+SEGMENTS_INTERVAL=10m
+
+today="$(date --rfc-3339=date)"
+GS_PATH="gs://my-timelapse-video/${today}"
+
+mkdir -p "${HOME}/${today}"
+cd "${HOME}/${today}"
+```
+
+This runs captures for 9 hours at 0.1 fps, uploading video segments every 10 minutes. Because video is captured to the working directory, the configuration ensures that a directory named for the current time is created to store video, and the same directory name is used in the remote storage. Using a directory name based on the time allows video segments to be easily correlated with when they were actually captured.
+
 ## Automation
 
 it's a systemd service + timer, wrapped in a debian package
