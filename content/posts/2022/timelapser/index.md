@@ -362,4 +362,30 @@ This runs captures for 9 hours at 0.1 fps, uploading video segments every 10 min
 
 ## Automation
 
-it's a systemd service + timer, wrapped in a debian package
+To run the system automatically, I set up some systemd units that will capture a video every day during working hours. A timer that triggers on weekdays:
+
+```
+[Timer]
+OnCalendar=Mon..Fri 09:00:00
+Persistent=true
+
+[Install]
+WantedBy=multi-user.target
+```
+
+And the matching service that is started by the timer:
+
+```
+[Unit]
+Description=Capture time-lapse videos
+
+[Service]
+User=timelapser
+Type=simple
+ExecStart=/usr/bin/timelapser /etc/timelapser.conf
+```
+
+The service runs the script as its own user which is not really required, but is convenient for confining the effects of video capture to a well-defined space (mostly that user's home directory).
+
+### Packaging
+
