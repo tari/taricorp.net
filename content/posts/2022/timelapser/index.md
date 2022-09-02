@@ -456,7 +456,7 @@ The `drawtext` filter applied via the `-vf` option takes the timestamp of each f
 
 ---
 
-Since sometimes there are long stretches of "nothing", it's useful later to do some filtering of each day's video to drop frames where there's very little change, which uses the `concat` input format to ffmpeg again and a different set of filters:
+Since sometimes there are long stretches of "nothing", it's useful later to do some filtering of each day's video to drop frames where there's very little change, combining the videos for each day into a single longer video; again using the `concat` input format to ffmpeg again and a different set of filters:
 
 ```sh
 ffmpeg -f concat -i ... \
