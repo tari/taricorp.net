@@ -2,7 +2,7 @@
 title: Efficiently Capturing Time-Lapse video with a Raspberry Pi
 slug: timelapser
 draft: false
-date: 2022-07-25T00:41:48.799Z
+date: 2022-09-02T06:42:55.078Z
 categories:
   - software
 tags:
