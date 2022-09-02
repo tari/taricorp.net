@@ -53,7 +53,7 @@ ffmpeg -i v4l2 -video_size 2304x1536 -i /dev/video0 \
     -vf fps=0.1 -t 60 timelapse.mp4
 ```
 
-In this instance I've captured video at one frame per 10 seconds (`vf fps=0.1`) and chosen to capture one minute of video (`-t 60`). In the final script these are configurable, but this illustrates the concept nicely.
+In this instance I've captured video at one frame per 10 seconds (`-vf fps=0.1`) and chosen to capture one minute of video (`-t 60`). In the final script these are configurable, but this illustrates the concept nicely.
 
 Although the required framerate for video encoding is low in this application, video encode performance remains a concern because the Raspberry Pi 2 is not a very powerful computer. I wanted to use a video codec that achieves good compression, and it needed to do so with enough speed that frames can be encoded at least as frequently as they are captured.
 
