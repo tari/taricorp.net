@@ -4,7 +4,7 @@ slug: timelapser
 draft: true
 date: 2022-07-25T00:41:48.799Z
 ---
-Earlier this year, I had a desire to capture time-lapse video of some construction that would take an unknown amount of time and occurred mostly during short periods of activity separated by intervals of inactivity with varying time. Because the overall recording time was unknown, this represented an interesting set of challenges that I wrote some software to address, using a Raspberry Pi and a USB webcam.
+Earlier this year, I had a desire to capture time-lapse video of some construction that would take an unknown amount of time and occurred mostly during short periods of activity separated by intervals of inactivity with varying time. Because the overall recording time was unknown, this represented an interesting set of challenges that I wrote some software to address, using a Raspberry Pi and a USB webcam. (See the end of this article for the complete source.)
 
 ## Existing options
 
@@ -389,3 +389,72 @@ The service runs the script as its own user which is not really required, but is
 
 ### Packaging
 
+I wanted to make it easy to deploy and manage the scripts, in particular to be able to more easily handle changes and deploy the scripts to a fresh Pi in the future should I desire. The easy approach to deployment is to simply copy the scripts to the machine to run them, but it's somewhat easier at deployment-time to use the OS package manager. Since Debian derivatives are usually used on Raspberry Pis, I spent some time learning how to create Debian packages and constructed a `timelapser` package containing the scripts and configuration needed to run this system.
+
+The package does the following:
+ * Install `timelapser` and `gcs-incremental` scripts to `/usr/bin`
+ * Install the systemd units to `/usr/lib/systemd/system`
+ * Install the sample configuration to `/etc/timelapser.conf`
+
+It does not currently create the user or attempt to configure `gsutil`, so post-install operations should probably include:
+
+ * Create the user and allow access to video devices: `adduser timelapser --ingroup video` (optionally choosing a non-default location for the home directory and so forth)
+ * Log in to a Google cloud account for storage access: `sudo -u timelapser` [`gcloud auth login`](https://cloud.google.com/sdk/gcloud/reference/auth/login)
+ * Edit `/etc/timelapser.conf` to configure video capture options and storage location
+   * If a bucket does not already exist, [create a bucket](https://cloud.google.com/storage/docs/creating-buckets) to store uploaded video
+
+To change the time at which video is captured, [`systemctl edit`](https://www.freedesktop.org/software/systemd/man/systemctl.html#edit%20UNIT%E2%80%A6) `timelapser.timer` can be used to override the provided `OnCalendar` clause.
+
+Finally, the usual `systemd` commands can be used to start automatically running capture on a schedule:
+
+    systemctl enable --now timelapser.timer
+
+Or to run it once then stop (useful for testing configuration):
+
+    systemctl start timelapser.service
+
+## Downloads
+
+**[timelapser_1.0.tar.xz](/static/2022/timelapser_1.0.tar.xz)**: complete code and packaging information, buildable with `debuild`.
+
+**[gitlab.com/taricorp/timelapser](https://gitlab.com/taricorp/timelapser)**: at time of this writing, the same as the above source tarball hosted on Gitlab. Easier to browse and may receive some updates.
+
+## Discussion
+
+Because videos are captured such that they play back in real-time (with video duration being equal to the original amount of time over which it was captured), some additional processing is useful. First, I combine all the video segments for each day and add a time indicator:
+
+```
+for f in *.mkv
+do
+  echo "file $f" >> concat.txt
+done
+
+ffmpeg -f concat -i concat.txt \
+  -vf 'drawtext=text=%{pts\\:hms}:fontsize=32:fontcolor=white:borderw=2:x=(w-tw)/2:y=lh,setpts=PTS/600.0' \
+  -r 60 -f matroska dayfast.mkv
+```
+
+Using the `concat` input format allows days where video capture was interrupted and resumed later (writing to another file) to still result in a single video for the entire day.
+
+The `drawtext` filter applied via the `-vf` option takes the timestamp of each frame (starting at 0 at the beginning of the video) and formats it as hours, minutes and seconds then overlays the text on the video at the top-middle. `setpts` then takes the same timestamp and divides by 600 (setting the output frame's timestamp to that new value), so the video now plays back 600 times faster than the input.
+
+---
+
+Since sometimes there are long stretches of "nothing", it's useful later to do some filtering of each day's video to drop frames where there's very little change, which uses the `concat` input format to ffmpeg again and a different set of filters:
+
+```
+ffmpeg -f concat -i ... \
+  -vf 'select=gt(scene\,0.02),setpts=N/(30*TB)' \
+  out.mkv
+```
+
+The `select` filter will use or discard frames, and `gt(scene,0.02)` will only select those frames that differ from the previous frame by more two percent (according to some unspecified `scene` metric).[^scene-metric] To speed the resultant video up further, `setpts=N/(30*TB)` increases speed by a further 30 times.
+
+[^scene-metric]: I arrived at the 2% difference in scene metric by experiment, finding that value wasn't too sensitive (changes in the display time didn't cause frames to be retained, for instance) but also that it didn't seem to drop interesting periods of action.
+
+Compared to use of `PTS` in the earlier example, `TB` is used here because input frames are dropped: the `PTS` is based on the input frame's time, so if `PTS` were used then the time filled by dropped frames would still exist in the output video but the frame itself would not exist (the previous one would continue to be shown). Since the goal of dropping similar frames is to reduce the runtime of the final video while preserving interesting activity, `TB` is the better choice.
+
+---
+
+
+As I write this conclusion, I've used this set of scripts to capture two different sets of videos to good effect, each covering more than a month of real time. The results have been satisfactory, and the system has been entirely hands-off aside from initial configuration and disabling it again when I was done, which nicely fulfills the goal of having a system that requires minimal attention.
