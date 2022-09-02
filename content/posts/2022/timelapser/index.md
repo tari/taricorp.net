@@ -370,13 +370,13 @@ mkdir -p "${HOME}/${today}"
 cd "${HOME}/${today}"
 ```
 
-This runs captures for 9 hours at 0.1 fps, uploading video segments every 10 minutes. Because video is captured to the working directory, the configuration ensures that a directory named for the current time is created to store video, and the same directory name is used in the remote storage. Using a directory name based on the time allows video segments to be easily correlated with when they were actually captured.
+This runs captures for 9 hours at 0.1 fps, uploading video segments every 10 minutes. Because video is captured to the working directory, the configuration ensures that a directory named for the current time is created to store video, and the same directory name is used in the remote storage. Using a directory name based on the start time allows video segments to be easily correlated with when they were actually captured.
 
 ## Automation
 
 To run the system automatically, I set up some systemd units that will capture a video every day during working hours. A timer that triggers on weekdays:
 
-```
+```ini
 [Timer]
 OnCalendar=Mon..Fri 09:00:00
 Persistent=true
@@ -387,7 +387,7 @@ WantedBy=multi-user.target
 
 And the matching service that is started by the timer:
 
-```
+```ini
 [Unit]
 Description=Capture time-lapse videos
 
