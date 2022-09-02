@@ -427,15 +427,19 @@ Or to run it once then stop (useful for testing configuration):
 
 ## Downloads
 
+Congratulations on making it to the end of this article. Here is the result all in one place, much easier to use as-is than trying to reassemble it from the code fragments in the article.
+
 **[timelapser_1.0.tar.xz]({{< resource "timelapser_1.0.tar.xz" >}})**: complete code and packaging information, buildable with `debuild`.
 
 **[gitlab.com/taricorp/timelapser](https://gitlab.com/taricorp/timelapser)**: at time of this writing, the same as the above source tarball hosted on Gitlab. Easier to browse and may receive some updates.
 
 ## Discussion
 
-Because videos are captured such that they play back in real-time (with video duration being equal to the original amount of time over which it was captured), some additional processing is useful. First, I combine all the video segments for each day and add a time indicator:
+Although I'm happy with how this system works, some additional work is called for once a complete time-lapse has been captured.
 
-```
+Because videos are captured such that they play back in real-time (with video duration being equal to the original amount of time over which it was captured), I first combine all the video segments for each day and add a time readout:
+
+```sh
 for f in *.mkv
 do
   echo "file $f" >> concat.txt
@@ -454,7 +458,7 @@ The `drawtext` filter applied via the `-vf` option takes the timestamp of each f
 
 Since sometimes there are long stretches of "nothing", it's useful later to do some filtering of each day's video to drop frames where there's very little change, which uses the `concat` input format to ffmpeg again and a different set of filters:
 
-```
+```sh
 ffmpeg -f concat -i ... \
   -vf 'select=gt(scene\,0.02),setpts=N/(30*TB)' \
   out.mkv
