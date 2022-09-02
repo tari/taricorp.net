@@ -1,7 +1,7 @@
 ---
 title: Efficiently Capturing Time-Lapse video with a Raspberry Pi
 slug: timelapser
-draft: true
+draft: false
 date: 2022-07-25T00:41:48.799Z
 categories:
   - software
@@ -20,7 +20,7 @@ Earlier this year, I had a desire to capture time-lapse video of some constructi
 
 ## Existing options
 
-There is no shortage of articles around the web describing how to capture time lapse videos with a Raspberry Pi, such as [Caroline Dunn's article in Tom's Hardware](https://www.tomshardware.com/how-to/raspberry-pi-time-lapse-video). I find that most of these involve some kind of script to take still images at intervals, and another component (usually using ffmpeg) to combine those images into a video.
+There is no shortage of articles around the web describing how to capture time lapse videos with a Raspberry Pi, such as [Caroline Dunn's article in Tom's Hardware](https://www.tomshardware.com/how-to/raspberry-pi-time-lapse-video). I find that most of these involve some kind of script to take still images at intervals, and another component (usually using [ffmpeg](https://ffmpeg.org/)) to combine those images into a video.
 
 Although this approach works fine, it suffers from several obvious shortcomings:
  * Frames stored as individual image files tend to require much more space to store them than an equivalent video file, since each frame will usually be very similar to the preceding ones: video codecs are designed to take advantage of this redundancy.
