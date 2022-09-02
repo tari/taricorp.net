@@ -3,6 +3,18 @@ title: Efficiently Capturing Time-Lapse video with a Raspberry Pi
 slug: timelapser
 draft: true
 date: 2022-07-25T00:41:48.799Z
+categories:
+  - software
+tags:
+  - video
+  - raspberrypi
+  - debian
+  - ffmpeg
+  - cloud
+  - google
+  - webcam
+  - logitech
+  - shell
 ---
 Earlier this year, I had a desire to capture time-lapse video of some construction that would take an unknown amount of time and occurred mostly during short periods of activity separated by intervals of inactivity with varying time. Because the overall recording time was unknown, this represented an interesting set of challenges that I wrote some software to address, using a Raspberry Pi and a USB webcam. (See the end of this article for the complete source.)
 
