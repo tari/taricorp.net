@@ -427,7 +427,7 @@ Or to run it once then stop (useful for testing configuration):
 
 ## Downloads
 
-**[timelapser_1.0.tar.xz](/2022/timelapser_1.0.tar.xz)**: complete code and packaging information, buildable with `debuild`.
+**[timelapser_1.0.tar.xz]({{< resource "timelapser_1.0.tar.xz" >}})**: complete code and packaging information, buildable with `debuild`.
 
 **[gitlab.com/taricorp/timelapser](https://gitlab.com/taricorp/timelapser)**: at time of this writing, the same as the above source tarball hosted on Gitlab. Easier to browse and may receive some updates.
 
