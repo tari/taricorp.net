@@ -298,7 +298,7 @@ while true; do
 done
 ```
 
-The dance with `wait_status` here is required because `wait` can be interrupted by a signal, and in fact we expect it to be periodically interrupted by a `SIGUSR1` when we want to trigger an upload. In this situation the return code of `wait` is documented to be 128 or greater, so only when the return code is less than 128 is the capture task known to have exited.
+The dance with `wait_status` here is required because `wait` can be interrupted by a signal, and in fact we expect it to be periodically interrupted by a `SIGUSR1` when we want to trigger an upload (as described in the previous section). In this situation the return code of `wait` is documented to be 128 or greater, so only when the return code is less than 128 is the capture task known to have exited.
 
 Once the capture task exits, all that remains is to clean up and ensure all data has been uploaded:
 
