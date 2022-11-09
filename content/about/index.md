@@ -59,20 +59,24 @@ Hi, I'm Peter.
   </a>
   <span id="contact">Find me online:</span>
   
-  * <a href="https://twitter.com/pmarheine" class="linkbar">
+  * <a rel="me" href="https://twitter.com/pmarheine" class="linkbar">
       <img src="{{< resource "Twitter_Social_Icon_Circle_Color.svg" >}}"
            alt="Twitter">
       @pmarheine
     </a>
-  * <a href="https://gitlab.com/taricorp/" class="linkbar">
+  * <a rel="me" href="https://digipres.club/@pmarheine" class="linkbar">
+      <img src="{{< resource "activitypub-icon.svg" >}}" alt="ActivityPub/Mastodon">
+      @pmarheine@digipres.club
+    </a>
+  * <a rel="me" href="https://gitlab.com/taricorp/" class="linkbar">
       <img src="{{< resource "gitlab-icon-rgb.png" >}}" alt="" >
       GitLab
     </a></li>
-  * <a href="https://github.com/tari/" class="linkbar">
+  * <a rel="me" href="https://github.com/tari/" class="linkbar">
       <img src="{{< resource "github-mark.png" >}}" alt="">
       GitHub
     </a>
-  * <a href="mailto:peter@taricorp.net" class="linkbar">
+  * <a rel="me" href="mailto:peter@taricorp.net" class="linkbar">
       <img src="{{< resource "email-svgrepo-com.svg" >}}"
            alt="Email">
       peter@taricorp.net
