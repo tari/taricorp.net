@@ -1,14 +1,25 @@
 ---
-layout: page
-title: The Case for Swap
-date: 2011-11-25
-categories: []
-tags: []
-status: publish
-type: page
-published: true
+draft: false
 last_revised: 2014-12-10
+layout: page
+slug: the-case-for-swap
+published: true
+date: 2011-11-25
+status: publish
+title: The Case for Swap
+tags: []
+type: page
+updated: 2022-12-01T22:28:29.869Z
+categories: []
 ---
+<aside style="background-color: #eea; padding: .5em; border-radius: 1em;">
+<b>Note from 2022</b>: this article is old and still relevant, but Chris Down's "<a href="https://chrisdown.name/2018/01/02/in-defence-of-swap.html">In Defence of Swap</a>" might be a better reference for a contemporary reader, since:
+<ul>
+  <li>I focused primarily on the desktop use case here.</li>
+  <li>Both the kernel and typical hardware have changed significantly in the intervening decade.</li>
+  <li>He probably does a better job of making a convincing argument than I did.</li>
+</ul>
+</aside>
 
 I frequently hear from people that they "don't need swap" because their computer
 has a large amount of memory (nowadays, 4/8 GiB or even more). To a certain
@@ -26,7 +37,7 @@ memory pressure increases can severely degrade performance. I present here a
 case for why you should always have some swap available, and offer some advice
 on how best to allocate it.
 
-[I'm targeting Linux systems here, but this advice should apply to other operating systems with little modification.]
+\[I'm targeting Linux systems here, but this advice should apply to other operating systems with little modification.]
 
 ## The case for swap
 
@@ -45,7 +56,7 @@ performance.
     article](http://web.archive.org/web/20120606171634/http://distilledb.com:80/blog/archives/date/2009/02/22/swap-files-in-linux.page)
     for a primer on how virtual memory works.
 
-[If you don't understand how virtual memory works and ignored that footnote in
+\[If you don't understand how virtual memory works and ignored that footnote in
 the previous sentence, read that then come back.]
 
 What many users seem to ignore is that the operating system developers also know
