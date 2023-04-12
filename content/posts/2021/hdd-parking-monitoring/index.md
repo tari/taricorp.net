@@ -83,7 +83,7 @@ bands. For example, a device may implement one power management method from 80h 
 performance, higher power consumption method from level A1h to FEh. Advanced power management levels
 80h and higher do not permit the device to spin down to save power.
 
-If we wanted to allow the disk to still park its heads but at minimum frequency, setting the APM value to 7Fh (`hdparm -B 127`) seems to be the correct choice. To prevent parking the heads at all a value greater than 128 may do the job, but it's possible that some disks won't behave this way because the ATA specification refers only to spinning down the disk and does not specify anything about parking heads.
+If we wanted to allow the disk to still park its heads but at minimum frequency, setting the APM value to 7Fh (`hdparm -B 127`) seems to be the correct choice. To prevent parking the heads at all a value greater than 128 may do the job (254 is a common choice, as the highest-power setting available), but it's possible that some disks won't behave this way because the ATA specification refers only to spinning down the disk and does not specify anything about parking heads.
 
 Unfortunately, APM settings don't persist between power cycles so if we wanted to change disk settings with APM they would need to be reapplied on every boot. On a Linux system this could be done with a udev rule matching a chosen drive, for instance matching the chosen disk's serial number:
 
@@ -92,6 +92,8 @@ ACTION=="add", SUBSYSTEM=="block", KERNEL=="sd[a-z]", \
     ENV{ID_SERIAL_SHORT}=="ABCDEFGH", \
     RUN+="/usr/bin/hdparm -B 127 -S 0 /dev/%k"
 ```
+
+(The properties like `ID_SERIAL_SHORT` can be queried on a running system using `udevadm info`, such as `udevadm info /dev/sdd` to get the properties of the disk currently assigned ID `sdd`.)
 
 Disk vendors typically provide their own vendor-specific ways to do persistent configuration of power management settings, so it's worth trying to use those instead so the desired configuration doesn't depend on the host system applying it, instead being configured in the drive (but in some cases it might be desirable to have the host configure that!).
 
@@ -106,6 +108,10 @@ idle3ctl -d /dev/sdb -s 254
 ```
 
 The other slight annoyance when setting the idle3 timer on WD drives is that changes only take effect when the drive is powered on, usually meaning the host computer must be fully shut down and started back up for any changes to be seen- this makes experimentation to determine how raw timer values are interpreted a slower and more tedious process.
+
+<aside style="padding: 1em; background-color: #f8f8f8; color: black;">
+<b>A note from 2023</b>: I made some changes to the drives used by a server recently and needed to inspect their head parking settings, finding that I now have an 8TB WD Red drive that doesn't accept idle3 commands and shipped with its APM level set to 164. I had to use a udev rule (see <a href="#APM">APM</a> above) to configure it to my liking.
+</aside>
 
 ### Seagate EPC
 
