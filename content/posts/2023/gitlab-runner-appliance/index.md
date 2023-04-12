@@ -64,3 +64,8 @@ Both of these are based on [Buildroot](https://buildroot.org/), a tool designed 
 ## Running the appliance
 
 TODO: Firewalling!
+
+Nice trick: memory balloon autodeflate:
+ * https://libvirt.org/formatdomain.html#memory-balloon-device
+ * https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=5a10b7dbf904bfe01bb9fcc6298f7df09eed77d5
+ * https://gitlab.com/qemu-project/qemu/-/commit/e3816255bf4b6377bb405331e2ee0dc14d841b80
