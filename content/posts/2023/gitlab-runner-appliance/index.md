@@ -63,9 +63,35 @@ Both of these are based on [Buildroot](https://buildroot.org/), a tool designed 
 
 ## Running the appliance
 
-TODO: Firewalling!
-
 Nice trick: memory balloon autodeflate:
  * https://libvirt.org/formatdomain.html#memory-balloon-device
  * https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=5a10b7dbf904bfe01bb9fcc6298f7df09eed77d5
  * https://gitlab.com/qemu-project/qemu/-/commit/e3816255bf4b6377bb405331e2ee0dc14d841b80
+
+### Firewalling
+
+This runs on my home network, but shouldn't be able to access devices on my LAN.
+In general, it should only reach things via the public internet.
+
+```
+echo > no-host-lan.xml << EOF
+<filter name="no-host-lan">
+    <rule action="drop" direction="out" statematch="false">
+        <ip dstipaddr="10.0.0.0" dstipmask="255.0.0.0"/>
+        <ip dstipaddr="172.16.0.0" dstipmask="255.240.0.0"/>
+        <ip dstipaddr="192.168.0.0" dstipmask="255.255.0.0"/>
+        <ip6 dstaddr="fd00::" dstipmask"8"/>
+    </rule>
+</filter>
+EOF
+virsh nwfilter-define no-host-lan.xml --validate
+```
+
+Then associate this rule with a VM:
+
+```
+<interface type="...">
+  ...
+  <filterref filter="no-host-lan"/>
+</interface>
+```
