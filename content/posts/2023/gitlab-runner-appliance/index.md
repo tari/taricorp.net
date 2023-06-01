@@ -78,10 +78,18 @@ echo > no-host-lan.xml << EOF
 <filter name="no-host-lan">
     <rule action="drop" direction="out" statematch="false">
         <ip dstipaddr="10.0.0.0" dstipmask="255.0.0.0"/>
-        <ip dstipaddr="172.16.0.0" dstipmask="255.240.0.0"/>
-        <ip dstipaddr="192.168.0.0" dstipmask="255.255.0.0"/>
-        <ip6 dstaddr="fd00::" dstipmask"8"/>
     </rule>
+    <rule action="drop" direction="out" statematch="false">
+        <ip dstipaddr="172.16.0.0" dstipmask="255.240.0.0"/>
+    </rule>
+    <rule action="drop" direction="out" statematch="false">
+        <ip dstipaddr="192.168.0.0" dstipmask="255.255.0.0"/>
+    </rule>
+    <!--
+    <rule action="drop" direction="out" statematch="false">
+        <ipv6 dstaddr="fd00::" dstipmask="8"/>
+    </rule>
+    -->
 </filter>
 EOF
 virsh nwfilter-define no-host-lan.xml --validate
