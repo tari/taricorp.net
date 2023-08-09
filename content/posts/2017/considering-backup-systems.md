@@ -1,9 +1,10 @@
 ---
-date: 2017-11-07
 title: Considering my backup systems
 slug: considering-backup-systems
+draft: false
+date: 2017-11-07
 categories:
- - Software
+  - Software
 tags:
   - cloud
   - archiving
@@ -148,7 +149,7 @@ So, the contenders:
    available, where the interesting ones for backups are Nearline and Coldline.
    Low cost per gigabyte stored, but costs are incurred for each operation and
    transfer of data out.
- * **[Backblaze B2](https://www.backblaze.com/b2/cloud-storage.html)**: very low
+ * **[Backblaze B2](https://www.backblaze.com/cloud-storage)**: very low
    cost per gigabyte, but incurs costs for download.
  * **[Online.net C14](https://www.online.net/en/c14)**: very low cost per gigabyte,
    no cost for operations or data transfer in the "intensive" flavor.
