@@ -23,6 +23,17 @@ Database servers usually recommend only treating swap as emergency memory, which
 
 postgres docs don't specifically mention swap, but at least Percona suggest doing the same: https://www.percona.com/blog/tune-linux-kernel-parameters-for-postgresql-optimization/
 
-They suggest setting swappiness globally, which is bad for everything else on the system. If it's a single-purpose server (backing a large service, perhaps) that's not an issue, but for small servers that run more than just the database it's a bitter pill.
+They suggest setting swappiness globally, which is bad for everything else on the system. If it's a single-purpose server (backing a large service, perhaps) that's not an issue, but for small servers that run more than just the database it's a bitter pill. A [postgres-related discussion from 2006](https://postgrespro.com/list/id/49298.209.244.4.106.1161290341.squirrel@www.drule.org) includes a similar comment to my though in the prior section:
+
+> This is very useful on smaller systems where memory is a scarce commodity.
+ I have a Xen virtual server with 128MB ram.  I noticed a big improvement
+in query performance when I upped swappiness to 80.  It gave just enough
+more memory to fs buffers so my common queries ran in memory.
+>
+> Yes, throwing more ram at it is usually the better solution, but it's nice
+linux gives you that knob to turn when adding ram isn't an option, at
+least for me.
+
+That mailing list thread was discussing historical behavior of postgres in preferring to depend on the OS's page cache rather than the database's (compare to what the MariaDB recommendation is, which seems to want you to depend on the database's page cache rather than the OS), but this particular comment observed that it can be very useful to encourage swapping (and control what might get swapped) when running in a memory-constrained environment.
 
 systemd MemoryswapMax=0 looks like it prevents a given service (or cgroup, if a slice) from swapping. That's much better!
