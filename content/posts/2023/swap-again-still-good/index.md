@@ -48,6 +48,8 @@ So although we find here that databases *can* be memory-hungry as they attempt t
 
 With that diversion through history and looking at other databases, we've learned that at least some databases (postgres) have no strong opinion on swappiness. Certainly one could expect performance to suffer if the database's actual working set does not remain in memory, but it seems the MySQL developers (and MariaDB, which has inherited the overall design of MySQL) don't believe the OS can be trusted to do that. Without studying this in great detail (I'm not interested in spending enough effort to actually measure performance under various conditions), it seems best to accept the database's recommendations.
 
-They suggest setting swappiness globally, which is bad for everything else on the system. If it's a single-purpose server (backing a large service, perhaps) that's not an issue, but for small servers that run more than just the database it's a bitter pill.
+For memory-constrained systems however, their recommendation seems bad. As we've seen, setting swappiness to a very small number can have negative performance implications and especially so when memory is not plentiful. For large services with meaningful budgets (and perhaps paid database administrators), I imagine setting swappiness is no problem but for the small sorts of services I usually work on (with budget along the lines of "as cheap as possible"), setting swappiness globally is a bitter pill to swallow because it will probably limit (re)use of memory in useful ways. Is there a better way?
+
+### Being cleverer
 
 systemd MemoryswapMax=0 looks like it prevents a given service (or cgroup, if a slice) from swapping. That's much better!
