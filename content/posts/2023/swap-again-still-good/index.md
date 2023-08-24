@@ -38,7 +38,7 @@ more memory to fs buffers so my common queries ran in memory.
 linux gives you that knob to turn when adding ram isn't an option, at
 least for me.
 
-This comment alludes to the same characteristics that I'm considering here, namely that allowing the kernel to swap some things out of main memory during normal operation can in fact be good for performance.
+This comment alludes to the same characteristics that I'm considering here, namely that allowing the kernel to swap some things out of main memory during normal operation can in fact be good for performance, especially when you wish to run in an environment with limited memory.
 
 ---
 
