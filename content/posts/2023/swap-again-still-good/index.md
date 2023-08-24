@@ -42,7 +42,7 @@ This comment alludes to the same characteristics that I'm considering here, name
 
 ---
 
-So although we find here that databases *can* be memory-hungry as they attempt to manage what data is retained in memory, this is not standard among implementations. MariaDB (and its MySQL ancestor) seem to believe they can manage which data is kept in memory better than the OS can, and for that design it seems reasonable to encourage low swappiness values to ensure that whatever data the database believes is in memory will actually be in memory when it's wanted: if the kernel were to swap out a page that the database has cached, it would always be more efficient to simply reduce the size of the database's buffers to reclaim that memory that it is to store and reload it from swap.
+So although we find here that databases *can* be memory-hungry as they attempt to manage what data is retained in memory, this is not standard among implementations. MariaDB (and its MySQL ancestor) seem to believe they can manage which data is kept in memory better than the OS can, and for that design it seems reasonable to encourage low swappiness values to ensure that whatever data the database believes is in memory will actually be in memory when it's wanted: if the kernel were to swap out a page that the database has cached, it would always be more efficient to simply reduce the size of the database's buffers to reclaim that memory than it is to store and reload it from swap.
 
 ## Making MariaDB nicer
 
