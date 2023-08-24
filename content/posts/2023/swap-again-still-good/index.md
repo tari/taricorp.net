@@ -21,19 +21,15 @@ however memory compression at least on Windows Server is disabled by default. ht
 
 In my case the limiting factor for system requirements probably is memory, since handling a small number of concurrent users for a web service doesn't require much CPU time.
 
-## Databases behaving badly
+## Databases 
 
-Database servers usually recommend only treating swap as emergency memory. For instance, the [MariaDB documentation recommends](https://mariadb.com/kb/en/configuring-swappiness/) setting `vm.swappiness` to either 0 or 1, which (as noted at the beginning of this post) is usually not a very good way to treat swap. However, given the design of the MariaDB server, this is a fairly reasonable approach because the database effectively maintains its own page cache (the [buffer pool](https://mariadb.com/kb/en/innodb-buffer-pool/)) separate from the OS's page cache for disk reads.
+Database servers usually seem to recommend only treating swap as emergency memory. For instance, the [MariaDB documentation recommends](https://mariadb.com/kb/en/configuring-swappiness/) setting `vm.swappiness` to either 0 or 1, which (as noted at the beginning of this post) is usually not a very good way to treat swap. However, given the design of the MariaDB server, this is a fairly reasonable approach because the database effectively maintains its own page cache (the [buffer pool](https://mariadb.com/kb/en/innodb-buffer-pool/)) separate from the OS's page cache for disk reads.
 
 Compared to MariaDB, Postgres seems more willing to rely on OS page caching for data stored on disk: its documentation does not mention swappiness (though Percona suggest that [lowering swappiness is likely improve performance](https://www.percona.com/blog/tune-linux-kernel-parameters-for-postgresql-optimization/)), and it recommends [smaller values of `shared_buffers`](https://www.postgresql.org/docs/15/runtime-config-resource.html#GUC-SHARED-BUFFERS), suggesting that more than 40% of system RAM is unlikely to be useful. By comparison, MariaDB suggests that [allocating up to 80% of system memory](https://mariadb.com/kb/en/innodb-system-variables/#innodb_buffer_pool_size) to database-managed buffers may be worthwhile.
 
-So although we find here that databases *can* be memory-hungry as they attempt to manage what data is retained in memory, this is not standard among implementations. MariaDB (and its MySQL ancestor) seem somewhat unique in that they believe they can manage which data is kept in memory better than the OS can, and for that design it seems reasonable to encourage low swappiness values to ensure that whatever data the database believes is in memory will actually be in memory when it's wanted: if the kernel were to swap out a page that the database has cached, it would always be more efficient to simply reduce the size of the database's buffers to reclaim that memory that it is to store and reload it from swap.
+While researching this, I found [a user's comment from 2006 regarding postgres and swappiness](https://postgrespro.com/list/id/49298.209.244.4.106.1161290341.squirrel@www.drule.org):
 
-### It's actually MariaDB
-
-They suggest setting swappiness globally, which is bad for everything else on the system. If it's a single-purpose server (backing a large service, perhaps) that's not an issue, but for small servers that run more than just the database it's a bitter pill. A [postgres-related discussion from 2006](https://postgrespro.com/list/id/49298.209.244.4.106.1161290341.squirrel@www.drule.org) includes a similar comment to my thoughts in the prior section:
-
-> This is very useful on smaller systems where memory is a scarce commodity.
+> [Increasing swappiness] is very useful on smaller systems where memory is a scarce commodity.
  I have a Xen virtual server with 128MB ram.  I noticed a big improvement
 in query performance when I upped swappiness to 80.  It gave just enough
 more memory to fs buffers so my common queries ran in memory.
@@ -42,6 +38,16 @@ more memory to fs buffers so my common queries ran in memory.
 linux gives you that knob to turn when adding ram isn't an option, at
 least for me.
 
-That mailing list thread was discussing historical behavior of postgres in preferring to depend on the OS's page cache rather than the database's (compare to what the MariaDB recommendation is, which seems to want you to depend on the database's page cache rather than the OS), but this particular comment observed that it can be very useful to encourage swapping (and control what might get swapped) when running in a memory-constrained environment.
+This comment alludes to the same characteristics that I'm considering here, namely that allowing the kernel to swap some things out of main memory during normal operation can in fact be good for performance.
+
+---
+
+So although we find here that databases *can* be memory-hungry as they attempt to manage what data is retained in memory, this is not standard among implementations. MariaDB (and its MySQL ancestor) seem to believe they can manage which data is kept in memory better than the OS can, and for that design it seems reasonable to encourage low swappiness values to ensure that whatever data the database believes is in memory will actually be in memory when it's wanted: if the kernel were to swap out a page that the database has cached, it would always be more efficient to simply reduce the size of the database's buffers to reclaim that memory that it is to store and reload it from swap.
+
+## Making MariaDB nicer
+
+With that diversion through history and looking at other databases, we've learned that at least some databases (postgres) have no strong opinion on swappiness. Certainly one could expect performance to suffer if the database's actual working set does not remain in memory, but it seems the MySQL developers (and MariaDB, which has inherited the overall design of MySQL) don't believe the OS can be trusted to do that. Without studying this in great detail (I'm not interested in spending enough effort to actually measure performance under various conditions), it seems best to accept the database's recommendations.
+
+They suggest setting swappiness globally, which is bad for everything else on the system. If it's a single-purpose server (backing a large service, perhaps) that's not an issue, but for small servers that run more than just the database it's a bitter pill.
 
 systemd MemoryswapMax=0 looks like it prevents a given service (or cgroup, if a slice) from swapping. That's much better!
