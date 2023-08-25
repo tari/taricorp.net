@@ -1,23 +1,34 @@
 ---
-title: "Revisiting swap: making database servers play nice"
-slug: swap-again-still-good
+title: "Linux swap: handling database servers"
+slug: database-swapspace
 draft: false
 date: 2023-08-23T08:44:49.620Z
 ---
 I've written previously about how [received wisdom regarding swap on Linux systems]({% ref /posts/2014/swap.md /%}) (and [Chris Down has done it better than I did](https://chrisdown.name/2018/01/02/in-defence-of-swap.html)) to the effect that using swap at all indicates an underprovisioned or oversubscribed system, while in reality swap is usually good to have and can help a machine achieve better performance. This came to mind again recently while I was tweaking the configuration of some small services (handling small numbers of concurrent users) that run on the same system as a MariaDB database, and led to me to a few interesting realizations.
 
-## Summarizing arguments for swap
+## Revisiting arguments for swap
 
-skim over how demand paging works, to remind the reader
+Many programmers are aware of the generalities of swap (or called a page file on Windows): the OS tracks memory in units of one *page*, allocating pages of physical RAM when needed by a process. If a page of memory is needed but there are none free to allocate, then it either needs to reject the request (not always possible) or take a page from somewhere else (usually meaning it needs to kill the process that owned that page).
+
+Swap space is a place on disk (or in other storage that is not main memory) where the OS can opt to place memory pages instead of freeing them through other means: if memory is needed but unavailable, it can "swap out" a page and arrange to swap it back in when its owner attempts to use it again. Swapping a page out or back in can take a long time (multiple milliseconds, or longer), but for pages which are rarely accessed it can be worthwhile to pay that cost so some other process can use the RAM that would otherwise be allocated to unused data.
+
+Linux offers a parameter called *swappiness* which controls the system's bias toward swapping pages out or dropping pages from the *page cache*, which is a transparent cache for file accesses. When things are working well, "unused" memory will usually be used to store page cache data in order to accelerate file accesses and in typical configurations it will prefer to shrink the page cache rather than swap pages out.
+
+### Memory compression
+
+The idea behind swap ("*demand paging*", more generally) is very old. More recent is the idea of memory compression, where instead of writing pages out to storage when they're no longer desired in RAM the data is instead compressed and stored elsewhere in RAM. This is useful because memory pages usually compress pretty well (often compressing to less than half their original size), and memory is so much quicker to access than external storage that it's often at least as fast to decompress a compressed page than it is to read it back from disk.
+
+Memory compression is now common in operating systems that expect to be used interactively (by a user sitting in front of the computer): MacOS has memory compression (but I'm unable to determine what that feature was added), Windows implements it since 2015 ([added in Windows 10](https://learn.microsoft.com/en-us/shows/seth-juarez/memory-compression-in-windows-10-rtm)), and Linux's `zram` was added in 2014 with some distributions (Fedora, [Pop!_OS](https://github.com/pop-os/default-settings/pull/163) and ChromeOS for instance) now enabling it by default.
+
+When using zram on Linux, it seems like configuring swappiness is usually useful: the kernel's default value of 60 is biased toward shrinking the page cache, but paging data out by writing to zram (even after the CPU cost of doing compression) is usually faster than traditional swap, even if the traditional swap is on fast solid-state storage rather than a traditional hard drive. A swappiness value greater than 100 (up to 200, the maximum) tends to be a good idea in that case, reflecting that it tends to be less costly to swap to compressed memory than it would be to reload file data from disk when needed. This assumes that the choice of pages to swap out accurately reflects which data will actually be used next, which is a difficult problem to solve but today's operating systems tend to do that fairly well.
 
 ---
 
-zram is pretty cool. It allows a linux system to do the same kind of memory compression as [Windows since Windows 10](https://learn.microsoft.com/en-us/shows/seth-juarez/memory-compression-in-windows-10-rtm) and MacOS since sometime.
+Either server-targeted OS distributions are more conservative with adopting this new technology however, or their creators believe that memory compression is not desirable in server workloads: Windows Server [disables memory compression by default](https://social.technet.microsoft.com/Forums/en-US/b2bf9771-9a6b-427f-ae66-94378e2305b8/memory-compression), and (from my experience) few Linux distributions enable any kind of zram by default though they do often default to at least a small amount of disk-backed swap.
 
-arch wiki writers suggest using high swappiness with zram:
-https://wiki.archlinux.org/title/Zram#Optimizing_swap_on_zram
+It's difficult to find any justification for not enabling memory compression on servers because (at least in the Linux world) that's the default behavior so there are no changes to point to where there might be discussion of the question, but it seems like servers may tend to have memory compression disabled because they're expected to have sufficient memory to absorb all application demand. That is, it is assumed that the system owners ensure there is always "enough" physical memory, however much that is for their needs.
 
-however memory compression at least on Windows Server is disabled by default. https://social.technet.microsoft.com/Forums/en-US/b2bf9771-9a6b-427f-ae66-94378e2305b8/memory-compression suggests that it might be tuned that way because servers are assumed to have plenty of memory (perhaps because typical users of Windows Server are less budget conscious). Memory compression may still be useful on servers if reducing memory use appears to be a good way to keep costs down.
+### What of small systems?
 
 In my case the limiting factor for system requirements probably is memory, since handling a small number of concurrent users for a web service doesn't require much CPU time.
 
