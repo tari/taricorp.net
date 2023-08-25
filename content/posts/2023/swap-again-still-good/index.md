@@ -53,3 +53,11 @@ For memory-constrained systems however, their recommendation seems bad. As we've
 ### Being cleverer
 
 systemd MemoryswapMax=0 looks like it prevents a given service (or cgroup, if a slice) from swapping. That's much better!
+
+## Possible alternatives
+
+the buffer pool in mariadb behaves a lot like a chunk of page cache that's dedicated to the database. Reducing its size (or not making it larger) is also probably a fine option, though write-heavy workloads might want a fairly large one because the database also uses the buffer pool to buffer writes as well as reads.
+
+Vettabase note that the official guidance of basically "give it as much memory as you can" is not very good: https://vettabase.com/is-innodb-buffer-pool-big-enough/
+
+It's not obvious what methods the database uses to read from disk. If it were memory-mapping the files then using data in the OS page cache would be nearly free, but it probably doesn't do that because then reads could block unpredictably when the data isn't currently loaded.
