@@ -19,7 +19,7 @@ Taking that logic to the meaninful conclusion, if the "main" input to an `overla
 
 What this means is that `overlay` allows processing of frames to split, with one branch doing some filtering to determine which frame should be kept and which should be retained, while the final output can be a copy of the input by passing through the original input as the second input to the `overlay`. This may be easier to understand with a diagrammed example:
 
-{% figure src="split-filter-overlay.png" caption="Input frames are split (copied) to:
+{% figure src="overlay-sample.drawio.svg" caption="Input frames are split (copied) to:
 
 1. A filter sequence that converts to monochrome then discards some of the frames based on the monochrome result
 2. Do nothing (no-op)
