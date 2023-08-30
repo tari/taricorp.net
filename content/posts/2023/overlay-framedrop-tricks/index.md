@@ -3,32 +3,157 @@ title: Improved timelapse video processing
 slug: overlay-framedrop-tricks
 date: 2023-08-30T05:58:37.811Z
 ---
+
 Using the `ffmpeg`'s overlay filter is a handy trick.
 
-The important thing is that the `overlay` filter attempts to align its inputs to the same presentation timestamp (PTS); that is, the instant from the start of the video at which a given frame is to be displayed. Although this behavior is not obvious, the documentation provides a few hints:
+The important thing is that the `overlay` filter attempts to align its inputs to the same presentation timestamp (PTS);
+that is, the instant from the start of the video at which a given frame is to be displayed. Although this behavior is
+not obvious, the documentation provides a few hints:
 
 > It takes two inputs and has one output. The first input is the "main" video on which the second input is overlaid.
 >
-> This filter also supports the framesync options.
->
-> Be aware that frames are taken from each input video in timestamp order, hence, if their initial timestamps differ, it is a good idea to pass the two inputs through a setpts=PTS-STARTPTS filter to have them begin in the same zero timestamp, as the example for the *movie* filter does.
+> Be aware that frames are taken from each input video in timestamp order, hence, if their initial timestamps differ,
+> it is a good idea to pass the two inputs through a setpts=PTS-STARTPTS filter to have them begin in the same zero
+> timestamp, as the example for the *movie* filter does.
 
-This wording seems to imply that the PTS of each frame from the "main" input to the `overlay` filter is will be the PTS of the output frame as well, and the other input will attempt to match that PTS from the other stream in order to select an appropriate frame.
+This wording seems to imply that the PTS of each frame from the "main" input to the `overlay` filter is will be the PTS
+of the output frame as well, and the other input will attempt to match that PTS from the other stream in order to select
+an appropriate frame.
 
-Taking that logic to the meaninful conclusion, if the "main" input to an `overlay` drops frames without modifying their PTS and the other input to the filter has the same frame timing, then the overlaid image (from the second input) will skip the same frames as the main input.
+Taking that logic to the meaninful conclusion, if the "main" input to an `overlay` drops frames without modifying their
+PTS and the other input to the filter has the same frame timing, then the overlaid image (from the second input) will
+skip the same frames as the main input.
 
-What this means is that `overlay` allows processing of frames to split, with one branch doing some filtering to determine which frame should be kept and which should be retained, while the final output can be a copy of the input by passing through the original input as the second input to the `overlay`. This may be easier to understand with a diagrammed example:
+---
 
-{% figure src="overlay-sample.drawio.svg" caption="Input frames are split (copied) to:
+What this means is that `overlay` allows processing of frames to split, with one branch doing some filtering to
+determine which frame should be kept and which should be retained, while the final output can be a copy of the input by
+passing through the original input as the second input to the `overlay`. This may be easier to understand with a
+diagrammed example:
 
-1. A filter sequence that converts to monochrome then discards some of the frames based on the monochrome result
+{{% figure src="overlay-sample.drawio.svg"
+    caption=`Flowchart illustrating a basic filter chain using the result of one filter to determine whether
+             frames should be retained, but emitting the original frames.`
+%}}
+
+In this example we might imagine that the goal is to drop parts of the original video that are very dark, perhaps 
+because we want to display it on something with poor contrast and converting to monochrome makes it easier to decide
+whether a given video frame is too dark to be useful. Frames from the input video are split (copied) to:
+
+1. A filter sequence that converts to monochrome then discards some of the frames based on the monochrome result,
+   as if perhaps this video were meant to be displayed on a screen with poor contrast and we wanted to ignore parts
+   of the video that would be too dark to see well.
 2. Do nothing (no-op)
 
-The first branch is the used as the main input to an overlay in order to set the desired output PTS, but because the second branch (as a copy of the input) is fully opaque the result is to only select the input frames that were not dropped by the filters on the first branch.
-" %}
+The first branch is the used as the main input to an overlay in order to set the desired output PTS, but because the
+second branch (as a copy of the input) is fully opaque the result is to only select the input frames that were not
+dropped by the filters on the first branch.
 
-The result of this has the same duration as the original input video, but fewer frames because the PTS of each output frame is retained. The `setpts` filter can fix this.
+## A worked example
 
-It also has a problem with being longer than intended, because `overlay` by default repeats the last frame in the shorter of its inputs until both end: if any frames at the end of the input are dropped on the first branch, they'll still be taken from the second. Setting `shortest=1` makes it stop when either stream ends, which is correct for this application.
+Recalling that the motivation for this filter layout was in processing time-lapse video, we can create a short
+sample video and illustrate what happens when running various filters, arriving at a clear understanding of how the 
+core understanding of careful `overlay` use is useful to generate good-looking time-lapse videos.
 
-TODO: make some short examples with testsrc and simple filtering. Captioned with the filter chain used.
+Here's the initial video, which is simply a counter that ticks off milliseconds and a rotating color bar as 
+generated by the `testsrc` filter.[^demo-video-generation]
+
+[^demo-video-generation]: for those playing along at home, I rendered this video with `ffmpeg -f lavfi -i 
+    testsrc=duration=10:decimals=2 outfile.webm`. `-f lavfi` says the input format is a filter specification, and 
+    `testsrc=duration=10` specifies a test video source which generates 10 seconds of video with the `decimals=2` 
+    component making the displayed numbers show milliseconds rather than only whole seconds. I've opted to otherwise
+    emit WebM video with default settings (VP9 codec at CRF 32).
+
+<figure>
+    <video controls autoplay loop playsinline width="320" height="240">
+        <source src="testsrc-original.webm" type="video/webm">
+    </video>
+    <figcaption>Sample video with no processing applied.</figcaption>
+</figure>
+
+### Simple overlay
+
+To become acquainted with `overlay`, we can add some decorations on top of the video using `overlay`. I've drawn
+a crude smiley face to put on top of the test pattern. This image has a transparent background so it won't completely 
+hide the video, and it has the same dimensions.
+
+{{% figure src="crude-smiley.png" caption="A crudely hand-drawn smiley face to overlay on the video." %}}
+
+#### Complex filter specification
+
+In order to actually use an overlay, it becomes necessary to know how to express a filter chain with multiple inputs.
+The ffmpeg documentation provides fairly clear documentation, but for ease of reading I will summarize it here.
+Thus far the filter chain has been strictly linear (one filter feeds immediately into the input of the next), which
+can be written simply by separating the specification of each filter with a comma, like `filter1,filter2`.
+
+For more complex filter chains, input and output connections can be given names, and unrelated filters are separated
+by semicolons rather than commas. When connections of two filters have the same name, they are connected together: the
+preceding example could also be written as `filter1 [out1]; [out1] filter2`, creating a "wire" or "pad" of sorts named 
+`out1` that the output of `filter1` (because `[out1]` appears after the filter name) and the input of `filter2`
+(`[out1]` written before `filter2`) are connected to.
+
+---
+
+To read two inputs from files, we also need to understand how to tell `ffmpeg` to read more than one file on the command
+line, and how to refer to them with filters.
+
+Input files are always specified with any number of options, then `-i infile` where `infile` is the name of the 
+desired file. In this case (and in many others), no further options are required, so specifying multiple files can
+be done simply by repeating `-i` options: `-i file1 -i file2`.
+
+Each input file is assigned a number automatically, with the first input being assigned 0, then 1 for the next and so
+forth. These numbers are the name of the corresponding pad in the filter chain, so a contrived filter chain consuming
+two inputs and discarding the first (using a `nullsink` filter that has one input and no outputs) could be written
+on the command line as `ffmpeg -i file1 -i file2 -filter_complex "[0] nullsink; [1] myfilter"` (where `myfilter` is
+some arbitrarily-chosen filter). When a filter has multiple inputs (or outputs), multiple pad names may be 
+specified in either position, like `[0][1] myfilter`.
+
+Having established how to write these, all following samples will note what the inputs are and the `filter_complex`
+option that creates the desired filter chain.
+
+#### Overlay in action
+
+Returning to the sample video (input 0) and overlay image (input 1), the requisite principles to use `overlay` have
+been established. Recalling that the `overlay` documentation says its first input is the main input and the second
+will be overlaid on it, the sample video should be its first input.
+
+<figure>
+    <video controls autoplay loop playsinline width="320" height="240">
+        <source src="simple-overlay.webm" type="video/webm">
+    </video>
+    <figcaption><code>[0][1] overlay</code></figcaption>
+</figure>
+
+### Removing uninteresting frames
+
+Pretending that we want to make a time-lapse from this test video, the `mpdecimate` filter is convenient. Its utility
+for this application may not be immediately obvious from its documentation however:
+
+> Drop frames that do not differ greatly from the previous frame in order to reduce frame rate.
+>
+> The main use of this filter is for very-low-bitrate encoding (e.g. streaming over dialup modem), but it could in 
+> theory be used for fixing movies that were inverse-telecined incorrectly.
+
+The first paragraph is the interesting one; we do in fact want to drop frames that do not differ greatly from their 
+predecessors. It's probably similar to the use of `select` I
+[previously suggested]({{% ref "/posts/2022/timelapser/index.md" %}})
+for this application (`select=gt(scene\,0.02)`) that used a poorly-defined "scene metric" which was assumed to behave 
+similarly. Overall, `mpdecimate` feels to me like a more appropriate choice.
+
+Since the sample video in use here has constant motion in the color bar, this section has no example of its own: 
+running `mpdecimate` on `testsrc` output is expected to do nothing, because of the constant motion. If this were an 
+actual video, that constantly-changing colorbar might be something that happens to be visible but is not interesting 
+for the purposes of the desired result.
+
+## stuff
+
+Writing this as 
+
+The result of this has the same duration as the original input video, but fewer frames because the PTS of each output
+frame is retained. The `setpts` filter can fix this.
+
+It also has a problem with being longer than intended, because `overlay` by default repeats the last frame in the
+shorter of its inputs until both end: if any frames at the end of the input are dropped on the first branch, they'll
+still be taken from the second. Fortunately the documentation includes a pointer to "framesync" options that are
+relevant to some filters that accept multiple inputs, where we can discover that setting `shortest=1`
+makes it stop when either stream ends, which is correct for this application.
