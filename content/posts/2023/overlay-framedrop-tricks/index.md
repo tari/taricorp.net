@@ -230,10 +230,10 @@ to 10 fps, so the 10 frames that are output play back in only one second rather 
     <video controls autoplay loop playsinline width="320" height="240">
         <source src="overlay-decimate-setpts-96.webm" type="video/webm">
     </video>
-    <figcaption><code>[0][1] overlay, mpdecimate, setpts=N/(10*TB), fps=10</code></figcaption>
+    <figcaption><code>[0][1]&nbsp;overlay, mpdecimate, fps=10, setpts=N*TB</code></figcaption>
 </figure>
 
-The expression `N/(10*TB)` specifies how the PTS of each frame should be computed. `N` is the
+The expression `N*TB` specifies how the PTS of each frame should be computed. `N` is the
 number of the frame being processed by the filter (0 for the first frame it receives, 1 for the
 next and so on), and `TB` is the "timebase value" which is effectively the resolution of the
 time for each PTS.
@@ -257,28 +257,74 @@ As long as the timebase itself can be specified precisely (such as by specifying
 of its time duration; 1⁄30 rather than $0.0\overline{3}$), then the PTS of each frame can be exactly represented.
 {{%/math%}}
 
-Knowing all this, the expression `1/(10*TB)` represents one tenth of a second: `TB` is some number that ffmpeg
-uses to represent "there are *this many* timebase ticks per second". Multiplying by the number
-of each frame that is encountered makes each frame advance from the previous by 1⁄10 of a second, giving us
-a video at a constant 10 fps regardless of how many frames were dropped from the input or what their original
-PTSes were.
-
-TODO: I think the preceding paragraph is wrong.
-https://stackoverflow.com/a/58268695/2658436
-
 ---
 
-There's an extra `fps` filter at the end here which I haven't mentioned yet: since 
+Knowing all this, the expression `N*TB` following `fps=10` represents one tenth of a second:
+`TB` is 1⁄10 of a second after `fps` sets it (otherwise the timebase is inherited from the input;
+it would be 1⁄25 if we didn't set it manually in this case)
+and multiplying by `N` makes the PTS advance monotonically by `TB` for each frame.
 
-## stuff
+## Recovering masked parts
 
-Writing this as 
+Having masked out high-motion parts of the frame to decimate, we lost all of the motion in the color
+bars and were stuck seeing the mask itself. Now it's time to use the core `overlay` realization
+that motivated this entire thing to recover the entire image for the frames that we want
+to keep.
 
-The result of this has the same duration as the original input video, but fewer frames because the PTS of each output
-frame is retained. The `setpts` filter can fix this.
+<figure>
+    <video controls autoplay loop playsinline width="320" height="240">
+        <source src="overlay-decimate-recover.webm" type="video/webm">
+    </video>
+    <figcaption><code>[0]&nbsp;split&nbsp;[x][y];
+                      [x][1]&nbsp;overlay, mpdecimate&nbsp;[d];
+                      [d][y]&nbsp;overlay</code></figcaption>
+</figure>
 
-It also has a problem with being longer than intended, because `overlay` by default repeats the last frame in the
-shorter of its inputs until both end: if any frames at the end of the input are dropped on the first branch, they'll
-still be taken from the second. Fortunately the documentation includes a pointer to "framesync" options that are
-relevant to some filters that accept multiple inputs, where we can discover that setting `shortest=1`
-makes it stop when either stream ends, which is correct for this application.
+Using `split` to make two copies of the input video and overlaying one copy on top of the
+decimated stream allows us to see the entire input frame, as intended: the color bar rotates
+and the centisecond counter is `00`, consistent with showing the first frame of each second
+rather than the last like the mask image used.
+
+However, not all is well: once the seconds digit reaches 9 (the last value we expect to see),
+we see every frame until the end of the video! This is because `overlay` by default will
+continue to emit data as long as any frames are available from either of its input: even though
+the decimated stream has ended, the input hasn't yet so it repeats the last frame of the decimated
+input until the overlay ends. Fortunately, one of the "framesync" options that `overlay`
+accepts solves this problem: `shortest=1` will make it stop when either input ends.
+
+<figure>
+    <video controls autoplay loop playsinline width="320" height="240">
+        <source src="overlay-decimate-shortest.webm" type="video/webm">
+    </video>
+    <figcaption><code>[0]&nbsp;split&nbsp;[x][y];
+                      [x][1]&nbsp;overlay, mpdecimate&nbsp;[d];
+                      [d][y]&nbsp;overlay=shortest=1</code></figcaption>
+</figure>
+
+## Putting it all together
+
+Finally, we can demonstrate the entire pipeline with decimation and PTS recomputation
+to output something that can truly be called a timelapse video.
+
+<figure>
+    <video controls autoplay loop playsinline width="320" height="240">
+        <source src="final.webm" type="video/webm">
+    </video>
+    <figcaption><code>[0]&nbsp;split&nbsp;[x][y];
+                      [x][1]&nbsp;overlay, mpdecimate&nbsp;[d];
+                      [d][y]&nbsp;overlay=shortest=1,
+                      fps=10, setpts=N*TB, photosensitivity</code></figcaption>
+</figure>
+
+As an extra trick that doesn't seem to matter for this example but is useful for actual
+videos, I've added the `photosensitivity` filter which filters rapid changes in brightness
+to be less rapid; I find the result is generally better-looking after that filter, and 
+it should be safer for people who are vulnerable to photosensitive epilepsy or flicker
+vertigo to view the result than it would be otherwise, which is good!
+
+## Conclusions
+
+I had a fun time gaining a better understanding of ffmpeg filters to achieve my goal
+of making better time-lapse videos, and I hope the detailed writeup is useful to my
+readers, either to gain a better understanding of video processing in general
+or as a guide for generating your own time-lapse videos!
