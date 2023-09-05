@@ -133,7 +133,7 @@ video.
     <video controls autoplay loop playsinline width="320" height="240">
         <source src="simple-overlay.webm" type="video/webm">
     </video>
-    <figcaption><code>[0][1] overlay</code></figcaption>
+    <figcaption><code>[0]&NoBreak;[1]&nbsp;overlay</code></figcaption>
 </figure>
 
 ### Removing uninteresting frames
@@ -156,7 +156,7 @@ similarly. Overall, `mpdecimate` feels to me like a more appropriate choice.
     <video controls autoplay loop playsinline width="320" height="240">
         <source src="testsrc-original.webm" type="video/webm">
     </video>
-    <figcaption><code>[0] mpdecimate</code></figcaption>
+    <figcaption><code>[0]&nbsp;mpdecimate</code></figcaption>
 </figure>
 
 Since the sample video in use here has constant motion both in the color bar and counter, this example looks
@@ -192,7 +192,7 @@ of the number will always be 96, since those are the values in the mask:
     <video controls autoplay loop playsinline width="320" height="240">
         <source src="masked-96.webm" type="video/webm">
     </video>
-    <figcaption><code>[0][1] overlay</code>, with the partially transparent mask image.</figcaption>
+    <figcaption><code>[0]&NoBreak;[1]&nbsp;overlay</code>, with the partially transparent mask image.</figcaption>
 </figure>
 
 There's a narrow dark line around the edge of the masked area, but otherwise this behaves
@@ -208,7 +208,7 @@ actually do something now:
     <video controls autoplay loop playsinline width="320" height="240">
         <source src="overlay-decimate-96.webm" type="video/webm">
     </video>
-    <figcaption><code>[0][1] overlay, mpdecimate</code></figcaption>
+    <figcaption><code>[0]&NoBreak;[1]&nbsp;overlay, mpdecimate</code></figcaption>
 </figure>
 
 This doesn't *look* any different from the first overlay, but it only has 10 frames rather
@@ -230,7 +230,7 @@ to 10 fps, so the 10 frames that are output play back in only one second rather 
     <video controls autoplay loop playsinline width="320" height="240">
         <source src="overlay-decimate-setpts-96.webm" type="video/webm">
     </video>
-    <figcaption><code>[0][1]&nbsp;overlay, mpdecimate, fps=10, setpts=N*TB</code></figcaption>
+    <figcaption><code>[0]&NoBreak;[1]&nbsp;overlay, mpdecimate, fps=10, setpts=N*TB</code></figcaption>
 </figure>
 
 The expression `N*TB` specifies how the PTS of each frame should be computed. `N` is the
@@ -275,9 +275,9 @@ to keep.
     <video controls autoplay loop playsinline width="320" height="240">
         <source src="overlay-decimate-recover.webm" type="video/webm">
     </video>
-    <figcaption><code>[0]&nbsp;split&nbsp;[x][y];
-                      [x][1]&nbsp;overlay, mpdecimate&nbsp;[d];
-                      [d][y]&nbsp;overlay</code></figcaption>
+    <figcaption><code>[0]&nbsp;split&nbsp;[x]&NoBreak;[y];
+                      [x]&NoBreak;[1]&nbsp;overlay, mpdecimate&nbsp;[d];
+                      [d]&NoBreak;[y]&nbsp;overlay</code></figcaption>
 </figure>
 
 Using `split` to make two copies of the input video and overlaying one copy on top of the
@@ -296,9 +296,9 @@ accepts solves this problem: `shortest=1` will make it stop when either input en
     <video controls autoplay loop playsinline width="320" height="240">
         <source src="overlay-decimate-shortest.webm" type="video/webm">
     </video>
-    <figcaption><code>[0]&nbsp;split&nbsp;[x][y];
-                      [x][1]&nbsp;overlay, mpdecimate&nbsp;[d];
-                      [d][y]&nbsp;overlay=shortest=1</code></figcaption>
+    <figcaption><code>[0]&nbsp;split&nbsp;[x]&NoBreak;[y];
+                      [x]&NoBreak;[1]&nbsp;overlay, mpdecimate&nbsp;[d];
+                      [d]&NoBreak;[y]&nbsp;overlay=shortest=1</code></figcaption>
 </figure>
 
 ## Putting it all together
@@ -310,9 +310,9 @@ to output something that can truly be called a timelapse video.
     <video controls autoplay loop playsinline width="320" height="240">
         <source src="final.webm" type="video/webm">
     </video>
-    <figcaption><code>[0]&nbsp;split&nbsp;[x][y];
-                      [x][1]&nbsp;overlay, mpdecimate&nbsp;[d];
-                      [d][y]&nbsp;overlay=shortest=1,
+    <figcaption><code>[0]&nbsp;split&nbsp;[x]&NoBreak;[y];
+                      [x]&NoBreak;[1]&nbsp;overlay, mpdecimate&nbsp;[d];
+                      [d]&NoBreak;[y]&nbsp;overlay=shortest=1,
                       fps=10, setpts=N*TB, photosensitivity</code></figcaption>
 </figure>
 
