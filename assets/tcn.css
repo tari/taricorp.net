@@ -36,9 +36,11 @@ blockquote {
     border-right: none;
 }
 
-/* Provide some guides to make tables easier to read */
+/* Make tables easier to read */
 table {
     border-collapse: collapse;
+    /* Don't overflow the container on narrow screens */
+    overflow-x: auto;
 }
 table thead th {
     vertical-align: bottom;
