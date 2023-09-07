@@ -32,6 +32,8 @@ There aren't many existing options for managing duplicate items like this. Doing
 
 I did discover [Rémi Mikel's duplicate finding tool](https://duplicates-google-photos.remikel.fr/) which seemed like a step in the right direction, but seemed to perform too badly to be very useful (probably because there are thousands of images that I want to get rid of, and it tries to display all of them in your browser). It did suggest an approach I could take to do this myself though, by using the public [Google Photos API](https://developers.google.com/photos/library/guides/overview).
 
+<aside class="information">Note from 2023: Mack Talcott alerted me to his <a href="https://github.com/mtalcott/google-photos-deduper/">Google Photos Deduper</a>, which does the kinds of image comparisons that I wanted and achieves actual deletion of duplicates by doing UI automation of the web interface. I've found that it works pretty well for my needs, but deleting images with UI automation is fairly slow and maintaining the UI automation over time could be a tedious process. It's definitely worth looking into if you want to actually delete duplicate images and not only identify them.</aside>
+
 ## Rolling an API client
 
 With some ideas in mind, I wrote a little Python application to gather data. Using the public API is fairly straightforward; the most difficult part is probably in simply setting something up to be able to authenticate with my own credentials and access my photos.
