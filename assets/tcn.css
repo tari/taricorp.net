@@ -33,3 +33,9 @@ blockquote {
     border-left: none;
     border-right: none;
 }
+
+.information {
+    padding: .5em;
+    background-color: #eef;
+    border-radius: .5rem;
+}
