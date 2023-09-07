@@ -1,7 +1,15 @@
 ---
 title: Moving a Linux system's root without rebooting
 slug: lvm-switcheroo
-date: 2023-08-29T05:13:24.389Z
+date: 2023-09-07T00:52:15.956Z
+categories:
+  - software
+tags:
+  - linux
+  - lvm
+  - raid
+  - ssd
+  - sysadmin
 ---
 
 On a long-lived Linux server I operate, it has periodically been desirable to
@@ -10,7 +18,9 @@ for various reasons.  Over the years it's migrated from a conveniently
 inexpensive mechanical hard drive to a series of increasingly capable and larger
 solid-state drives (SSDs), first connected over SATA and later in the form of
 M.2 NVMe cards.  I recently sought to do another upgrade, swapping the current
-NVMe drive for a larger one.
+NVMe drive for a larger one. Making things more interesting, I've developed strategies to do this without rebooting except to physically plug or unplug devices!
+
+<!-- more -->
 
 Traditionally, migrating a system to a new root disk like this either involves
 reinstalling completely and restoring data afterwards, or booting from some kind
@@ -22,13 +32,11 @@ latter.
 
 During an earlier migration of this same system, I realized that Linux's Logical
 Volume Manager (LVM) could make these kinds of migration easier. Primarily LVM
-making it easier to resize disk partitions after moving them to a new disk,
-allowing me to take advantage of progressively larger disks over time.  It also
+makes it easier to resize disk partitions after moving them to a new disk,
+allowing me to take advantage of progressively larger disks over time; but it also
 turns out that LVM's layers of abstraction make it possible to move filesystems
 (including the root) without even turning the computer off, doing a kind of
 "**switcheroo**" that minimizes downtime.
-
-<!-- more -->
 
 Depending on the hardware configuration, this approach allows disk migration
 without any downtime, provided the storage devices involved can be hotplugged or
@@ -292,13 +300,13 @@ Enter the partition's new unique GUID ('R' to randomize): abf0aa0a-b6ed-45a9-9c1
 New GUID is ABF0AA0A-B6ED-45A9-9C16-77727FEF1538 
 ```
 
-After writing that and exiting `gdisk`, `gdisk -l /dev/sdf` verifies that the
+After saving the new partition table and exiting `gdisk`, `gdisk -l /dev/sdf` verifies that the
 new partition has the same size (start and end sectors) as the old one, so I'm
 happy with this result.
 
 ### Copying the filesystem
 
-To copy the filesystem, I'd like to take a bit-exact copy to ensure there won't
+To copy the filesystem, I'd like to take a bit-exact copy (rather than copying the files and replicating the directory structure) to ensure there won't
 be any unexpected differences between the original and copy. Since I only rarely
 need to write to this filesystem and certainly don't need to right now (aside
 from writing the copy to the new disk), I can remount it read-only then copy the
@@ -353,7 +361,7 @@ unlike a real disk. A few of the interesting features include:
 
 VGs and LVs are all given names, which is where the names like `myhost-root`
 seen earlier come from. `myhost` is the name of the VG I'm using, and `root` is 
-the name of the LV that's holding the filesystem that gets mounted at `/` (the
+the name of the LV holding the filesystem that gets mounted at `/` (the
 system root).
 
 ### Desired configuration
@@ -425,7 +433,7 @@ activation_mode="degraded"
 ```
 
 Since this was already set as I wanted, I didn't need to make any further
-changes, and could shut down to swap out the old disk and install the new one.
+changes, and proceeded to shut down the computer, swap out the old disk and install the new one.
 
 ## Unexpected misbehavior
 
