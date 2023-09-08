@@ -105,7 +105,7 @@ translating a few items to more understandable versions:
 }
 </style>
 
-<figure role="treegrid">
+<figure role="treegrid" style="overflow-x: auto">
     <table id="lsblk">
         <thead>
             <tr>
