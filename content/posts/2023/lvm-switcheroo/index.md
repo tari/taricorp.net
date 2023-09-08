@@ -1,7 +1,7 @@
 ---
 title: Moving a Linux system's root without rebooting
 slug: lvm-switcheroo
-date: 2023-09-07T00:52:15.956Z
+date: 2023-09-08T01:00:00.000Z
 categories:
   - software
 tags:
