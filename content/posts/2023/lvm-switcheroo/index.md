@@ -482,11 +482,11 @@ Each of these steps conveniently maps to a single command to run:
 `pvmove` takes a while to complete, because it moves all data on `sdf2` to other
 PVs in the VG. Since I moved the new drive to the mainboard slot when I was
 ready to try the RAID, `sdf` is now the *old* drive. Then `vgreduce` removes the
-PV from the named VG, and `pvremove` wipes the PV signature off the old disk.
+PV from the named VG (failing if there is any data still stored on the nominated PV), and `pvremove` wipes the PV signature off the old disk.
 
 After doing that, I rebooted normally and the system came up as expected this
 time, running entirely on the new disk. Meanwhile, the old disk has no data left
-on it and could be reused for other purposes.
+on it and can be reused for other purposes.
 
 ## Useful tools, if you don't mess it up
 
