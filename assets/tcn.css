@@ -4,6 +4,7 @@
     text-decoration: inherit;
 }
 
+/* Make figures stand out from text */
 figure {
     padding: 1rem;
     margin: 1rem;
@@ -26,6 +27,7 @@ figure figcaption {
     width: 100%;
 }
 
+/* Separate blockquotes from their context and indent them */
 blockquote {
     border-image: linear-gradient(to right, white, #888, white) 1;
     border-width: 1px;
@@ -34,8 +36,32 @@ blockquote {
     border-right: none;
 }
 
-.information {
+/* Provide some guides to make tables easier to read */
+table {
+    border-collapse: collapse;
+}
+table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #ccc;
+}
+table td, table th {
+    padding: .25rem 1ch;
+    border-top: 1px solid #ccc;
+}
+table tbody tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, .05);
+}
+
+/* Utility classes */
+
+/* Call attention to a block */
+.attention, .information {
     padding: .5em;
-    background-color: #eef;
     border-radius: .5rem;
+}
+.attention {
+    background-color: #fee;
+}
+.information {
+    background-color: #eef;
 }
