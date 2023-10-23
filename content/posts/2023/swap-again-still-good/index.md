@@ -59,9 +59,23 @@ So although we find here that databases *can* be memory-hungry as they attempt t
 
 With that diversion through history and looking at other databases, we've learned that at least some databases (postgres) have no strong opinion on swappiness. Certainly one could expect performance to suffer if the database's actual working set does not remain in memory, but it seems the MySQL developers (and MariaDB, which has inherited the overall design of MySQL) don't believe the OS can be trusted to do that. Without studying this in great detail (I'm not interested in spending enough effort to actually measure performance under various conditions), it seems best to accept the database's recommendations.
 
-For memory-constrained systems however, their recommendation seems bad. As we've seen, setting swappiness to a very small number can have negative performance implications and especially so when memory is not plentiful. For large services with meaningful budgets (and perhaps paid database administrators), I imagine setting swappiness is no problem but for the small sorts of services I usually work on (with budget along the lines of "as cheap as possible"), setting swappiness globally is a bitter pill to swallow because it will probably limit (re)use of memory in useful ways. Is there a better way?
+For memory-constrained systems however, their recommendation seems bad. As we've seen, setting swappiness to a very small number can have negative performance implications and especially so when memory is not plentiful. For large services with meaningful budgets (and perhaps paid database administrators), I imagine setting swappiness is no problem but for the small sorts of services I usually work on (with budget along the lines of "as cheap as possible"), setting swappiness globally is a bitter pill to swallow because it will probably limit (re)use of memory in useful ways. Is there a better way? With a setup to the question like this, of course there is!
 
 ### Being cleverer
+
+Linux's cgroups offer very flexible ways to control resource availability in slices. Although introduced [around 2007](https://lwn.net/Articles/236038/), my impression is that the resource limiting capabilities are often underutilized.
+
+On a modern Linux system, the `memory.swap.max` attribute for a cgroup is interesting:
+
+> A read-write single value file which exists on non-root cgroups. The default is "max".
+>
+> Swap usage hard limit. If a cgroup's swap usage reaches this limit, anonymous memory of the cgroup will not be swapped out.
+
+In addition, the description of `memory.swap.high` offers some additional useful detail:
+
+> This limit marks a point of no return for the cgroup. It is NOT designed to manage the amount of swapping a workload does during regular operation. Compare to memory.swap.max, which prohibits swapping past a set amount, but lets the cgroup continue unimpeded as long as other memory can be reclaimed.
+
+These notes lead to the conclusion that if we set the swap max on a cgroup containing a MariaDB or MySQL database to zero, it should be possible to prevent it from swapping without affecting the rest of the system!
 
 systemd MemoryswapMax=0 looks like it prevents a given service (or cgroup, if a slice) from swapping. That's much better!
 
