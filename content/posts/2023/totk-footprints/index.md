@@ -39,6 +39,8 @@ might be able to do with its underlying data beyond the scope of the game's feat
 <aside class="information">If you only want the technical details of the footprint.sav data file
 without any of the narrative, jump to the <a href="#complete-data-format">complete data format description</a>.</aside>
 
+![Link looking over a cloud-studded landscape in a screenshot captured in Tears of the Kingdom.](overview.webp)
+
 <aside class="attention">Although I do not discuss the plot of TOTK nor BOTW in this post, much of the discussion may
 represent <b>gameplay spoilers</b>. Be warned.</aside>
 
