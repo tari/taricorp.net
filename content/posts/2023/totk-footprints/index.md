@@ -30,6 +30,8 @@ plot less compelling than Breath of the Wild ("BOTW"), the scale of the newer ga
 extremely satisfied on its completion. Between them, I'd say these most recent Zelda games are strong contenders for the
 title of "best videogame" with no qualifiers.
 
+![Link looking over a cloud-studded landscape in a screenshot captured in Tears of the Kingdom.](overview.webp)
+
 Other people have written much more eloquently about what makes TOTK such an exquisite game, so I won't spend more words
 on that. My reason for writing is a thought I had on completion of the game relating the Hero's Path feature and what I
 might be able to do with its underlying data beyond the scope of the game's features.
@@ -38,8 +40,6 @@ might be able to do with its underlying data beyond the scope of the game's feat
 
 <aside class="information">If you only want the technical details of the footprint.sav data file
 without any of the narrative, jump to the <a href="#complete-data-format">complete data format description</a>.</aside>
-
-![Link looking over a cloud-studded landscape in a screenshot captured in Tears of the Kingdom.](overview.webp)
 
 <aside class="attention">Although I do not discuss the plot of TOTK nor BOTW in this post, much of the discussion may
 represent <b>gameplay spoilers</b>. Be warned.</aside>
