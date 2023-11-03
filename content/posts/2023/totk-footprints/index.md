@@ -2,6 +2,17 @@
 title: Doing what Nintendon't with the Hero's Path
 slug: totk-footprints
 date: 2023-11-03T21:00:00+11:00
+categories:
+  - software
+tags:
+  - nintendo
+  - games
+  - reverse-engineering
+  - maps
+  - python
+  - jupyter
+  - leafletjs
+  - zelda
 ---
 
 <style>
