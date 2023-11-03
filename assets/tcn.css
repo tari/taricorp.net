@@ -38,17 +38,18 @@ blockquote {
 
 /* Make tables easier to read */
 table {
+    --border-color: #ccc;
     border-collapse: collapse;
     /* Don't overflow the container on narrow screens */
     overflow-x: auto;
 }
 table thead th {
     vertical-align: bottom;
-    border-bottom: 2px solid #ccc;
+    border-bottom: 2px solid var(--border-color);
 }
 table td, table th {
     padding: .25rem 1ch;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid var(--border-color);
 }
 table tbody tr:nth-child(even) {
     background-color: rgba(0, 0, 0, .05);
@@ -60,6 +61,8 @@ table tbody tr:nth-child(even) {
 .attention, .information {
     padding: .5em;
     border-radius: .5rem;
+    margin-top: .5em;
+    margin-bottom: .5em;
 }
 .attention {
     background-color: #fee;
