@@ -50,6 +50,13 @@ Hi, I'm Peter.
   height: 2em;
   margin: 2px;
 }
+@media(prefers-color-scheme: dark) {
+    .linkbar {
+        background-color: #888;
+        color: #efefef;
+        border-color: #121212;
+    }
+}
 </style>
 
 <div id="about-me-box">

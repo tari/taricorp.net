@@ -109,7 +109,7 @@ idle3ctl -d /dev/sdb -s 254
 
 The other slight annoyance when setting the idle3 timer on WD drives is that changes only take effect when the drive is powered on, usually meaning the host computer must be fully shut down and started back up for any changes to be seen- this makes experimentation to determine how raw timer values are interpreted a slower and more tedious process.
 
-<aside style="padding: 1em; background-color: #f8f8f8; color: black;">
+<aside class="information">
 <b>A note from 2023</b>: I made some changes to the drives used by a server recently and needed to inspect their head parking settings, finding that I now have an 8TB WD Red drive that doesn't accept idle3 commands and shipped with its APM level set to 164. I had to use a udev rule (see <a href="#APM">APM</a> above) to configure it to my liking.
 </aside>
 

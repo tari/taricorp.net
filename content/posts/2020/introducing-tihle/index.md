@@ -40,7 +40,7 @@ source code.
 
 <!--more-->
 
-<aside style="background-color: #eee; padding: .5em; border-radius: .5em;">
+<aside class="information">
 
   <h2 style="margin: 0;">Audio version</h2>
 
