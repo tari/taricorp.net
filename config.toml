@@ -37,7 +37,8 @@ essays = "/essays/:slug/"
              <a class="atomic-badgers" href="https://gitlab.com/taricorp/taricorp.net">atomic badgers</a>. \
              Contents licensed under \
              <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">\
-             <img src="https://licensebuttons.net/l/by-sa/4.0/80x15.png" alt="CC-BY-SA" />\
+             <!-- https://licensebuttons.net/l/by-sa/4.0/80x15.png --> \
+             <img src="data:image/webp;base64,UklGRkQBAABXRUJQVlA4TDcBAAAvT4ADAI/BoG0kR6PjT/br9g0NhW3bNsn/13ZPWwrbNlLu9p8WnqGZ/1BYwF3TXdNVgvSddK1vQM6h0+1Z8myBuUrQv/w9cQ8AIO9x9P3v4h3fnBr46OweNgc/21oAAnWPtdjZZBl9tpfR1QIAYGv654BlLAKEUQgcRpJtWrvPOM/+tpl/eE8fN4CI/itw20bJ4JjhEVBPqJgAlFZqJD3mj0jEuv8rt0/06Bs5P4i4+b9ZnzmAgYmIOfszz4TGCXNtjpPB+U7EintnChDd/KGJ8HsKeDxNWZY3LQxYPkVcpz8tgEPWn8zXVDA0JOR02ybLh4hvD2wDwIEpdEPyV27e3LQyZPkacWPbwN84eSUMbmi0ObY6F/vh7GFI4kdsLqo1i97pAMujCvdeKmQ9Vtf/vksF/w3lBAA=" alt="CC-BY-SA" />\
              </a> unless otherwise noted.\
            """
 
