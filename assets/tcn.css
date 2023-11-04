@@ -71,6 +71,10 @@ table tbody tr:nth-child(even) {
     background-color: #eef;
 }
 
+:root {
+    color-scheme: light dark;
+}
+
 @media (prefers-color-scheme: dark) {
     /* Code blocks inline their styles, but at least ensure the text is visible */
     .highlight {
