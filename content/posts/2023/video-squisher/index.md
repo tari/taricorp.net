@@ -205,3 +205,31 @@ try {
 ```
 
 There might be a slightly better way to handle this, but I wasn't able to quickly discern it. The `Promise` returned by `fetchEventSource()` resolves successfully in some cases, so there's probably a detail that wasn't obvious to me. In any case, depending on exceptions to close a connection works okay.
+
+## Actual transcoding
+
+Having proven the concept of streaming events, the remaining piece of the server is to run something that transcodes the received video then returns the new file and streams progress output while it's running. Given the input file is a `NamedTemporaryFile` called `infile`, running Handbrake's CLI isn't hard:
+
+```python
+with tempfile.NamedTemporaryFile(mode='rb', dir='/var/tmp') as outfile:
+    args = [
+        # Output mp4 with leading MOOV
+        '--format', 'av_mp4', '--optimize',
+        # 5 megabits per second video, two-pass encoding
+        '--multi-pass', '--vb', '5000',
+        '--crop-mode', 'none',
+        '--encoder', 'x264', '--encoder-preset', 'slow', '--turbo',
+        # Don't process audio, just copy
+        '--aencoder', 'copy',
+        '--input', infile.name,
+        '--output', outfile.name,
+    ]
+    with subprocess.Popen(['HandBrakeCLI'] + args,
+                          stdin=subprocess.DEVNULL,
+                          stdout=subprocess.PIPE,
+                          stderr=subprocess.STDOUT,
+                          text=True) as proc:
+        self.handle_subprocess(proc)
+        assert proc.poll() is not None, "Subprocess should have exited"
+        self.send_event(str(proc.returncode), 'returncode')
+```
