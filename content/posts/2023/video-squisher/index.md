@@ -208,7 +208,7 @@ There might be a slightly better way to handle this, but I wasn't able to quickl
 
 ## Actual transcoding
 
-Having proven the concept of streaming events, the remaining piece of the server is to run something that transcodes the received video then returns the new file and streams progress output while it's running. Given the input file is a `NamedTemporaryFile` called `infile`, running Handbrake's CLI isn't hard:
+Having proven the concept of streaming events, the remaining piece of the server is to run something that transcodes the received video then returns the new file and streams progress output while it's running. Given the input file is a `NamedTemporaryFile` called `infile`, running Handbrake's CLI and getting access to the output isn't hard:
 
 ```python
 with tempfile.NamedTemporaryFile(mode='rb', dir='/var/tmp') as outfile:
@@ -233,3 +233,182 @@ with tempfile.NamedTemporaryFile(mode='rb', dir='/var/tmp') as outfile:
         assert proc.poll() is not None, "Subprocess should have exited"
         self.send_event(str(proc.returncode), 'returncode')
 ```
+
+Here I've simply created a second temporary file for Handbrake to write its output to, then run it in a subprocess. A `handle_subprocess` method on the request handler (not yet implemented!) will be responsible for relaying output back to the client by calling `send_event`, and once the subprocess exits it sends back a `returncode` event to indicate whether the transcode process completed successfully.
+
+### Real-time output streaming
+
+Normally to capture the output from a subprocess using Python's `subprocess` module, you'd want to call `communicate` on the process to wait for completion and return its output as a string. This application wants to return output immediately as it arrives rather than all at once after the subprocess exits, so that's clearly not sufficient: we instead need to send a message whenever any new output appears, and ideally send empty messages rather than waiting for a long time without printing anything to ensure the stream's connection doesn't time out due to inactivity.
+
+I know that `communicate` must do something similar to what I want to do by collecting output as it arrives, because that method ensures processes which take input on standard input won't get stuck by doing the same thing: waiting for output while a subprocess is waiting for input would deadlock the entire thing, so it must be able to opportunistically grab output from a subprocess and pass input in. Looking at how the Python standard library implements `communicate`, I found it worked similarly to how I expected it would (using something like the `select()` system call) and implemented something similar:
+
+```python
+def handle_subprocess(self, proc: subprocess.Popen):
+    with selectors.DefaultSelector() as sel:
+        # If not set to nonblocking, the read() of stdout can block
+        # when we try to read more data than is present. When nonblocking,
+        # it only returns whatever data is available.
+        os.set_blocking(proc.stdout.fileno(), False)
+        sel.register(proc.stdout, selectors.EVENT_READ)
+
+        while True:
+            # Wait up to 1 second for some data
+            ready = sel.select(timeout=1)
+            if ready:
+                for key, events in ready:
+                    # If there's data available, read it.
+                    if key.fileobj == proc.stdout:
+                        data = proc.stdout.read(16384)
+                        # We were told there's data ready, but if we read
+                        # nothing that means the output has been closed
+                        # (the subprocess exited) and we reached the end.
+                        if not data:
+                            return
+                        self.send_event(data, ty='stdout')
+            else:
+                # select() timed out; send an empty event
+                self.send_event()
+```
+
+This assumes the subprocess' standard output is opened in text mode (we passed `text=True` to `subprocess.Popen()`), and thus sends chunks of text from its standard output out as messages by calling `send_event`.
+
+The main tricks here are:
+ * Setting `proc.stdout` to non-blocking mode so we won't ever wait for new data to arrive.
+ * Using `read(n)` to read only up to `n` bytes of data, rather than reading to the end of the stream.
+ * Polling with `selectors` to respond immediately when data becomes available to read, or give up after a timeout.
+
+To test this, I used [curl](https://curl.se/) to manually send requests to the server because that was somewhat easier than clicking several things in a web browser for every test and it directly prints out the results:
+
+```
+$ curl -X POST \
+  --data-binary @myvideo.mp4 \
+  --header "Content-Type: application/octet-stream" \
+  http://localhost:9429/squish
+event: uploadprogress              
+data: 0.0
+
+event: uploadprogress                                                 
+data: 0.99                                                            
+                                                                      
+event: uploadprogress                                                 
+data: 1                                                               
+                                   
+event: stdout                                                                                                                               
+data: [13:23:57] Compile-time hardening features are enabled          
+                                                                      
+event: stdout                                                         
+data: Cannot load libnvidia-encode.so.1                                                                                                     
+                                                                      
+event: stdout                  
+data: [13:23:57] hb_display_init: attempting VA driver 'iHD'
+...
+```
+
+Somewhat interestingly, I had originally expected that calling `read` with a parameter (to limit the number of bytes read) should prevent it from blocking, but I found that my server was emitting large chunks of data much less frequently than expected, and wasn't generating empty (keepalive) messages at all. It turned out that the chunks were 16384 bytes and the `read`s were actually blocking, which I fixed by calling `os.set_blocking`. It might be possible to make this logic a little bit simpler after that discovery, but I've found it to work okay.
+
+This implementation ended up working nicely, so the remaining piece is to return the output file to the client and save it in the web browser.
+
+### Sending files back
+
+The output from Handbrake is created as a `NamedTemporaryFile`, which can be read like a normal file once the Handbrake subprocess exits. In order to let the client do some progress reporting for the download, I first send a `resultsize` message indicating how many bytes of output there are:
+
+```python
+outfile.seek(0, os.SEEK_END)
+output_len = outfile.tell()
+outfile.seek(0, os.SEEK_SET)
+self.send_event(f'{output_len}', 'resultsize')
+
+# Read chunks of the output file and send back to the client
+while chunk := outfile.read(BUF_COPY_SZ):
+    self.send_event(base64.b64encode(chunk).decode('ascii'), 'result')
+```
+
+The data in each `result` message is encoded with base64 because event streams only accept text, not binary data. To ensure the video data being returned is valid in an event stream, I've chosen to base64-encode it because that's easy to decode in the browser.
+
+---
+
+With all the server parts implemented, I had to extend the javascript running on the client to handle all of the event types in the `onmessage` function. I added an element to the HTML with ID `outputBox` to contain the encoder's output, which will be streamed, and added code to handle each event kind:
+
+```javascript
+const outputBox = document.getElementById('outputBox');
+let resultData = null;
+let resultDataOffset = null;
+
+switch (ev.event) {
+  case 'uploadprogress':
+    // Report progress of initial upload
+    break;
+  case 'stdout':
+    // Add the new line of data to the output box
+    outputBox.append(ev.data, '\n');
+    // Scroll it to the bottom so the new output is visible
+    outputBox.scrollTo(0, outputBox.scrollHeight);
+    break;
+  case 'returncode':
+    // Interpret the return code as a number
+    const code = Number(ev.data);
+    // Abort if it wasn't successful
+    if (code !== 0) {
+      throw new Error('Encode failed');
+    }
+    break;
+  case 'resultsize':
+    // Interpret data as a number, allocating storage to contain
+    // all the data that will be returned. These values will be
+    // build up in following 'result' messages.
+    resultData = new Uint8Array(Number(ev.data));
+    resultDataOffset = 0;
+    break;
+  case 'result':
+    // base64-decode the data
+    const chunk = atob(ev.data);
+    // Append bytes of the data chunk to resultData (using codePointAt()
+    // because the "binary" string returned by atob() is a weird kind of
+    // string).
+    for (let i = 0; i < chunk.length; i++) {
+      resultData[resultDataOffset++] = chunk[i].codePointAt(0);
+    }
+
+    // If all the expected data arrived, save the data as if it
+    // were a regular downloaded file.
+    if (resultDataOffset === resultData.length) {
+      // Put the bytes (resultData) into a File
+      const f = new File([resultData], file.name + '.mp4', {
+        type: 'video/mp4'
+      });
+
+      // Create an HTML anchor which downloads the created file when
+      // clicked.
+      const link = document.createElement('a')
+      link.download = f.name;
+      link.href = URL.createObjectURL(f);
+      // Free the resultData, since the created object URL
+      // now contains all the data that matters.
+      resultData = null;
+      resultDataOffset = null;
+
+      // Click the generated link to trigger download, and free the
+      // object URL of data after that. This needs to use setTimeout()
+      // because the download won't actually start until no scripts are
+      // executing, so we delay calling revokeObjectURL() until after
+      // the download has actually begun so the data is still present
+      // to save.
+      const clickHandler = () => {
+        setTimeout(() => {
+          URL.revokeObjectURL(link.href);
+          link.removeEventListener('click', clickHandler);
+        }, 150);
+      };
+      link.addEventListener('click', clickHandler);
+      link.click();
+
+      // All done; close the event stream by throwing an exception
+      // which we know means everything is done.
+      throw new Done();
+    }
+}
+```
+
+The handling of binary data and base64-decoding here is somewhat awkward, but works well enough. For very large videos it could be rather inefficient, but at least for videos with size around 100 megabytes I found the performance to be acceptable.
+
+In the actual code I also added a `<progress>` element to the HTML, which gets updated for each `uploadprogress` event (indicating how much data has been uploaded) and each `result` event (indicating what fraction of the total result has been received). I haven't included that code here, just because it's not important to the more interesting concepts of how the system works.
