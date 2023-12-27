@@ -103,3 +103,105 @@ async function handleFile(evt) {
 // Do the EventSource thing when the form is submitted.
 document.getElementById('inputForm').onsubmit = handleFile;
 ```
+
+## Server implementation
+
+Without a server the above client prototype is useless, so I next had to write a server application that can accept the uploaded file and send back events. Since I'm familiar with the tools available in Python's standard library, I opted to implement it in terms of [`http.server`](https://docs.python.org/3.12/library/http.server.html).
+
+```python
+import http.server
+
+BUF_COPY_SZ = 1 << 20
+
+class Handler(http.server.SimpleHTTPRequestHandler):
+    def send_event(self, data: str = None, ty: str = None):
+        """
+        Send an event in a stream, with specified type (unset if None)
+        and data (no data if None).
+        """
+        if data is not None:
+            # Send the event type if specified.
+            if ty is not None:
+                self.wfile.write(f'event: {ty}\n'.encode('utf-8'))
+            # Line breaks are field separators in an event stream, so multiline
+            # data must be split into multiple data: lines.
+            for line in data.splitlines():
+                self.wfile.write(f'data: {line}\n'.encode('utf-8'))
+            # Messages are separated by blank lines
+            self.wfile.write(b'\n')
+        else:
+            # No data sends a line with no meaning, useful to keep the
+            # connection alive by sending some data.
+            self.wfile.write(b':\n')
+        # Ensure the whole message gets sent immediately.
+        self.wfile.flush()
+
+    def do_POST(self):
+        # SimpleHTTPRequestHandler will call this to handle POST
+        # requests.
+
+        # To receive the uploaded file, we need to know how large it is.
+        upload_size = self.headers.get('Content-Length')
+        if upload_size is None:
+            self.send_error(400, 'Missing length', 'Content-Length must be set for POSTs')
+            return
+        upload_size = int(upload_size)
+
+        # Input seems okay, so start sending an event stream.
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/event-stream')
+        self.send_header('Cache-Control', 'no-store')
+        self.end_headers()
+
+        # Save the uploaded data into a temporary file that can be
+        # processed later, copying it in 1MB chunks. Send back
+        # 'uploadprogress' events as we go, to demonstrate sending
+        # events.
+        with tempfile.NamedTemporaryFile(mode='wb', dir='/var/tmp') as infile:
+            for o in range(0, upload_size, BUF_COPY_SZ):
+                buf = self.rfile.read(min(BUF_COPY_SZ, upload_size - o))
+                infile.write(buf)
+                self.send_event(f'{o / upload_size:.02}', 'uploadprogress')
+            self.send_event('1', 'uploadprogress')
+
+# When run as a script, serve HTTP on an arbitrary port.
+if __name__ == '__main__':
+    PORT = 9428
+
+    httpd = http.server.HTTPServer(('', PORT), Handler)
+    print("serving on port", PORT)
+    httpd.serve_forever()
+```
+
+This server will respond to `GET` requests by returning the contents of a file that exists (behavior provided by `SimpleHTTPRequestHandler`), allowing it to serve my HTML and javascript files. Any `POST` request expects to receive some uploaded file data and returns an event stream.
+
+### Testing the principle
+
+Running the server (`python server.py`) and loading it in a web browser, I was able to upload a file and see events come back as expected. However, when the server closed the connection after completing its work I found that the client would attempt to reconnect (as if the connection had been interrupted). This makes sense because in general it's not possible to determine whether a given connection closure was intentional, but it is a little bit annoying.
+
+After spending some time studying the implementation of `fetch-event-source` (not actually very complex!), I decided that the best way to cleanly close a stream in the browser was to throw an exception:
+
+```javascript
+class Done extends Exception {}
+
+try {
+  await fetchEventSource('foo', {
+    onmessage(ev) {
+      // Decide if done..
+      throw new Done();
+    }
+    onerror(err) {
+      throw err;
+    },
+  });
+} catch (e) {
+  if (e instanceof Done) {
+    // Finished successfully
+  } else {
+    // Unexpected error
+    throw e;
+  }
+}
+```
+
+There might be a slightly better way to handle this, but I wasn't able to quickly discern it. The `Promise` returned by `fetchEventSource()` resolves successfully in some cases, so there's probably a detail that wasn't obvious to me. In any case, depending on exceptions to close a connection works okay.
