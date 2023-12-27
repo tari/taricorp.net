@@ -3,7 +3,7 @@ title: "Video Squisher: minimal command-line processing on the web"
 slug: video-squisher
 date: 2023-12-23T09:47:06.970Z
 ---
-I've recently been asked to reduce the size of video files with some regularity, taking in a video file and generating something with reduced file size. This is an easy task to accomplish with [Handbrake](https://handbrake.fr/), and since the transcodes I was asked to do were consistent in their needs, I was able to set up a preset in Handbrake to make these conversions very simple.
+I've recently been asked to reduce the size of video files with some regularity, taking in a video file and generating something with reduced file size ("squishing" the video; hence "video squisher"). This is an easy task to accomplish with [Handbrake](https://handbrake.fr/), and since the transcodes I was asked to do were consistent in their needs, I was able to set up a preset in Handbrake to make these conversions very simple.
 
 Unfortunately, there were a few steps that weren't as easy to automate: namely, grabbing the original video and sharing the transcoded version later. Rather than need to do anything myself for each video, I sought to make my process available for "self-service", probably as some kind of web-based tool instead. Since the imposition of receiving a file, running it through Handbrake, and sharing the result is fairly small though, I wanted to make this tool as simple as possible. I believe I succeeded, and that the results are interesting enough to share because I discovered a few new tricks that made it easier.
 
@@ -428,4 +428,6 @@ The other particularly useful-seeming improvement that I've considered but not b
 
 ---
 
-I've published the complete source code to this tool at **<https://gitlab.com/taricorp/videosquisher>**, which might be useful to others. Beyond that, I don't anticipate doing any further work on this because it meets my needs. The options passed to the video encoder might be changed at some point in the future if I decide they're worth changing, and there's some possibility I might later add the features noted in the previous paragraph; however right now I have no plans to make further improvements, and I chose to write about this tool simply because I thought its implementation used some interesting techniques that are worth thinking about.
+I've published the complete source code to this tool at **<https://gitlab.com/taricorp/videosquisher>**, which might be useful to others. Beyond that, I don't anticipate doing any further work on this because it meets my needs. The options passed to the video encoder might be changed at some point in the future if I decide they're worth changing, and there's some possibility I might later add the features noted in the previous paragraph; however right now I have no plans to make further improvements.
+
+I chose to write about this tool simply because I thought its implementation used some interesting techniques that seem worth thinking about: certainly it could be adapted to other applications where a user might run a command-line tool with a fairly fixed set of options to consume one file and generate another, so this could be a convenient base on which to build similar tools!
