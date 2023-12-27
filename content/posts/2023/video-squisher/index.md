@@ -2,6 +2,14 @@
 title: "Video Squisher: minimal command-line processing on the web"
 slug: video-squisher
 date: 2023-12-23T09:47:06.970Z
+categories:
+  - software
+tags:
+  - python
+  - handbrake
+  - javascript
+  - web
+  - hacks
 ---
 I've recently been asked to reduce the size of video files with some regularity, taking in a video file and generating something with reduced file size ("squishing" the video; hence "video squisher"). This is an easy task to accomplish with [Handbrake](https://handbrake.fr/), and since the transcodes I was asked to do were consistent in their needs, I was able to set up a preset in Handbrake to make these conversions very simple.
 
