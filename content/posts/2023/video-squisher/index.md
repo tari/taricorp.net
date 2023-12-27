@@ -412,3 +412,9 @@ switch (ev.event) {
 The handling of binary data and base64-decoding here is somewhat awkward, but works well enough. For very large videos it could be rather inefficient, but at least for videos with size around 100 megabytes I found the performance to be acceptable.
 
 In the actual code I also added a `<progress>` element to the HTML, which gets updated for each `uploadprogress` event (indicating how much data has been uploaded) and each `result` event (indicating what fraction of the total result has been received). I haven't included that code here, just because it's not important to the more interesting concepts of how the system works.
+
+## Results
+
+The result in a browser looks like this:
+
+<video controls src="squish.webm" playsinline width="649" height="356" preload="metadata">
