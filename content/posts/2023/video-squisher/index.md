@@ -424,3 +424,8 @@ The result in a browser looks like this:
 
 As already noted, I added a progress bar for both upload and download progress which wasn't included in the code samples above. This could probably also be hooked up to the progress reporting that Handbrake does itself (especially in its JSON output mode), but that would require more than zero parsing of its output so I didn't bother; it's okay to "manually" read the status from text rather than only look at a progress bar.
 
+The other particularly useful-seeming improvement that I've considered but not been interested in implementing could be to load the input video in a `<video>` element on the client before uploading it. The information from the browser could be used to determine its length, which could be used as an input to a simple algorithm that computes a required bitrate for the video output given a target file size. Being able to estimate the input bitrate in that way would solve the current problems where a low-bitrate input could be uselessly transcoded to a higher bitrate!
+
+---
+
+I've published the complete source code to this tool at **<https://gitlab.com/taricorp/videosquisher>**, which might be useful to others. Beyond that, I don't anticipate doing any further work on this because it meets my needs. The options passed to the video encoder might be changed at some point in the future if I decide they're worth changing, and there's some possibility I might later add the features noted in the previous paragraph; however right now I have no plans to make further improvements, and I chose to write about this tool simply because I thought its implementation used some interesting techniques that are worth thinking about.
