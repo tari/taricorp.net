@@ -206,6 +206,9 @@ try {
 
 There might be a slightly better way to handle this, but I wasn't able to quickly discern it. The `Promise` returned by `fetchEventSource()` resolves successfully in some cases, so there's probably a detail that wasn't obvious to me. In any case, depending on exceptions to close a connection works okay.
 
+It's worth realizing here that my implementation of this application is completely unable to reconnect in case of connection loss because the server is entirely stateless: it is impossible to resume a stream because
+any information about the transcode process will be lost when the connection to the server for a given request is closed. For personal use and limited applications I don't mind, but a public tool might want to be more robust and pay the associated complexity costs.
+
 ## Actual transcoding
 
 Having proven the concept of streaming events, the remaining piece of the server is to run something that transcodes the received video then returns the new file and streams progress output while it's running. Given the input file is a `NamedTemporaryFile` called `infile`, running Handbrake's CLI and getting access to the output isn't hard:
@@ -417,4 +420,7 @@ In the actual code I also added a `<progress>` element to the HTML, which gets u
 
 The result in a browser looks like this:
 
-<video controls src="squish.webm" playsinline width="649" height="356" preload="metadata">
+<video controls src="squish.webm" playsinline width="649" height="356" preload="metadata"></video>
+
+As already noted, I added a progress bar for both upload and download progress which wasn't included in the code samples above. This could probably also be hooked up to the progress reporting that Handbrake does itself (especially in its JSON output mode), but that would require more than zero parsing of its output so I didn't bother; it's okay to "manually" read the status from text rather than only look at a progress bar.
+
