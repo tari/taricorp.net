@@ -436,7 +436,7 @@ In the actual code I also added a `<progress>` element to the HTML, which gets u
 
 ## Results
 
-The result in a browser looks like this:
+The result in a browser looks like this, featuring the same file input field to choose a file, a progress bar that shows upload progress and later download progress, with all of the status output from the encoder appearing in real time beneath:
 
 <video controls src="squish.webm" playsinline width="649" height="356" preload="metadata"></video>
 
