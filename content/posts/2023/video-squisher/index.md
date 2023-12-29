@@ -346,7 +346,7 @@ The data in each `result` message is encoded with base64 because event streams o
 
 ---
 
-With all the server parts implemented, I had to extend the javascript running on the client to handle all of the event types in the `onmessage` function. I added an element to the HTML with ID `outputBox` to contain the encoder's output, which will be streamed, and added code to handle each event kind:
+With all the server parts implemented, I had to extend the javascript running on the client to handle all of the event types in the `onmessage` function. I added an element to the HTML with ID `outputBox` to contain the encoder's output, which will be streamed, and added code to handle each event kind as they arrive on the stream (inside the event source's `onmessage` function):
 
 ```javascript
 const outputBox = document.getElementById('outputBox');
