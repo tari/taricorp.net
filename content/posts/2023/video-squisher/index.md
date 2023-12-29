@@ -13,7 +13,7 @@ tags:
 ---
 I've recently been asked to reduce the size of video files with some regularity, taking in a video file and generating something with reduced file size ("squishing" the video; hence "video squisher"). This is an easy task to accomplish with [Handbrake](https://handbrake.fr/), and since the transcodes I was asked to do were consistent in their needs, I was able to set up a preset in Handbrake to make these conversions very simple.
 
-Unfortunately, there were a few steps that weren't as easy to automate: namely, grabbing the original video and sharing the transcoded version later. Rather than need to do anything myself for each video, I sought to make my process available for "self-service", probably as some kind of web-based tool instead. Since the imposition of receiving a file, running it through Handbrake, and sharing the result is fairly small though, I wanted to make this tool as simple as possible. I believe I succeeded, and that the results are interesting enough to share because I discovered a few new tricks that made it easier.
+Unfortunately, there were a few steps that weren't as easy to automate: namely, grabbing the original video and sharing the transcoded version later. Rather than need to do anything myself for each video, I sought to make my process available for "self-service", probably as some kind of web-based tool instead. Since the imposition of receiving a file, running it through Handbrake, and sharing the result is fairly small though, I wanted to make this tool as simple as possible. I believe I succeeded and that the results are interesting enough to share because I discovered a few new tricks that made it easier, so in this post I will describe what I built to meet this need and how it was made.
 
 <!--more-->
 
@@ -29,7 +29,7 @@ Given I had been using Handbrake to manually transcode videos, I expected that a
 
 ## Client prototyping: enter SSE
 
-Of the requirements I had set, the goal of reporting real-time progress seemed most challenging so I investigated that first. I fairly quickly stumbled upon a web API that I wasn't familiar with which seemed to meet my needs [Server-sent events](https://en.wikipedia.org/wiki/Server-sent_events) (SSE). This API involves a client making a single HTTP request to a server, which then responds with a stream of events in a structured data format (using content type `text/event-stream`). At a high level, the flow of [using an `EventSource`](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events) in a browser is to:
+Of the requirements I had set, the goal of reporting real-time progress seemed most challenging so I investigated that first. I fairly quickly stumbled upon a web API that I wasn't familiar with which seemed to meet my needs: [Server-sent events](https://en.wikipedia.org/wiki/Server-sent_events) (SSE). This API involves a client making a single HTTP request to a server, which then responds with a stream of events in a structured data format (using content type `text/event-stream`). At a high level, the flow of [using an `EventSource`](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events) in a browser is to:
 
 1. Send an HTTP request to a server
 2. Handle messages as they are sent from the server. Each message has up to four fields that the client can interpret:
@@ -47,7 +47,7 @@ In the interest of making the server implementation simple, SSE seemed like a go
 
 ### Sending file data
 
-There's one problem with the idea of using server-sent events: the [`EventSource`](https://developer.mozilla.org/en-US/docs/Web/API/EventSource/EventSource) constructor provided by web browsers for the client to open a connection doesn't offer any way to send data alongside the original request, which I need in order to upload a file to be processed. Conveniently, others have noticed the same limitation and worked around it in the form of the [`fetch-event-source`](https://www.npmjs.com/package/@microsoft/fetch-event-source) package which clearly describes the limitations of the standard `EventSource`, saving me some explanation:
+There's one problem with the idea of using server-sent events: the [`EventSource`](https://developer.mozilla.org/en-US/docs/Web/API/EventSource/EventSource) constructor provided by web browsers for the client to open a connection doesn't offer any way to send data alongside the original request, which I need in order to upload a file to be processed. Conveniently, others have noticed the same limitation and worked around it in the form of the [`fetch-event-source`](https://www.npmjs.com/package/@microsoft/fetch-event-source) package which also describes the limitations of the standard `EventSource`, saving me some explanation:
 
 > * You cannot pass in a request body: you have to encode all the
 >   information necessary to execute the request inside the URL, which is
@@ -58,7 +58,7 @@ There's one problem with the idea of using server-sent events: the [`EventSource
 >   strategy: the browser will silently retry for you a few times and
 >   then stop, which is not good enough for any sort of robust application.
 
-With this, I prototyped a basic client allowing a user to select a file, which would then be uploaded to the server and events handled as sent back. The HTML is simple, substantially just an input field and some javascript to be run when the user confirms the selected file:
+With `fetch-event-source` in hand, I prototyped a basic client allowing a user to select a file, which would then be uploaded to the server and events handled as sent back. The HTML is simple, substantially just an input field and some javascript to be run when the user confirms the selected file:
 
 ```html
 <!DOCTYPE html>
@@ -79,7 +79,7 @@ With this, I prototyped a basic client allowing a user to select a file, which w
 </html>
 ```
 
-Since I don't care much about compatibility with old browsers that don't support javascript modules, I was able to write "modern" javascript in client.mjs:
+Since I don't care much about compatibility with old browsers that don't support javascript modules, I was able to write "modern" javascript in `client.mjs` to plumb data through:
 
 ```javascript
 // Use fetch-event-source, pulling from a CDN so I don't need to bother
@@ -181,7 +181,9 @@ if __name__ == '__main__':
     httpd.serve_forever()
 ```
 
-This server will respond to `GET` requests by returning the contents of a file that exists (behavior provided by `SimpleHTTPRequestHandler`), allowing it to serve my HTML and javascript files. Any `POST` request expects to receive some uploaded file data and returns an event stream.
+This server will respond to `GET` requests by returning the contents of a file that exists (behavior provided by `SimpleHTTPRequestHandler`), allowing it to serve my HTML and javascript files. Any `POST` request expects to receive some uploaded file data and returns an event stream by calling `send_event` from inside `do_POST` for each request.
+
+Notably, no per-request information is saved anywhere: if the connection is interrupted there is no mechanism to resume, because managing the state of each active stream and reaping the ones that have completed would be more complex. Associating a stream directly with a connection by keeping only local state ensures resources will always be cleaned up when a connection closes.
 
 ### Testing the principle
 
@@ -212,7 +214,13 @@ try {
 }
 ```
 
-There might be a slightly better way to handle this, but I wasn't able to quickly discern it. The `Promise` returned by `fetchEventSource()` resolves successfully in some cases, so there's probably a detail that wasn't obvious to me. In any case, depending on exceptions to close a connection works okay.
+There might be a slightly better way to handle this, but I wasn't able to quickly discern it. The `Promise` returned by `fetchEventSource()` resolves successfully in some cases, so there's probably a detail that wasn't obvious to me.[^http1] In any case, depending on exceptions to close a connection works okay.
+
+[^http1]: `http.server` speaks HTTP 1.0 and closes the connection when it's
+done responding to a request by default, which might confuse event source clients and
+cause this awkwardness. Using a chunked transfer encoding and speaking
+HTTP 1.1 might prevent that (by making it clear when the stream ends),
+but is somewhat more complex to handle on the server.
 
 It's worth realizing here that my implementation of this application is completely unable to reconnect in case of connection loss because the server is entirely stateless: it is impossible to resume a stream because
 any information about the transcode process will be lost when the connection to the server for a given request is closed. For personal use and limited applications I don't mind, but a public tool might want to be more robust and pay the associated complexity costs.
@@ -251,7 +259,7 @@ Here I've simply created a second temporary file for Handbrake to write its outp
 
 Normally to capture the output from a subprocess using Python's `subprocess` module, you'd want to call `communicate` on the process to wait for completion and return its output as a string. This application wants to return output immediately as it arrives rather than all at once after the subprocess exits, so that's clearly not sufficient: we instead need to send a message whenever any new output appears, and ideally send empty messages rather than waiting for a long time without printing anything to ensure the stream's connection doesn't time out due to inactivity.
 
-I know that `communicate` must do something similar to what I want to do by collecting output as it arrives, because that method ensures processes which take input on standard input won't get stuck by doing the same thing: waiting for output while a subprocess is waiting for input would deadlock the entire thing, so it must be able to opportunistically grab output from a subprocess and pass input in. Looking at how the Python standard library implements `communicate`, I found it worked similarly to how I expected it would (using something like the `select()` system call) and implemented something similar:
+I know that `communicate` must do something similar to what I want to do by collecting output as it arrives, because that method ensures processes which take input on standard input won't get stuck by doing the same thing: waiting for output while a subprocess is waiting for input would deadlock the entire thing, so it must be able to opportunistically grab output from a subprocess and pass input in. Looking at how the Python standard library implements `communicate`, I found it worked similarly to how I expected it would (using something like the `select()` system call) and implemented something similar myself in `handle_subprocess`:
 
 ```python
 def handle_subprocess(self, proc: subprocess.Popen):
