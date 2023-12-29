@@ -443,7 +443,7 @@ just the value `C9` for a `ret` instruction.
 This approach quickly turned out to be problematic as I was testing the emulator.
 I chose **[Phoenix][phoenix]** as the target program for initial development because
 it's a sort of classic calculator game and as a bonus shouldn't depend too tightly
-on emulation accuracy- Phoenix has designed to be portable across a number of calculators,
+on emulation accuracy- Phoenix was designed to be portable across a number of calculators,
 so hopefully doesn't contain many assumptions about the system.
 
 [phoenix]: https://www.ocf.berkeley.edu/~pad/game-ti83p-phoenixz.html
