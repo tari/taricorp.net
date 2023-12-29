@@ -323,7 +323,7 @@ data: [13:23:57] hb_display_init: attempting VA driver 'iHD'
 ...
 ```
 
-Somewhat interestingly, I had originally expected that calling `read` with a parameter (to limit the number of bytes read) should prevent it from blocking, but I found that my server was emitting large chunks of data much less frequently than expected, and wasn't generating empty (keepalive) messages at all. It turned out that the chunks were 16384 bytes and the `read`s were actually blocking, which I fixed by calling `os.set_blocking`. It might be possible to make this logic a little bit simpler after that discovery, but I've found it to work okay.
+Somewhat interestingly, I had originally expected that calling `read` with a parameter (to limit the number of bytes read) should prevent it from blocking, but I found that my server was emitting large chunks of data much less frequently than expected, and wasn't generating empty (keepalive) messages at all. It turned out that the chunks were 16384 bytes (the length which was being passed to `read`) and the `read`s were actually blocking, which I fixed by calling `os.set_blocking`. It might be possible to make this logic a little bit simpler after that discovery, but I've found it to work okay.
 
 This implementation ended up working nicely, so the remaining piece is to return the output file to the client and save it in the web browser.
 
