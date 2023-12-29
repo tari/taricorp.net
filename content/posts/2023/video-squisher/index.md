@@ -1,7 +1,7 @@
 ---
 title: "Video Squisher: minimal command-line processing on the web"
 slug: video-squisher
-date: 2023-12-23T09:47:06.970Z
+date: 2023-12-29T02:24:54.269Z
 categories:
   - software
 tags:
