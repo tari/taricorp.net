@@ -8,3 +8,33 @@ https://www.cemetech.net/forum/viewtopic.php?t=19329
 <video controls autoplay muted
        width="320" height="240" src="{{< resource "full99.webm" >}}"
        poster="{{< resource "promo.png" >}}">
+
+- - -
+
+Title: WEB1999 - Relive the 90s Internet on your Calculator!
+
+Description:  Miss the chaotic, popup-filled internet of the late 90s? WEB1999 brings the classic web experience to your TI-83 Premium CE or TI-84 Plus CE calculator!
+
+This program recreates those annoying (yet strangely nostalgic) popups, like "HOT SINGLES in your area!" and "YOU'VE WON!".  Hum "Ride of the Valkyries" as you watch WEB1999 do its thing - it plays itself!
+
+Features
+
+Faithful recreations of iconic 90s web popups
+
+Web-safe 216-color palette for that authentic look
+
+Relive web design trends of the era
+
+Want to try it?
+
+Visit the links below to download. If you're using an emulator, experience it as it was truly intended!
+
+Download on Cemetech: https://www.cemetech.net/downloads/files/2402
+
+Source Code on Gitlab: https://gitlab.com/taricorp/web1999/-/releases
+
+Get Nostalgic
+
+If you loved (or hated) the early internet, WEB1999 is a must-try.  Share it with friends and reminisce about the days before endless scrolling and targeted ads.
+
+Hashtags: #web1999 #retro #calculators #programming #nostalgia #90s #webdesign
