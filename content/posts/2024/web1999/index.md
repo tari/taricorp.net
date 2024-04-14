@@ -38,3 +38,18 @@ Get Nostalgic
 If you loved (or hated) the early internet, WEB1999 is a must-try.  Share it with friends and reminisce about the days before endless scrolling and targeted ads.
 
 Hashtags: #web1999 #retro #calculators #programming #nostalgia #90s #webdesign
+
+---
+
+What critics (the contest judgest) are saying about WEB1999:
+
+An excellent instance of a screensaver modeled after both the golden age of screensavers and the golden
+age of the internet. Callbacks to both classic internet culture and the calculator community of yore,
+with a few easter eggs to boot. No key input required, other than to exit the screensaver. Extremely thorough
+readme, including a history/background on each of the "windows" that can appear.
+
+It looks great. The posterization and dithering really gives the feel of the 90s,
+and the use of an even more limited palette is a clever way to work within the
+bounds. Capturing the nostalgia of having just way too many popups.
+
+An HTML readme that looks like it's from '99? Nice!
