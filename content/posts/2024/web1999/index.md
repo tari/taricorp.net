@@ -3,11 +3,16 @@ title: "WEB1999: the web of 1999 in math class"
 slug: web1999
 date: 2024-01-28T06:40:50.987Z
 ---
-https://www.cemetech.net/forum/viewtopic.php?t=19329
+Over on Cemetech in the final months of 2023, we [held a programming contest](https://www.cemetech.net/forum/viewtopic.php?t=19320): write a screensaver, any kind of screensaver. I'm not often one to do any kind of competitive programming, but a screensaver is a nice project because there's a lot of room in which to play and many of the hard aspects of programming (interacting with humans) can be completely ignored! As a results, [I wrote a program I called WEB1999 to enter in the contest](https://www.cemetech.net/forum/viewtopic.php?t=19329), and ended up winning second place.
 
+<figure>
 <video controls autoplay muted
        width="320" height="240" src="{{< resource "full99.webm" >}}"
        poster="{{< resource "promo.png" >}}">
+<figcaption>WEB1999 in action.</figcaption>
+</figure>
+
+Inspired heavily by the [Realistic Internet Simulator](https://web.archive.org/web/20021204203905/https://www2.b3ta.com/realistic-internet-simulator/) ("Kill the Pop-ups"), WEB1999 invokes the spirit of pop-up advertising and Internet culture around the turn of the millennium in the form of a program that runs on Texas Instruments' TI-84+ CE color-screen graphing calculators.
 
 - - -
 
