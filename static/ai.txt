@@ -1,0 +1,5 @@
+# Deny use of content for AI training per Spawning's supported
+# format for ai.txt.
+User-Agent: *
+Disallow: /
+Disallow: *
