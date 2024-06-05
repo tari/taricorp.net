@@ -1,0 +1,6 @@
+# Netlify-style redirects for Gitlab pages
+# @ should redirect to www.
+https://taricorp.net/* https://www.taricorp.net/:splat
+# Old feed URLs that are nice to keep for existing readers
+/feed/ /feed.xml
+/feed /feed.xml
