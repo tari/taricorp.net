@@ -12,23 +12,23 @@ variables:
 
 pages:
   extends: .hugo
+  only: ['master']
   needs: []
   variables:
     # Include drafts
-    HUGO_FLAGS: -D
-    HUGO_BASEURL: https://beta.taricorp.net/
+    HUGO_FLAGS: --minify
+    HUGO_BASEURL: https://www.taricorp.net/
 
 build:
   extends: .hugo
   stage: build
   needs: []
   variables:
-    HUGO_FLAGS: --minify
-    HUGO_BASEURL: https://www.taricorp.net/
+    HUGO_FLAGS: -D
+    HUGO_BASEURL: https://beta.taricorp.net/
 
 deploy:
   stage: deploy
-  only: ['master']
   needs: [build]
   image: 'instrumentisto/rsync-ssh'
   variables:
