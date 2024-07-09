@@ -59,7 +59,13 @@ As I was developing graphics to display in the program, I had some difficulty de
 
 ---
 
+{{< figure src="malvertising.png" alt="Three windows, each containing something that seems untrustworthy. The leftmost is titled 'Limewire' and has a 'Download' link for a 3MB exe file seemingly claiming to be a copy of 'Crawling' by Linkin Park. The middle one advertises 'HOT SINGLES waiting to meet today!' where some of the text is stylized to look like flames and a large portion of the window is taken up by the frame for an image that is not displayed. The window on the right claims 'You are visitor #1,000,000!' with a button to claim a prize. An image of a yellow sports car is between them." caption="Malvertising lives in 2024, much as it did in 1999." >}}
 
+These windows are inspired by malware and malvertising (advertisements designed to take advantage of people who interact them, often by roping them into scams) that feel to me like they were common around 1999. It turns out that LimeWire as appears on the left is a little bit anachronistic because LimeWire didn't reach its peak until 2001, but malware on peer-to-peer networks is a perennial concern for users of those networks. The other two advertisements here are much more generic and would be at home on a web page today with some style adjustments.
+
+Pornographic (or nearly-so) advertisements are not uncommon on web sites peddling illegal (or questionably-legal) goods, so the "Hot singles" window alludes to that concept without compromising the all-ages friendliness of my program. As a bonus, using the "broken image" icon (in place of an image that would not be appropriate for all viewers) as appeared in Netscape Navigator nicely captures the feeling of personal computing prior to the year 2000. I was also quite pleased with the idea of text that looks like it's on fire, which feels strongly reminiscent of WordArt.
+
+Finally, the image of a sports car combined with a dubious claim of being the millionth visitor to a web page is an easy way for baddies to collect information from gullible targets. Dangling an apparent prize in front of a user raises plenty of questions to somebody who takes a moment to think about it (Why is a prize being given to the millionth visitor specifically?), but those who get excited and only think carefully later could find their personal information in the hands of n'er-do-wells before they realize!
 
 - - -
 
