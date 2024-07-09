@@ -44,7 +44,22 @@ As described further in the following section, I had a lot of fun using realisti
 
 ## Design notes
 
-I included many of my design notes in the documentation that comes along with the program, but in the interest of accessibility I'll reproduce much of that here.
+I included many of my design notes in the documentation that comes along with the program, but in the interest of easy reading I'll reproduce much of that here alongside images that are much easier to study than they are when the program is in motion.
+
+---
+
+{{< figure src="testwindow.png" alt="A blank window titled 'Large Test window'" caption="The general concept for displaying windows." >}}
+
+With an idea in mind to build a "kill the pop-ups"-style screensaver, the first code I had to write was something that could display a window which I could then add interesting things to. Since I had retro PCs in mind, the window decorations and background color are based on the default styles of Windows 95, 98, and Me which remained available as the "Classic Theme" in later
+versions until Windows 8 removed it as a standard option.
+
+I also limited myself to approximately the [web-safe color palette](https://en.wikipedia.org/wiki/Web_colors#Web-safe_colors) with only 216 colors available, although the conscious choice to limit the color palette to that one came a bit later in the process. The CE calculators have displays capable of doing 16-bit color (5-6-5 RGB), but programmers usually run it in an 8-bit palettized mode instead (where each byte refers to one of 256 colors) because it's considerably faster on the calculator's relatively slow Z80 without any display acceleration to speak of.
+
+As I was developing graphics to display in the program, I had some difficulty dealing with the limited 256-color palette and ensuring that my graphics looked like I intended. Once I realized I could lean into the theme with a web-safe palette and use existing tools (the [GNU Image Manipulation Program](https://www.gimp.org/)) to make my images look the same on my computer and a calculator, it was an easy choice! GIMP offers a web-safe palette as an option "out of the box" alongside a choice of several dithering methods, so it was rather fun and easy to develop graphics once I committed to that approach.
+
+---
+
+
 
 - - -
 
