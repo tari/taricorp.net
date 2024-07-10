@@ -70,6 +70,14 @@ Finally, the image of a sports car combined with a dubious claim of being the mi
 
 {{< figure src="memes.png" alt="Three windows, left to right: an image of a man with half his face covered in machinery, captioned 'CATS: ALL YOUR BASE ARE BELONG TO US'; a cartoon luchador in front of a sunset, with text 'STRONG BAD SINGS!', crossed out '$99.99?' followed by '$193.75', and a phone number 1-800-555-SBSINGS; the bow of a sunken ship sticking out above water with the legend 'Mistakes: Your purpose may only be to act as a warning to others'." caption="Internet users still enjoy memes today, though these may not be immediately recognized by younger viewers." >}}
 
+Meme culture remains strong today, and while brainstorming ideas for things to include in WEB1999 I recalled several "classic" memes that worked out nicely. "All your base are belong to us" seems comfortably classified as a classic that many people will still recognize today, and in browsing a very old collection of memes I had stored I was reminded of the "demotivator" genre inspired by [Despair](https://despair.com/)'s parodies of motivational posters; "Mistakes" pictured above was one of the earliest examples of their work I found in old versions of their web site on [the Internet Archive's Wayback Machine](https://web.archive.org/web/19981212024329/http://www.despair.com/) that I thought would still look okay when reduced to 256 colors and greatly reduced in resolution.
+
+Although I might not classify "Strong Bad Sings" as a meme, it comes from [Homestar Runner](https://homestarrunner.com/) which I get the impression became popular with many of the same people who would have been plugged into meme culture around the turn of the millennium.
+
+### Plain old advertising
+
+{{< figure src="commercialism.png" alt="Two advertisements, one of them for America Online advertising 540 hours free and blazing 56k speeds and the other simply saying 'Got Milk?' and picturing a tall glass of milk." caption="Advertisements just like these were a common sight in the late 90s." >}}
+
 Title: WEB1999 - Relive the 90s Internet on your Calculator!
 
 Description:  Miss the chaotic, popup-filled internet of the late 90s? WEB1999 brings the classic web experience to your TI-83 Premium CE or TI-84 Plus CE calculator!
