@@ -1,7 +1,7 @@
 ---
 layout: page
 title: mkg3a
-date: 2011-12-05 22:44:11.000000000 -07:00
+date: 2024-07-18
 categories: []
 tags: []
 status: publish
@@ -34,31 +34,28 @@ the [blog post introducing the project](/2011/mkg3a.html), and the
 [feedback/announcements thread](http://www.cemetech.net/forum/viewtopic.php?t=6153)
 on Cemetech.
 
-# Code
+## Code
 
-I don't usually make a point of packaging releases, since this is such a small project.  The code is always available in the repository at Bitbucket: https://bitbucket.org/tari/mkg3a/
+I don't usually make a point of packaging releases, since this is such a small project.
+The code is always available in the repository at GitLab: https://gitlab.com/taricorp/mkg3a
 
-Releases are tagged in the repository, and automatic snapshot packages are
-available from Bitbucket's [downloads
-page](https://bitbucket.org/tari/mkg3a/downloads).
+Releases are tagged in the repository, automatically-generated source archives corresponding
+with each tag are available via the GitLab UI: https://gitlab.com/taricorp/mkg3a/-/tags. You
+can also check out a specific branch with git, for example:
 
-# Building
+    git clone --depth=1 --branch=0.5.0 https://gitlab.com/taricorp/mkg3a.git
+
+## Building
 
 mkg3a is configured with cmake.  For a basic build, the following should work:
 
 ```
-$ hg clone https://bitbucket.org/tari/mkg3a
+$ git clone https://gitlab.com/taricorp/mkg3a.git
 $ mkdir mkg3a/build
 $ cd mkg3a/build
 $ cmake ..
-$ make
-# make install
-```
-
-To clone a specific revision or tag (perhaps version 0.1e), use mercurial's -r option:
-
-```
-$ hg clone -r 0.1e https://bitbucket.org/tari/mkg3a
+$ cmake --build .
+# cmake --build . --target install
 ```
 
 Specifying the install path at build-time is done via cmake (like `--prefix=` with autotools):
@@ -77,12 +74,19 @@ libraries configured (I've written up some notes on [building the
 libraries](/2012/static-libpng-on-win32-with-cmake.html) and
 [telling CMake where to look for them](/2012/locating-packages-with-cmake.html)).
 
-# Usage
+On most linux systems, you can get suitable copies of libpng and zlib by installing whatever package your distribution
+provides that includes the libpng development headers. On
+Debian and its derivatives (Ubuntu, Mint, ...) that should be `libpng-dev`, RPM-based
+distributions (RHEL, CentOS) seems to call it `libpng-devel`, and on Arch it's
+included in the regular `libpng` package.
+
+## Usage
 
 To do much of anything useful with mkg3a, you'll want to have some compiled code
 for the Prizm.  GCC (built to target SH3) and
 [libfxcg](https://github.com/Jonimoose/libfxcg) are the primary tools  you'll
 need to do that.  [more notes on building programs to come, hopefully].
 
-The mkg3a README file includes some usage examples.  Refer to those until I
-get some written here.
+The mkg3a README file includes some usage examples.  Refer to those in lieu of
+any more detailed documentation here. [Cemetech's WikiPrizm](https://prizm.cemetech.net/Mkg3a/)
+may also be a useful resource.
