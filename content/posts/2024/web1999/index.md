@@ -153,6 +153,11 @@ interacts, it just needs to close a window when that's plausibly possible)
 and consequently needs to choose a window and an element of that window to
 move to and interact with.
 
+As it turns out, it's much easier as a software author to assume an intelligent
+user than it is to automate behavior that looks intelligent. On the upside
+however, automating everything means none of the interaction actually needs to
+work, and shortcuts can be taken there.
+
 ### Cursor behavior
 
 {{< figure src="testwindow.png" alt="A blank window titled 'Large Test window'" caption="The Large Test Window illustrates the important UI elements." >}}
@@ -182,8 +187,11 @@ obscure the lower ones.
 
 ### Window occlusion
 
-Somewhat more difficult is determining which window the cursor should interact
-with. Although the topmost one should always be interactable, I didn't think
+When there are multiple windows onscreen, some of them might be obscuring 
+important parts of others like the close button or even hiding the lower
+one completely.
+
+Although the topmost window should always be interactable, I didn't think
 always going to the topmost window would be interesting behavior, and it
 doesn't seem to match what a human would do in this situation: a human would
 probably choose a window located near the cursor and close it, unless it became
@@ -197,11 +205,18 @@ visible, it was much simpler to treat a UI element as visible only if none of
 it was obscured. While looping over all windows stacked on top of a candidate
 window, the ones that cannot be closed or moved can be ignored.
 
+This code sample (adapted from the real program's `getNewTarget` function)
+illustrates generally how the logic to select a window
+works, assuming one that we want to interact with is returned by
+`getAWindow`. `wm` is the list of windows sorted with the topmost first:
+
 ```c++
+extern Window wm[MAX_WINDOWS];
+
 Window& candidate = getAWindow();
-Rect closeTarget = candidate->getCloseTarget();
+Rect closeTarget = candidate.getCloseTarget();
 bool closeOccluded = false;
-Rect moveTarget = candidate->getMoveTarget();
+Rect moveTarget = candidate.getMoveTarget();
 bool moveOccluded = false;
 
 while (occluderIdx-- > 0) {
@@ -214,20 +229,85 @@ while (occluderIdx-- > 0) {
 
 // If both targets are occluded, this window is not interactable.
 if (closeOccluded && moveOccluded) {
-    dbg_printf("Window %p is fully occluded, will not "
-               "interact.\n",
-               &*candidate);
+    dbg_printf("Window %p is fully occluded, will not interact.\n",
+               &candidate);
     continue;
 }
 ```
 
+In the real program, this runs in a loop until an interactable window
+is found with candidates chosen by their distance from the cursor: the
+program will choose to interact with the window that is closest to the
+cursor, as long as the region that the cursor needs to be in to either
+move or close the window is not occluded by another window.
+
+This code sample also illustrates a few of the abstractions I wrote to
+hide some of the details of the math. A `Window`'s location is described
+by a `Rect` which has a position onscreen, width and height; there are also
+shortcut functions to get the `Rect`s corresponding to where the window's
+titlebar is (which can be interacted with to bring the window to the top and
+move it), as well as its close button. The `overlapsWith` method on `Rect`s
+checks whether any part of a rectangle overlaps with some other rectangle.
+
 ### Distance metrics
 
-Knowing what is interactable, choose the one nearest to the cursor.
+The next moderately interesting question to answer was how to determine
+which window is closest to the cursor, since it's now understood how to
+determine if a given window is actually an acceptable candidate to interact
+with.
 
-The trick here (for a machine that doesn't have good division performance)
-is that the precise distance between points doesn't matter, so L1 distance
-is good enough.
+The obvious approach is to use basic geometry and get the length of a vector
+between the cursor and the closest point of a window to the cursor. If
+`cx` and `cy` are the cursor's X and Y coordinates while `wx` and `wy` are
+the coordinates of a point on a window, the distance is clearly
+`sqrt((cx-wx)*(cx-wx) + (cy - wy)*(cy - wy))`: simply applying the Pythagorean
+theorem.
+
+On an eZ80 processsor where I could be doing this computation with fairly
+high frequency, I didn't think that computation would be acceptably performant.
+There's no hardware support for computing the square root of numbers, and
+I wasn't very interested in trying to implement a fast square root.
+
+Instead, I noticed that the actual distance between two points doesn't actually
+matter, as long as I can know which of multiple points (points on windows that
+we might want to interact with) is closest to a chosen point (the cursor's
+current location). Since the order of any two distances before computing the
+square root and even before squaring the coordinate offsets is the same as after
+doing those operations, I simplified distance computations to work in terms of
+the [rectilinear distance](https://en.wikipedia.org/wiki/Taxicab_geometry) instead:
+
+```c++
+static int distance_NonLinear(gfx_point_t a, gfx_point_t b) {
+    return abs(a.x - b.x) + abs(a.y - b.y);
+}
+```
+
+With a distance metric, the `getNewTarget` function can iterate over all
+windows onscreen and find the one nearest to the cursor. The actual distance
+is not known, but we do know the nearest window is found. As discussed in the
+previous section, windows where none of the interaction targets are visible
+(abstracted out as the `isFullyOccluded` function) are ignored.
+
+```c++
+Window* nearest = nullptr;
+int nearestMetric = INT_MAX;
+
+for (auto candidateIdx = 0; candidateIdx < wm.size(); candidateIdx++) {
+   Window* candidate = wm[candidateIdx];
+   if (isFullyOccluded(candidate)) {
+       continue;
+   }
+
+   auto candidateDest = closeTarget.getNearestPoint(cursor.getLocation());
+   auto candidateDist = distance_NonLinear(cursor.getLocation(), candidateDest);
+   if (candidateDist < nearestMetric) {
+       nearest = candidate;
+       nearestMetric = candidateDist;
+   }
+}
+
+return nearest;
+```
 
 ---
 
@@ -248,7 +328,75 @@ distances moved much more slowly than a human would.
 
 ### Cursor movement
 
-Bresenham's line algorithm, but ended up being fixed-point math.
+In the previous video, the cursor is already moving along a line between
+its original location and its destination. This is very easy for a human
+to do when using a mouse, but took some effort to implement in software
+in a way that was reasonably performant on a Z80 processor.
+
+The first algorithm I thought of when considering how to determine where
+to move the cursor was to use [Bresenhams' line
+algorithm](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm),
+which I have previously heard of used for fast line-drawing functions on
+TI calculators.
+
+After spending some time familiarizing myself with Bresenham's algorithm,
+I realized there was an issue with simply applying that algorithm: I need
+the cursor to move over time, not merely draw the line between two points.
+
+At this point I decided it made sense to take advantage of the eZ80 being
+more capable than most 8-bit processors, in that it is able to do arithmetic
+on integers that are up to 24 bits wide and can multiply (but not divide)
+16-bit integers in hardware. So I reached for fixed-point math.
+
+What I ended up with was a `Mover` class encapsulating the details of
+computing how the cursor should move, which is constructed with two points to
+move between and can be advanced over time to sweep between the start
+and end points. Because it seemed reasonable to move the cursor in up to 128
+steps, I chose to express the progress from start to end point as an
+8-bit unsigned value, with 1 bit before the decimal point and 7 after:
+the 8-bit integer `0` is 0.0, and `0x80` is 1.0. In this way, moving the
+cursor at minimum speed involves adding 1/128 (integer value `1`) to the 
+progress along the line at each step.
+
+Inspired by Bresenham's line algorithm, for each of the x and y coordinates
+I multiplied the required distance to be moved by the fraction of the distance
+to be moved (that fixed-point number) to get the distance to move the cursor
+in one step. To prevent drift, the fractional part is saved and accumulates
+between calls, adding to the distance moved when it exceeds 1 pixel.
+The code looks like this, where `speed` is a fixed-point fraction of the
+total distance to cover, `progress` is the fraction of the distance covered
+already, `dx` and `dy` are the total distance to move on the X and Y axes,
+and `errx` and `erry` are the accumulated error for each axis:
+
+```c++
+gfx_point_t Mover::advance(uint8_t speed) {
+    // If speed would cause overshoot, clamp progress to 1.0.
+    if (speed + progress > 0x80) {
+        speed = 0x80 - progress;
+    }
+    gfx_point_t out;
+
+    // Fixed-point multiplication, taking the integer part.
+    out.x = (dx * speed) / 0x80;
+    // Take the fractional part and add to accumulated error.
+    errx += abs(dx * speed) & 0x7f;
+    // If error is greater than 1.0, advance towards the destination
+    // and subtract 1.0 from the error.
+    if (errx >= 0x80) {
+        out.x += signum(dx);
+        errx -= 0x80;
+    }
+
+    // Do the same for the y axis...
+
+    return out;
+}
+```
+
+Notably, this implementation shouldn't require any actual division because
+the divisions are always by 128, which can be expressed as an arithmetic
+right shift by 7 bits instead. Multiplication is still needed, but eZ80's
+hardware multiplier should be sufficient to make that fast.
 
 ### Cursor pacing
 
