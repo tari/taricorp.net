@@ -6,7 +6,6 @@ categories: []
 tags: []
 status: publish
 type: page
-published: true
 ---
 
 This is a project to create a replica of the divergence meter that appears in

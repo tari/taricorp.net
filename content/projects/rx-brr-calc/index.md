@@ -6,7 +6,6 @@ categories: []
 tags: []
 status: publish
 type: page
-published: true
 ---
 
 This is an extremely simple GUI for calculating ideal configuration register

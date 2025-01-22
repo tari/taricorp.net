@@ -6,7 +6,6 @@ categories: []
 tags: []
 status: publish
 type: page
-published: true
 ---
 
 feed-accelerator is an RSS/Atom feed reader following the UNIX philosophy ("do

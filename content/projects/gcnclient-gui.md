@@ -6,7 +6,6 @@ categories: []
 tags: []
 status: publish
 type: page
-published: true
 ---
 
 This is a basic GUI for configuring the [globalCalcNet][gcn] client program,
