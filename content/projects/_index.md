@@ -6,7 +6,6 @@ categories: []
 tags: []
 status: publish
 type: page
-published: true
 in_global_nav: true
 ---
 

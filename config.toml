@@ -22,6 +22,9 @@ baseName = "feed"
   [markup.goldmark.renderer]
     unsafe = true
 
+[security]
+enableInlineShortcodes = true
+
 [permalinks]
 posts = "/:year/:slug/"
 projects = "/projects/:slug/"

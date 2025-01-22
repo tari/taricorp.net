@@ -6,7 +6,6 @@ categories: []
 tags: []
 status: publish
 type: page
-published: true
 ---
 
 PuTTYJL is a wrapper and patch for [PuTTY][putty] written in C# for .NET 3.5 and

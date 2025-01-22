@@ -6,7 +6,6 @@ categories: []
 tags: []
 status: publish
 type: page
-published: true
 ---
 
 MishaBot is a combination IRC bot and web interface that acts as a link

@@ -6,7 +6,6 @@ categories: []
 tags: []
 status: publish
 type: page
-published: true
 ---
 
 This page documents details of the Casio Prizm graphic calculator's processor,
