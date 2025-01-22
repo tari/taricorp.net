@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WEB1999 bytecode renderer</title>
+        <meta name="viewport" content="width=device-width, initial=scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    </head>
+    <body>
+
+        <div class="container">
+            <div class="row">
+            <div id="bccSource" style="height: 90vh; min-height: 400px; resize: vertical;" class="col-md flex-shrink-1">--[[
+w9bcc is a built-in library providing all of the functions specific to
+WEB1999 bytecode. Loading it binds the provided functions in the global
+namespace.
+]]
+require 'w9bcc'
+
+-- Every window must have its size and title specified. Failing to set either
+-- one is an error.
+WindowSize{ width = 96, height = 64 }
+WindowTitle("WEB1999")
+
+-- If you have a solid background color, filling the entire window
+-- is convenient.
+FillWindow('white')
+
+--[[
+Text foreground and background colors can be set to any color, or transparent.
+
+Background color is optional and the last set background color will be
+retained if omitted.
+]]
+SetTextColor{ fg = 'transparent', bg = 'green'}
+DrawText{ "Hello, world!", x = 1, y = 1 }
+
+--[[
+Labels for function parameters are optional, but if labels are omitted then
+the parameters must be given in the same order as in the examples.
+]]
+SetTextColor{ 'red', 'transparent' }
+DrawText { "", 1, 15 }
+
+local rainbow = "RAINBOW TEXT!!!"
+for i = 1, #rainbow do
+    -- Colors can be specified in any way accepted in CSS, including
+    -- rgb(r, g, b) or hsl(h, s, l).
+    local color = string.format("hsl(%d, 75%%, 50%%)", 43 * (i - 1))
+    SetTextColor{ fg = color }
+    -- If the location for text is omitted, it is drawn beginning at the
+    -- end of the most recently drawn text.
+    local char = rainbow:sub(i, i)
+    DrawText{ char }
+end
+
+SetDrawColor('cyan')
+FillRectangle{ x = 2, y = 30, width = 96 - (2 * 2), height = 20 }
+
+--[[
+Sprites can be loaded from image files in most common formats. Loaded sprites
+have the image width and height available as properties, and can be displayed
+at chosen screen coordinates by calling draw_at{x, y}.
+
+The raw sprite data (one byte per pixel, as palette indexes) is available as
+the 'data' property on sprites, and the 'is_transparent' property is true if
+the sprite has transparency. If it does, the value in its 'transparent_color'
+property is the palette index (as appears in the 'data') that represents a
+transparent pixel.
+]]
+local icon = Sprite:load('icon.png')
+assert(not icon.is_transparent)
+icon:draw_at{x = 96 / 4 - icon.width / 2, y = 32}
+
+--[[
+This sprite is drawn on the right side, and has transparency. Notice that
+the one on the left has a white background, whereas the one on the right
+(this sprite) allows the underlying rectangle to show through.
+]]
+local icon2 = Sprite:load('icon-transparent.png')
+assert(icon2.is_transparent)
+icon2:draw_at{x = 3 * 96 / 4 - icon.width / 2, y = 32}
+</div>
+            <div class="col-md d-flex flex-column align-items-center">
+                <div class="d-flex justify-content-center align-items-center" style="width: 320px; height: 240px; background-color: #3165ad;">
+                    <canvas id="rendererCanvas"></canvas>
+                </div>
+                <div>
+                    <label>
+                        Load files, readable with <tt>Sprite:load()</tt><br>
+                        <input id="loadFileSelect" type="file" multiple autocomplete="off"></input>
+                    </label>
+                    <ul id="loadedFiles"></ul>
+                </div>
+                <textarea class="w-100 flex-grow-1" id="bccOutput"></textarea>
+                <button id="resetButton">Reset editor (clear all changes)</button>
+            </div>
+            </div>
+        </div>
+
+        <!-- Preload workaround to get integrity on the import -->
+        <link rel="modulepreload"
+              href="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.0/ace.min.js"
+              integrity="sha512-5ur89G46zAPpH0kj/TDGeB/csR1UsUNmKUf4GXNmNOwM1SoMA3IJ85jYBoHQnfDLIkfydZtsxxmGpNsY+2plqg=="
+              crossorigin="anonymous" referrerpolicy="no-referrer">
+
+        <script type="module">
+import Renderer from './render.mjs'
+import Interpreter from './interpret.mjs'
+
+import "https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.0/ace.min.js"
+ace.config.set('basePath', "https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.0/")
+
+const interpreter = new Interpreter()
+const renderer = Renderer.create(document.getElementById('rendererCanvas'))
+
+let pendingEditTimer = null
+let editorDirty = false
+const editor = ace.edit('bccSource')
+editor.session.setMode('ace/mode/lua')
+
+const reloadedContents = localStorage.getItem("editorContents")
+if (reloadedContents) {
+    editor.setValue(reloadedContents, -1)
+}
+populateLoadedFiles()
+
+window.addEventListener('beforeunload', (event) => {
+    if (!editorDirty) {
+        return
+    }
+
+    try {
+        localStorage.setItem("editorContents", editor.getValue())
+        interpreter.save()
+    } catch (err) {
+        if (err instanceof DOMException && err.name === "QuotaExceededError") {
+            // Failed to save, so warn the user that data might be lost
+            event.preventDefault()
+        }
+    }
+})
+
+// TODO: enable autocompletion of w9bcc APIs: https://stackoverflow.com/a/65219943/2658436
+const output = document.getElementById('bccOutput')
+
+async function compile() {
+    const script = editor.getValue()
+    let messages, bytecode = null
+    try {
+        const result = await interpreter.evaluate(script)
+        messages = result.messages
+        bytecode = result.bytecode
+    } catch (err) {
+        if (err instanceof Interpreter.Error) {
+            messages = err.messages
+        } else {
+            console.error(err)
+            messages = [err.toString()]
+        }
+    }
+    output.value = messages.join('\n')
+
+    if (bytecode !== null) {
+        console.info('Successfully compiled bytecode', bytecode)
+        try {
+            (await renderer).render(bytecode)
+        } catch (err) {
+            output.value += "\nRenderer: " + err.toString()
+        }
+    }
+}
+
+await compile()
+
+function scheduleCompile() {
+    if (pendingEditTimer !== null) {
+        clearTimeout(pendingEditTimer)
+    }
+    editorDirty = true
+    pendingEditTimer = setTimeout(compile, 2500)
+}
+
+editor.session.on('change', scheduleCompile)
+
+function populateLoadedFiles() {
+    for (const [name, data] of interpreter.getFiles()) {
+        const li = document.createElement('li')
+        li.append(name)
+        const img = document.createElement('img')
+        img.src = URL.createObjectURL(new Blob([data]))
+        li.append(img)
+        document.getElementById('loadedFiles').appendChild(li)
+    }
+}
+
+document.getElementById('loadFileSelect').addEventListener('change', async (evt) => {
+    const filesList = document.getElementById('loadedFiles')
+
+    const loadPromises = []
+    for (const file of evt.target.files) {
+        loadPromises.push(interpreter.addFile(file))
+    }
+    await Promise.allSettled(loadPromises)
+
+    for (const i of filesList.querySelectorAll('img')) {
+        URL.revokeObjectURL(i.src)
+    }
+    while (filesList.firstChild !== null) {
+        filesList.removeChild(filesList.firstChild)
+    }
+
+    populateFilesList()
+    scheduleCompile()
+})
+
+document.getElementById('resetButton').addEventListener('click', function resetEditor() {
+    editorDirty = false
+    localStorage.clear()
+    window.location.reload()
+})
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    </body>
+</html>

@@ -1,21 +1,44 @@
 ---
 title: "WEB1999: the web of 1999 in math class"
 slug: web1999
-date: 2025-01-05T06:40:50.987Z
+date: 2025-01-22T16:00:00+11:00
 ---
-I often find that imposed limitations make it easier to create things: it's easy to aim for perfection if you can expend as much effort as you like on something and thus end up with nothing that you'll ever call good enough to share.
-Over on Cemetech in the final months of 2023, we [held a programming contest](https://www.cemetech.net/forum/viewtopic.php?t=19320): write a screensaver, any kind of screensaver. I'm not often one to do any kind of competitive programming, but as a prompt for a constrained project this was a good one for me. As a result, [I wrote a program I called WEB1999](https://www.cemetech.net/forum/viewtopic.php?t=19329), that won second place.
+
+I often find that imposed limitations make it easier to create things: it's
+easy to aim for perfection if you can expend as much effort as you like on
+something and thus end up with nothing that you'll ever call good enough to
+share. Over on Cemetech in the final months of 2023,[^delayed] we [held a programming
+contest](https://www.cemetech.net/forum/viewtopic.php?t=19320): write a
+screensaver, any kind of screensaver. I'm not often one to do any kind of
+competitive programming, but as a prompt for a constrained project this was a
+good one for me. As a result, [I wrote a program I called
+WEB1999](https://www.cemetech.net/forum/viewtopic.php?t=19329), that won second
+place.
+
+[^delayed]: Oops, it took me more than a year to write this post.
 
 <!-- more -->
 
 A screensaver is a nice project because there's a lot of room in which to play and many of the hard aspects of programming (interacting with humans) can be completely ignored! I wasn't originally planning to write anything to enter, but after thinking to myself what I might expect other people to enter, I came up with an idea that piqued my interest and didn't seem too hard to build. 
 
-## Get WEB1999
+<details style="padding: 0 1em; margin: 0.5em; background-color: #eee;">
+<summary>In this post you will find...</summary>
+{{< toc >}}
+</details>
 
-If you want to play with the program instead of or in addition to simply reading about it, a copy of WEB1999 suitable for loading onto a TI-84+ CE or TI-83 Premium CE calculator can be obtained from the releases section of my gitlab project: \
+## Get the program
+
+If you want to play with the program instead of or in addition to simply
+reading about it, a copy of WEB1999 suitable for loading onto a TI-84+ CE or
+TI-83 Premium CE calculator can be obtained from the releases section of my
+Gitlab project: \
 **<https://gitlab.com/taricorp/web1999/-/releases>**
 
-A copy can also be obtained from the [Cemetech archives](https://www.cemetech.net/downloads/files/2402) or [ticalc.org](https://www.ticalc.org/archives/files/fileinfo/479/47909.html). All of the release packages include the full source code and documentation, so you shouldn't miss anything regardless of where you choose to get a copy from.
+The source code can also be found on Gitlab, or a copy can also be obtained
+from the [Cemetech archives](https://www.cemetech.net/downloads/files/2402) or
+[ticalc.org](https://www.ticalc.org/archives/files/fileinfo/479/47909.html).
+All of the release packages include the full source code and documentation, so
+you shouldn't miss anything regardless of where you choose to get a copy from.
 
 ## WEB1999 in action
 
@@ -47,9 +70,12 @@ mostly just uses the default HTML structure provided by
 As described further in the following sections, not only did I have a lot of
 fun using historical inspiration and realistic limitations to restrict myself,
 but there were also a few interesting aspects to the implementation that I'll
-describe! Continue reading for notes on [the program's design](#design-notes)
-and [interesting aspects of its implementation](#implementation-notes).
+describe!
 
+Continue reading for notes on [the program's design](#design-notes) and
+[interesting aspects of its implementation](#implementation-notes), plus
+[additional improvements I'd like to
+make](#bytecoded-graphics-and-future-work).
 
 ## Implementation notes
 
@@ -174,21 +200,23 @@ The obvious approach is to use basic geometry and get the length of a vector
 between the cursor and the closest point of a window to the cursor. If
 `cx` and `cy` are the cursor's X and Y coordinates while `wx` and `wy` are
 the coordinates of a point on a window, the distance is clearly
-`sqrt((cx-wx)*(cx-wx) + (cy - wy)*(cy - wy))`: simply applying the Pythagorean
+`sqrt((cx-wx)*(cx-wx) + (cy - wy)*(cy - wy))`: simply apply the Pythagorean
 theorem.
 
-On an eZ80 processsor where I could be doing this computation with fairly
-high frequency, I didn't think that computation would be acceptably performant.
-There's no hardware support for computing the square root of numbers, and
-I wasn't very interested in trying to implement a fast square root.
+On an eZ80 processsor where I could be doing this computation with fairly high
+frequency, I didn't think getting a true hypotenuse length would be acceptably
+performant. There's no hardware support for computing the square root of
+numbers, and I wasn't very interested in trying to implement a fast square
+root.
 
 Instead, I noticed that the actual distance between two points doesn't actually
 matter, as long as I can know which of multiple points (points on windows that
 we might want to interact with) is closest to a chosen point (the cursor's
-current location). Since the order of any two distances before computing the
-square root and even before squaring the coordinate offsets is the same as after
-doing those operations, I simplified distance computations to work in terms of
-the [rectilinear distance](https://en.wikipedia.org/wiki/Taxicab_geometry) instead:
+current location). Since the relationship between any two distances (which is
+longer) before computing the square root and even before squaring the
+coordinate offsets is the same as after doing those operations, I simplified
+distance computations to work in terms of the [rectilinear
+distance](https://en.wikipedia.org/wiki/Taxicab_geometry) instead:
 
 ```c++
 static int distance_NonLinear(gfx_point_t a, gfx_point_t b) {
@@ -238,8 +266,8 @@ movement of the window as required.
 The cursor's speed seems inconsistent here because this particular prototype
 restarted moving the cursor every time it considered whether a new window
 should be targeted (when a window was created), and (as described in the
-following sections) at the time I recorded this cursor movement over short
-distances moved much more slowly than a human would.
+following sections) at the time I recorded this video the cursor moved over
+short distances moved much more slowly than a human would.
 
 ### Cursor movement
 
@@ -253,7 +281,6 @@ to move the cursor was to use [Bresenhams' line
 algorithm](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm),
 which I have previously heard of used for fast line-drawing functions on
 TI calculators.
-
 After spending some time familiarizing myself with Bresenham's algorithm,
 I realized there was an issue with simply applying that algorithm: I need
 the cursor to move over time, not merely draw the line between two points.
@@ -279,12 +306,11 @@ public:
 };
 ```
 
-Because it seemed reasonable to move the cursor in up to 128
-steps, I chose to express the progress from start to end point as an
-8-bit unsigned value, with 1 bit before the decimal point and 7 after:
-the 8-bit integer `0` is 0.0, and `0x80` is 1.0. In this way, moving the
-cursor at minimum speed involves adding 1/128 (integer value `1`) to the 
-progress along the line at each step.
+Because it seemed reasonable to move the cursor in up to 128 steps, I chose to
+express the progress from start to end point as an 8-bit unsigned value, with 1
+bit before the decimal point and 7 after: the 8-bit integer `0` is 0.0, and
+`0x80` is 1.0. In this way, moving the cursor at minimum nonzero speed involves
+adding 1/128 (integer value `1`) to the progress along the line at each step.
 
 Inspired by Bresenham's line algorithm, for each of the x and y coordinates
 I multiplied the required distance to be moved by the fraction of the distance
@@ -330,8 +356,8 @@ hardware multiplier should be sufficient to make that fast.
 
 As I noted in relation to the [last video](#video-morewindows), the initial 
 approach I chose to selecting the speed at which the cursor should move yielded
-awkward results where it tended to move much slower than a human would, if
-it needed to move only a short distance. This had two reasons:
+awkward results where it tended to move much slower than a human would if
+it only needed to move a short distance. This had two reasons:
 
  * The amount of time required to move between two points was constant: the
    speed used to advance the `Mover` was always 1/128, so the cursor would
@@ -352,9 +378,13 @@ constant.
 Because the `Mover` still works in fractions of the distance to cover however,
 there needs to be a conversion between speed in pixels and the fraction of the
 total distance to cover in each tick. The obvious approach is to compute the
-distance to cover, then divide that distance by the desired speed in pixels
-per tick and multiply by 1.0 (as a fixed-point value; 128): `speed_px * 128
-/ distance_px`.
+distance to cover, then divide that distance by the desired speed in pixels per
+tick and multiply by 1.0 (as a fixed-point value; 128): `speed_px * 128 /
+distance_px`. For example, if the cursor moves at a constant speed of 4 pixels
+per tick and it needs to move 64 pixels total, then it's obvious that it should
+move one sixteenth of the total distance per tick (because 64 divided by 4 is
+16): 4 * 128 / 64 = 8, which is equal to 1/16 when interpreted as a fixed-point
+value with 7 fractional bits.
 
 That obvious approach bumps into both of the issues that we've
 already used tricks to improve the performance of, though: it both needs to
@@ -416,7 +446,7 @@ center of the screen for maximum ~~annoyance~~ visibility.
 
 To choose the position of a window when it was created, I was simply generating
 uniform (or near enough to uniform) random screen coordinates for it to be
-displayed at (0-319 on the X axis and 0-239 on the Y) and clamping values to
+displayed at (0-319 on the X axis and 0-239 on the Y), then clamping values to
 ensure there would always be something interactable visible (the titlebar to
 drag the window, or its close button).
 
@@ -432,9 +462,9 @@ center of the screen while still appearing to be random. (I left the Y coordinat
 as it was, because a window with its top edge offscreen cannot be interacted
 with at all.)
 
-I figured a standard normal distribution tends to look random in a way that is
-satisfactory to the eye, so after doing some research I decided to approximate a
-normal distribution with an [Irwin-Hall
+I assumed that a standard normal distribution tends to look random in a way
+that is satisfactory to the eye, so after doing some research I decided to
+approximate a normal distribution with an [Irwin-Hall
 distribution](https://en.wikipedia.org/wiki/Irwin%E2%80%93Hall_distribution) of
 degree twelve. With some tweaking of the values output from the distribution
 with random numbers in the range 0-255 as input (generated as three 32-bit
@@ -484,7 +514,7 @@ given time: every visible window should be unique.
 
 I achieved this by indirection in the window manager and dynamic dispatch. The
 `WindowManager` owns an array of `Window*` which are the windows being displayed
-onscreen or `nullptr` if the window that goes in a slot is not open.  Each slot
+onscreen, or `nullptr` if the window that goes in a slot is not open.  Each slot
 in this array is assigned to a particular kind of window, which is a subclass of
 `Window`. Those slots are assigned manually in the source code, something like
 this (where in the actual implementation, use of a macro avoids repeating most
@@ -516,11 +546,11 @@ createWrap:
 }
 ```
 
-Of note, if a window of the randomly-chosen type already exists, this function
+Note that if a window of the randomly-chosen type already exists, this function
 will attempt each of the others in sequence until one that doesn't yet exist is
 created. That requires a check beforehand to ensure that there is at least one
 available slot in `instances` to avoid an infinite loop, which I've omitted from
-the above sample code. The use of a `goto` statement at all is rather
+the above sample code. The use of a `goto` statement at all is also rather
 unconventional, but I found it to be a useful shortcut that allowed me to
 guarantee that this function would always complete in a reasonable amount of
 time. It would be more random to continuously generate random numbers until an
@@ -583,6 +613,10 @@ public:
 }
 ```
 
+How I wrote the code isn't the only thing I find worthy of comment in WEB1999,
+though. I also have thoughts to share on how I designed the windows that it can
+display and why they look the way they do!
+
 ## Design notes
 
 I included many of my design notes in the documentation that comes along with
@@ -592,13 +626,36 @@ program is in motion.
 
 ### Window styles and color
 
-With an idea in mind to build a "kill the pop-ups"-style screensaver, the first code I had to write was something that could display a window which I could then add interesting things to. Since I had retro PCs in mind, the window decorations and background color are based on the default styles of Windows 95, 98, and Me; grey borders with an outset/inset shading effect, and a blue titlebar (changing to grey when a window is inactive).
+With an idea in mind to build a "kill the pop-ups"-style screensaver, the first
+code I had to write was something that could display a window which I could
+then add interesting things to. Since I had retro PCs in mind, the window
+decorations and background color are based on the default styles of Windows 95,
+98, and Me; grey borders with an outset/inset shading effect, and a blue
+titlebar (changing to grey when a window is inactive).
 
 {{< figure src="testwindow.png" alt="A blank window titled 'Large Test window'" caption="The general concept for displaying windows." >}}
 
-I also limited myself to approximately the [web-safe color palette](https://en.wikipedia.org/wiki/Web_colors#Web-safe_colors) with only 216 colors available, although the conscious choice to limit the color palette to that one came a bit later in the process. The CE calculators have displays capable of doing 16-bit color (5-6-5 RGB), but programmers usually run it in an 8-bit palettized mode instead (where each byte refers to one of 256 colors) because it's considerably faster on the calculator's relatively slow Z80 without any display acceleration to speak of.
+I also limited myself to approximately the [web-safe color
+palette](https://en.wikipedia.org/wiki/Web_colors#Web-safe_colors) with only
+216 colors available, although the conscious choice to limit the color palette
+to that one came a bit later in the process. The CE calculators have displays
+capable of doing 16-bit color (5-6-5 RGB), but programmers usually run it in an
+8-bit palettized mode instead (where each byte refers to one of 256 colors)
+because it's considerably faster on the calculator's relatively slow
+Z80-derived processor that also lacks any purpose-built hardware to make it
+more efficient to display images.
 
-As I was developing graphics to display in the program, I had some difficulty dealing with the limited 256-color palette and ensuring that my graphics looked like I intended. Once I realized I could lean into the theme with a web-safe palette and use existing tools (the [GNU Image Manipulation Program](https://www.gimp.org/)) to make my images look the same on my computer and a calculator, it was an easy choice! GIMP offers a web-safe palette as an option "out of the box" alongside a choice of several dithering methods, so it was rather fun and easy to develop graphics once I committed to that approach.
+As I was developing graphics to display in the program, I had some difficulty
+dealing with the limited 256-color palette and ensuring that my graphics looked
+like I intended. Once I realized I could lean into the theme with a web-safe
+palette and use existing tools (the [GNU Image Manipulation
+Program](https://www.gimp.org/)) to make my images look the same on my computer
+and a calculator, it was an easy choice! GIMP offers a web-safe palette as an
+option "out of the box" alongside a choice of several dithering methods, so it
+was rather fun and easy to develop graphics once I committed to that approach.
+
+Once I nailed down the general look and feel, the ideas I had for what to put
+in each kind of window fell into several categories.
 
 ### Malware and malvertising
 
@@ -623,15 +680,34 @@ feels strongly reminiscent of
 [WordArt](https://en.wikipedia.org/wiki/Microsoft_Office_shared_tools#WordArt)
 (which I feel has become much less used since the 90s).
 
-Finally, the image of a sports car combined with a dubious claim of being the millionth visitor to a web page is an easy way for baddies to collect information from gullible targets. Dangling an apparent prize in front of a user raises plenty of questions to somebody who takes a moment to think about it (Why is a prize being given to the millionth visitor specifically?), but those who get excited and only think carefully later could find their personal information in the hands of n'er-do-wells before they realize!
+Finally, the image of a sports car combined with a dubious claim of being the
+millionth visitor to a web page is an easy way for baddies to collect
+information from gullible targets. Dangling an apparent prize in front of a
+user raises plenty of questions to somebody who takes a moment to think about
+it (Why is a prize being given to the millionth visitor specifically?), but
+those who get excited and only think carefully later could find their personal
+information in the hands of n'er-do-wells before they realize!
 
 ### Memes
 
 {{< figure src="memes.png" alt="Three windows, left to right: an image of a man with half his face covered in machinery, captioned 'CATS: ALL YOUR BASE ARE BELONG TO US'; a cartoon luchador in front of a sunset, with text 'STRONG BAD SINGS!', crossed out '$99.99?' followed by '$193.75', and a phone number 1-800-555-SBSINGS; the bow of a sunken ship sticking out above water with the legend 'Mistakes: Your purpose may only be to act as a warning to others'." caption="Internet users still enjoy memes today, though these may not be immediately recognized by younger viewers." >}}
 
-Meme culture remains strong today, and while brainstorming ideas for things to include in WEB1999 I recalled several "classic" memes that worked out nicely. "All your base are belong to us" seems comfortably classified as a classic that many people will still recognize today, and in browsing a very old collection of memes I had stored I was reminded of the "demotivator" genre inspired by [Despair](https://despair.com/)'s parodies of motivational posters; "Mistakes" pictured above was one of the earliest examples of their work I found in old versions of their web site on [the Internet Archive's Wayback Machine](https://web.archive.org/web/19981212024329/http://www.despair.com/) that I thought would still look okay when reduced to 256 colors and greatly reduced in resolution.
+Meme culture remains strong today, and while brainstorming ideas for things to
+include in WEB1999 I recalled several "classic" memes that worked out nicely.
+"All your base are belong to us" seems comfortably classified as a classic that
+many people will still recognize today, and in browsing a very old collection
+of memes I had stored I was reminded of the "demotivator" genre inspired by
+[Despair](https://despair.com/)'s parodies of motivational posters; "Mistakes"
+pictured above was one of the earliest examples of their work I found in old
+versions of their web site on [the Internet Archive's Wayback
+Machine](https://web.archive.org/web/19981212024329/http://www.despair.com/)
+that I thought would still look okay when reduced to 256 colors and greatly
+reduced in resolution.
 
-Although I might not classify "Strong Bad Sings" as a meme, it comes from [Homestar Runner](https://homestarrunner.com/) which I get the impression became popular with many of the same people who would have been plugged into meme culture around the turn of the millennium.
+Finally, although I might not classify "Strong Bad Sings" as a meme, it comes
+from [Homestar Runner](https://homestarrunner.com/) which I get the impression
+became popular with many of the same people who would have been plugged into
+meme culture around the turn of the millennium.
 
 ### Mass media
 
@@ -670,9 +746,382 @@ appeared across many forms of media; there were few people in the United States
 who were never exposed to those ads, so this ought to be familiar to anybody of
 at least a certain age.
 
-## Future work
+## Bytecoded graphics and future work
 
-bytecode so windows don't need to be built in
+At this point, discussion has reached the limit of what I implemented in time
+to submit WEB1999 to the contest I wrote it for. After that however, I had more
+ideas that seemed interesting to play with even if they weren't going to be
+included in my contest submission. This section discusses those ideas, which
+involve a variety of technical decisions that I think are worthy of discussion.
 
-currently not as good because they can't be compressed, but embedding
-lua was interesting
+---
+
+In the version of WEB1999 I submitted to the contest, there were 11 different
+windows. I might have added more, but the program was nearing the limit for
+reasonable size. On CE calculators the tooling supports compressing programs so
+they can be larger than 64 kilobytes, but even a compressed program is limited
+by the available user RAM once decompressed (up to 154 KB) and I found the
+program was nearing that limit.
+
+Having designed those 11 window kinds, I had a pretty good idea of what
+sorts of graphical operations are useful for this application. Since it
+seemed interesting to try to allow windows to be provided separately from
+the program itself, I set out to define windows as a simple domain-specific
+language rather than as C++ classes that must be compiled in to the program.
+
+That approach could allow window definitions to be stored independently from
+the main program and act more like plug-ins than an integral part of WEB1999,
+so it would be easy for users to pick and choose which windows they want
+to see as well as create their own.
+
+### Bytecodes
+
+Knowing what operations are useful, I came up with the following bytecode
+instructions that the program should be able to interpret. A window
+would be described by its size, text to be shown in the titlebar,
+and a series of bytecode instructions. Each instruction includes up to
+four operands that specify things like a position in the window's
+content area or colors to use:
+
+ * `Fill(c)`: fills the entire window content area with a specified color.
+ * `Color(c)`: sets the color used by all following shape drawing commands,
+   until a new color is set.
+ * `Rect(x, y, w, h)`: draw an unfilled rectangle with the top left corner
+   at the specified x and y coordinates, with specified width and height.
+ * `FillRect(x, y, w, h)`: same as `Rect()` but fills the rectangle with the
+   same color as its outline.
+ * `Horiz(x, y, w)`: draw a horizontal line start at specified (x,y)
+   coordinates, with width w.
+ * `Vert(x, y, h)`: same as `Horiz()` but draws a vertical line with height
+   h.
+ * `Circle(x, y, r)`: draw an unfilled circle centered at (x,y) with 
+   radius r.
+ * `TextFG(c)`: set the text foreground color to c.
+ * `TextColors(f, b)`: set the test foreground color to f and background
+   color to b.
+ * `StrXY(x, y, s)`: display the string s at (x,y).
+ * `Str(s)`: display the string s immediately to the right of the last
+   displayed text.
+ * `Sprite(x, y, i)`: display the image i at (x,y)
+ * `SpriteRLET(x, y, i)`: display the image i (with transparency and
+   RLE compression) at (x,y)
+
+Clearly some of these commands partially duplicate the functionality
+of others, but I found it useful to have simplified versions of some
+commands like setting the text color (where I often wanted to change
+the foreground color but not the background color), or encode data
+differently (RLET sprites are faster to display and require less
+memory to store, provided a sprite has moderately large areas of
+contiguous transparency).
+
+---
+
+The encoding of bytecode that the program consumes is as a stream of
+single-byte opcodes (basically the names of each of the supported functions),
+each followed by its parameters encoded in a way defined by the opcode. The
+`Fill` and `Color` operations for example are followed by a single byte
+specifying the palette index to use, whereas `Sprite` is followed by a 16-bit X
+coordinate, 8-bit Y coordinate, 8-bit image width and height, then width×height
+bytes of image data.
+
+Each of these bytecode functions translates pretty directly to graphics
+functions as they exist in the calculator libraries, so that aspect of the
+implementation is mostly uninteresting. But to simplify writing windows in
+terms of the bytecode I spent some effort building tools, and those are also
+worth discussing.
+
+### Compilation and preview
+
+I quickly found while translating some of the window types to bytecode that
+it was difficult to manually write the bytecodes. Even with the assistance
+of some macros, my initial approach of writing the bytecode as byte arrays
+in the program's C++ source clearly wouldn't scale to creating more windows
+with ease. The "Hot Singles" window was the first one I converted, and
+it looked like this:
+
+```c++
+extern const uint8_t HotSingles_descriptor[] = WINDOW_BYTECODE(
+        180, 126, "Singles near you!",
+        FILL(C_WHITE),
+        RECT(C_BORDER_TOP, 0, 0, 96, 64),
+        SPRITE(broken_image, (96 / 2) - (broken_image_width / 2),
+               (64 / 2) - (broken_image_height / 2)),
+        SPRITE_RLET(hotsingles_left, 5, 66),
+        SPRITE_RLET(hotsingles_right, 63, 66),
+        STR_XY("Waiting to meet today!", 10, 94),
+        TEXT_COLOR(C_GREEN),
+        STR_XY("CHAT", 118, 22),
+        STR_XY("NOW!", 120, 30)
+);
+```
+
+Although not too difficult to read, I needed to edit other project files to
+import image files in a format suitable for embedding in a program (variables
+like `broken_image` and `hotsingles_left` refer to image data) and although it's
+not difficult to understand how the window is meant to look from reading this
+code, making changes while developing it is tedious because that required
+rebuilding and relaunching the program.[^plugins]
+
+[^plugins]: Referring to sprites by name as in `broken_image` also wouldn't
+work for images that weren't built into the program, because in this example
+they're actually expressed as pointers to data compiled into the program.
+
+To improve on those things, I chose to define a domain-specific language that
+expresses the bytecode operations nicely and integrate that with a way to
+generate a live preview of the window definition code so I could get a
+WYSIWYG experience.
+
+My first approach to a domain-specific language was building a small Python
+library that allowed me to write a window definition as a sequence of
+Python function calls. Something like this:
+
+```python
+from w9bcc import *
+
+FillWindow(C_WHITE)
+Rectangle(C_BORDER_TOP, 0, 0, 96, 64)
+```
+
+That was a little easier to write, but I wasn't satisfied by the options I had
+to load images or conveniently specify colors while still selecting a color
+that actually exists in the palette used by the program. In particular,
+although I could choose existing libraries to load images and quantize them to
+the same palette as used by WEB1999 I thought it would be difficult to build a
+Python interpreter and those libraries into a format that would be easy to
+distribute so anybody could write window bytecode. In particular, my ideal was
+that it should be possible for anybody to write window definitions just by
+loading an editor in their web browser and save the resulting bytecode in a
+format suitable for sending to a calculator. So, instead of continuing further
+down the Python path I decided to make it so bytecode would be written in Lua
+using some WEB1999-specific libraries.
+
+Although I had never worked with Lua before, it seemed like a good choice for
+this application because it's easy to embed in larger programs and it's not
+too complex as a language so it should be fairly accessible to other people.
+The result looks like this:
+
+```lua
+require 'w9bcc'
+
+local WW = 168
+WindowTitle("Singles near you!")
+WindowSize{width = 168, height = 105}
+
+FillWindow('white')
+
+SetDrawColor('silver')
+DrawRectangle{x = 0, y = 0, width = 96, height = 64}
+local broken_image = Sprite:load('broken_image.png')
+broken_image:draw_at{x = (96 / 2) - (broken_image.width / 2),
+                     y = (64 / 2) - (broken_image.height / 2)}
+```
+
+It's not difficult to see a similarity between this Lua and the Python sample
+above, but it has solutions to the difficulties I already discussed:
+
+ * Colors are specified as strings, which are interpreted according to the [rules
+   of CSS](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value). That
+   means that where it's convenient basic names (like `white` or `green`)
+   can be used, or colors can be specified with their RGB components (`#fdcb12`)
+   or even by hue, saturation and lightness (HSL; `hsl(50 80% 40%)`).
+ * Images can be loaded as `Sprite` objects, which are converted to the appropriate
+   palette when loaded. Their dimensions are exposed as properties of the `Sprite`
+   object, which is useful to compute the position to draw at when an image is
+   meant to be centered at some position.
+
+The Lua interpreter that runs this code is embedded in a Rust program,
+because I needed to write code to handle image loading and color conversion.
+It was reasonably easy to do those tasks in Rust and expose the relevant
+functions to Lua as a library, with a few magic functions to emit data
+into the final bytecode stream (hidden behind functions like `FillWindow`
+in the above example).
+
+---
+
+
+In order to get WYSIWYG editing (and to satisfy the goal that everything should
+be usable by anybody with access to a web browser), I embedded the Rust program
+in a web application (which I knew would be feasible when I started using Rust
+for this application). It has a text editor and a canvas to display a window in
+(both things that are easy to do in a web page but moderately difficult to do
+in programs generally), and when the text changes it attempts to run the
+bytecode compiler. If successful, it then interprets the bytecode to display
+the results. Since this is a web application, you can [go try it out for
+yourself!](
+{{< globalresource.inline >}}
+{{ (resources.Get "2025/web1999/w9bcc-web/index.html").Permalink }}
+{{< /globalresource.inline >}}
+)
+
+{{< figure src="w9bcc-snapshot.png" alt="A screenshot of a web browser, with a text box containing syntax-highlighted Lua code on the left side and an image of a WEB1999 window containing several colored boxes, text and sprites. A text box below the preview reads 'Generated: 608 bytes of bytecode.'" caption="The bytecode editor is a simple split view between code and a preview of the result, with status and error information also shown." >}}
+
+One annoyance with this simple web application is in how images need to be
+loaded. Because the app does not have access to files in general, they need
+to be manually loaded via a file picker before they can be loaded with
+`Sprite:load`. I think this could be improved with the [web file system
+API](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API), but
+because my bytecode compiler can also be built as a regular program and run on
+the command line it's not annoying enough for me to have investigated: it's
+reasonably easy to load images into the webapp for testing, then save a copy
+of the images and final bytecode source as the "final" version which can
+be recompiled at any time without using the web app.
+
+---
+
+Interpreting the bytecode here reuses the C++ decoder that I built for the
+actual program (here called `w99bci`), which is compiled separately from the
+Rust bytecode compiler (`w99bcc`). A small Javascript driver program takes
+bytecode from the compiler and passes it to the renderer which is exposed to
+Javascript using Emscripten's binding generation tools.  I had to write
+versions of the calculator graphics functions that worked in terms of a [2d
+canvas rendering
+context](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D),
+but that wasn't terribly difficult. Displaying text in the same way it would
+appear on a calculator was most complex, because I needed to embed a copy of
+the calculator's bitmap font and decode text into a series of images to
+display. The Javascript driver looks something like this:
+
+```javascript
+// interpreter is the bytecode compiler (Rust with embedded Lua interpreter)
+const interpreter = new Interpreter()
+// renderer takes bytecode and displays to a canvas (C++)
+const renderer = Renderer.create(document.getElementById('rendererCanvas'))
+
+// editor refers to the text input widget
+const script = editor.getValue()
+const result = await interpreter.evaluate(script)
+renderer.render(result.bytecode)
+```
+
+The C++ renderer has a small amount of code that's emscripten-specific,
+but most of the class implementation is the same between the web and
+calculator. When constructing a renderer to be embedded in a web page,
+the caller is expected to pass in a handle to the DOM canvas element,
+palette data, and data representing the bitmaps corresponding to how
+characters are displayed in the calculator's font. The palette and font
+data are loaded from image files in the caller in my application.
+
+```c++
+#ifdef __EMSCRIPTEN__
+Renderer::Renderer(emscripten::val canvasElement, emscripten::val paletteValues,
+                   emscripten::val fontBitmaps)
+    : x(0),
+      y(0),
+      w(canvasElement["width"].as<uint16_t>()),
+      h(canvasElement["height"].as<uint8_t>()) {
+    using namespace std::string_literals;
+    auto ctx = canvasElement.call<emscripten::val>("getContext", "2d"s);
+
+    gfx_Begin(ctx, paletteValues, fontBitmaps);
+}
+
+void Renderer::renderJS(const emscripten::val &bytecode) {
+    std::vector<uint8_t> bytes =
+            emscripten::convertJSArrayToNumberVector<uint8_t>(bytecode);
+    if (bytes.size() == 0 || bytes.back() != OP_EOF) {
+        EM_ASM({throw new Error('Bytecode must end with OP_EOF, but did not')});
+    }
+
+    render(bytes.data());
+}
+
+EMSCRIPTEN_BINDINGS(Renderer) {
+    emscripten::class_<Renderer>("Renderer")
+            .constructor<emscripten::val, emscripten::val, emscripten::val>()
+            .function("render", &Renderer::renderJS);
+}
+
+#else /* !__EMSCRIPTEN__ */
+Renderer::Renderer(Rect contentArea)
+    : x(contentArea.x),
+      y(contentArea.y),
+      w(contentArea.width),
+      h(contentArea.height) {}
+#endif
+```
+
+To implement graphics in terms of the library functions used on a calculator,
+I added more C++ code that maintains the same kind of global state that the
+calculator has, and depends on the application passing in handles to the
+requisite Javascript objects (the canvas rendering context notably):
+
+```c++
+static std::vector<RGB> palette;
+static emscripten::val ctx = emscripten::val::undefined();
+static emscripten::val fontBitmaps = emscripten::val::undefined();
+static RGBA textFGColor = {.opaque = true, .rgb = {0, 0, 0}};
+static RGBA textBGColor = {.opaque = false, .rgb = {}};
+static int textX;
+static int textY;
+
+void gfx_Begin(emscripten::val canvasContext, emscripten::val paletteRGB,
+               emscripten::val fontBitmapsIn) {
+    ctx = canvasContext;
+    fontBitmaps = fontBitmapsIn;
+
+    for (size_t i = 0; i < paletteRGB["length"].as<size_t>(); i++) {
+        uint8_t r = paletteRGB[i][0].as<uint8_t>();
+        uint8_t g = paletteRGB[i][1].as<uint8_t>();
+        uint8_t b = paletteRGB[i][2].as<uint8_t>();
+        palette.push_back({.r = r, .g = g, .b = b});
+    }
+}
+
+void gfx_FillRectangle(int x, int y, int w, int h) {
+    ctx.call<void>("fillRect", x, y, w, h);
+}
+```
+
+Since when running on a calculator a program needs to call `gfx_Begin` to
+switch display modes anyway, it's easy to do canvas initialization in the same
+function for `w99bci`. Functions like `gfx_FillRectangle` implement the actual
+drawing commands, using the global state set up in `gfx_Begin`.
+
+### Limitations
+
+Currently the web-based editor can generate bytecode from an easy-to-write
+Lua program, but can't be saved as a program that can be loaded by WEB1999
+running on a calculator. The main reason for this is that I'm not very satisfied
+with the amount of memory they would require: when window definitions are built
+into the main program, they automatically get compressed with the rest of the
+code and data and decompressed when the program is run. When loading external bytecode
+however, the program would either need to:
+
+1. Decompress bytecode on the fly whenever a window needs to be displayed,
+   which could be slow.
+2. Require that external bytecode not be compressed, potentially requiring
+   a lot of memory.
+3. Decompress all bytecode that will be used into RAM at startup.
+
+None of those are very satisfactory to me. I don't think on-the-fly
+decompression will be fast enough, not allowing compression of external
+bytecode seems like it would be too large, and decompressing bytecode at
+startup wouldn't solve the issue of the program currently being limited by the
+amount of available RAM. Possibly a hybrid solution such as allowing a window
+definition to be either compressed or uncompressed and decompressing them at
+startup if needed would be acceptable, but I haven't spent the time to explore
+those ideas much.
+
+---
+
+At the time of this writing, the latest revisions to WEB1999 have converted
+all of the windows I created to be expressed in terms of bytecode. This is
+integrated into the procedure for compiling the program, where `w99bcc` is run
+as needed to translate Lua source into data that gets compiled into the program
+and interpreted using the `w99bci` component. This represents useful steps toward
+being able to load external bytecode as well, but since I haven't developed a
+satisfactory solution to the bytecode size-related concerns it's unable to load
+external bytecode at this time.
+
+## Conclusions
+
+I had fun writing WEB1999, and it was nice to have a calculator programming
+challenge that caught my interest. It had been some years since I wrote any
+software intended to run on a calculator, and I enjoyed working within those
+limitations.
+
+If you own or have access to a TI-84 Plus CE calculator, I'd encourage you to
+load a copy of WEB1999 onto it for on-demand entertainment. For everybody else,
+I hope there were some interesting aspects to its implementation that I've
+described or that the historical discussion around the windows I designed was
+some combination of entertaining and informative!
