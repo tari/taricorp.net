@@ -10,3 +10,9 @@ I asked them about this price discrepancy via a support ticket, and was disappoi
 As a hobbyist I don't use this server for anything critical (I don't mind some downtime) and I'm highly motivated by saving about €4 per month, so I planned out how I would do that migration between systems. Read on for what those plans looked like and how execution went.
 
 <!-- more -->
+
+## Current state
+
+Hardware-wise, my current server is a `START-2S-SATA` model, with a slow [Silvermont](https://en.wikichip.org/wiki/intel/microarchitectures/silvermont) Intel Atom processor, 4GB of RAM and a 1TB hard drive. Systems with the same specs are about €4 per month cheaper than I currently pay and new services cost the same as one month's service to activate, so I would break even in monetary cost (having paid less overall than if I hadn't done any migration) in only about three months.
+
+For the OS on this server, I use [NixOS](https://nixos.org/) specifically because the way the system is configured makes it easy to rebuild should something go wrong. Whereas with a traditional Linux distribution rebuilding a system from scratch would involve manually installing any packages that were installed and then restoring configuration from backup, with Nix the entire configuration is built from a small number of plain-text files that are easy to back up. Data still needs to be restored from backups, but restoring most of the system is as simple as installing Nix, copying `configuration.nix` and any other files back over, then running `nixos-rebuild switch`.
