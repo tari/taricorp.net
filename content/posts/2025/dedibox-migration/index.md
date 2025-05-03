@@ -49,3 +49,44 @@ For IPv4, Scaleway simply provide a DHCP server that will assign the correct add
 ```
 
 `dhcpcd` is the default DHCP client for NixOS, and I configured it to request a /48 IPv6 prefix and send the specified DUID, as well as set a static address inside the delegated prefix. A different server will have different a DUID and /48 prefix which I will need to change. Since I don't actually use the /48 prefix at all though, it's also possible that a new server will allow SLAAC (which for some reason isn't available on all Dediboxes) and I can get rid of this configuration completely.
+
+#### Disks and boot
+
+This system has a single hard drive that it boots from using GRUB:
+
+```
+boot.loader.grub = {
+  enable = true;
+  device = "/dev/sda";
+};
+```
+
+The disk is partitioned with only two partitions: one ext4 volume for `/boot` and a Linux LVM physical volume containing the root filesystem and another data storage :
+
+```
+fileSystems = {
+  "/" = {
+    device = "/dev/mapper/lvm-root";
+    fsType = "xfs";
+  };
+  "/boot" = {
+    device = "/dev/sda1";
+    fsType = "ext4";
+  };
+  "/data" = {
+    device = "/dev/mapper/lvm-data";
+    fsType = "xfs";
+    options = [ "uquota" ];
+  };
+};
+```
+
+This doesn't refer to any device UUIDs or anything, so recreating the same structure on another machine should be enough to get it working. I haven't done any special bootloader configuration, so I also think it's likely that setting up GRUB in the same way is enough to ensure the system can boot again.
+
+## Planning
+
+Having investigated the configuration and found only the networking options that look like they need to be modified for a new machine (and even those only need to be updated for IPv6), I think the easiest approach to migration will be to simply copy the disk, update the network configuration then reboot and hope everything works.
+
+Actually doing that seems like it could be done easily just with [`dd` over the network](https://superuser.com/questions/1279671/clone-disk-over-network), or perhaps more cleverly using [Clonezilla](https://clonezilla.org/). Clonezilla seems like it could be faster because it knows how to avoid copying disk blocks that are unused, but doesn't trivially support copying directly between two disks over the network[^iscsi] and doesn't seem to know how to determine unused blocks on LVM volumes so it wouldn't actually offer me very much of an advantage.
+
+[^iscsi]: I imagine I could set up the new machine as an iSCSI target and connect the old one to that as initiator so the new machine's disk appears as a local device (backed by the one over the network), though I've never had reason to try using iSCSI before so that would be an unfamiliar workflow.
