@@ -90,3 +90,13 @@ Having investigated the configuration and found only the networking options that
 Actually doing that seems like it could be done easily just with [`dd` over the network](https://superuser.com/questions/1279671/clone-disk-over-network), or perhaps more cleverly using [Clonezilla](https://clonezilla.org/). Clonezilla seems like it could be faster because it knows how to avoid copying disk blocks that are unused, but doesn't trivially support copying directly between two disks over the network[^iscsi] and doesn't seem to know how to determine unused blocks on LVM volumes so it wouldn't actually offer me very much of an advantage.
 
 [^iscsi]: I imagine I could set up the new machine as an iSCSI target and connect the old one to that as initiator so the new machine's disk appears as a local device (backed by the one over the network), though I've never had reason to try using iSCSI before so that would be an unfamiliar workflow.
+
+## Execution
+
+First I wanted to boot up the new machine with a live system. Confusingly, my only option for setting up the new machine was to install one of the provided OSes on it: there was no option to boot it from some image without doing an automated installation. So I used the Dedibox web console to install Debian, with the expectation that I would immediately throw away that install. This was moderately annoying, because it was contrary to [Scaleway's installation documentation](https://www.scaleway.com/en/docs/dedibox/how-to/install-a-server/) which says there is a "Install over KVM" (using remote access via a machine's BMC) option but that I didn't see. I believe that option didn't exist because this type of machine doesn't actually have a BMC suitable for remote administration, but I didn't find any suggestion in the documentation that only some machines have that feature.
+
+<screenshot of console here>
+
+After I let it automatically install Debian, I hit the "Rescue" button on the control panel to reboot the system into a RAM-based Linux system so I could erase the entire disk. The most recent version of a distribution they offer for system rescue that I was willing to use was Ubuntu 20.04 which is dismayingly out of date (although it's still supported until 2028, so it's not obsolete!), but that didn't end up being an issue at all. After waiting a while I was able to SSH in to the machine running Ubuntu from a ramdisk, and work out exactly how I was going to copy the old machine's disk over.
+
+echo password | ssh origin "sudo -S dd if=/dev/sda bs=1M | lzop -1" | lzop -d | pv --size=1000G | sudo dd of=/dev/sda1 bs=1
