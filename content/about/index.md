@@ -1,7 +1,7 @@
 ---
 author: tari
 comments: false
-date: 2020-07-18
+date: 2025-09-23
 layout: page
 slug: about
 title: Peter Marheine
@@ -66,11 +66,6 @@ Hi, I'm Peter.
   </a>
   <span id="contact">Find me online:</span>
   
-  * <a rel="me" href="https://twitter.com/pmarheine" class="linkbar">
-      <img src="{{< resource "Twitter_Social_Icon_Circle_Color.svg" >}}"
-           alt="Twitter">
-      @pmarheine
-    </a>
   * <a rel="me" href="https://digipres.club/@pmarheine" class="linkbar">
       <img src="{{< resource "activitypub-icon.svg" >}}" alt="ActivityPub/Mastodon">
       @pmarheine@digipres.club
