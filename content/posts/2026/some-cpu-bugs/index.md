@@ -1,7 +1,14 @@
 ---
-title: A selection of CPU hardware bugs
-slug: some-cpu-bugs
-date: 2026-01-28T12:28:00.000+11:00
+title: A few CPU hardware bugs
+slug: a-few-cpu-bugs
+date: 2026-01-28T20:06:00.000+11:00
+categories: []
+tags:
+  - intel
+  - ite
+  - riscv
+  - bugs
+  - firmware
 ---
 Catherine (Whitequark)'s recent [observations on poorly](https://crackhead.technology/)[\-engineered firmware](https://social.treehouse.systems/@whitequark/115946915331426694) reminded me of a few mistakes I've seen in vendors' CPUs; some unimportant and others surprisingly bad. Since I've never seen these widely discussed, here's some discussion and links to supporting evidence to make them more widely known, since I think they're interesting.
 
